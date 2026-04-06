@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Studio v3.0</title>
+    <style>
+        :root {
+            --bg-deep: #0a0a12;
+            --bg-sidebar: #121221;
+            --accent: #6c63ff;
+            --text: #e0e0e0;
+            --border: #2d3748;
+        }
+        body {
+            margin: 0; padding: 0;
+            background: var(--bg-deep);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; height: 100vh;
+            overflow: hidden;
+        }
+        #sidebar {
+            width: 300px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+        }
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: bold; font-size: 1.2em;
+            color: var(--accent);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        #chapter-list, #slide-list {
+            overflow-y: auto; flex: 1;
+            padding: 10px;
+        }
+        .list-item {
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: background 0.2s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .list-item:hover { background: rgba(108, 99, 255, 0.1); }
+        .list-item.active { background: var(--accent); color: white; }
+        
+        #preview-container {
+            flex: 1;
+            display: flex; flex-direction: column;
+            padding: 40px;
+            align-items: center; justify-content: center;
+            background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        #slide-frame {
+            width: 960px; height: 540px; /* 16:9 ratio */
+            border: none;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px var(--border);
+            background: #000;
+            border-radius: 4px;
+        }
+        .status-badge {
+            font-size: 0.7em; padding: 2px 6px; border-radius: 10px;
+            background: #27ae60; color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <div class="header">
+            Lumina Studio
+            <span class="status-badge">LIVE</span>
+        </div>
+        <div id="chapter-list"></div>
+        <div style="padding: 10px; border-top: 1px solid var(--border); font-size: 0.8em; color: #718096;">SLIDES</div>
+        <div id="slide-list"></div>
+    </div>
+    <div id="preview-container">
+        <iframe id="slide-frame"></iframe>
+        <div style="margin-top: 20px; color: #718096; font-size: 0.8em;">
+            Mode: 16:9 (960x540 Preview) | Autoreload: Enabled
+        </div>
+    </div>
+
+    <script>
+        let currentChapter = '';
+        let currentSlide = '';
+        const socket = new WebSocket(`ws://${location.host}`);
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.event === 'reload') {
+                console.log('Reloading due to file change:', data.file);
+                refreshSlides();
+            }
+        };
+
+        async function fetchChapters() {
+            const res = await fetch('/api/chapters');
+            const chapters = await res.json();
+            const list = document.getElementById('chapter-list');
+            list.innerHTML = '';
+            chapters.forEach(ch => {
+                const div = document.createElement('div');
+                div.className = `list-item ${ch === currentChapter ? 'active' : ''}`;
+                div.textContent = ch;
+                div.onclick = () => selectChapter(ch);
+                list.appendChild(div);
+            });
+        }
+
+        async function selectChapter(ch) {
+            currentChapter = ch;
+            await fetchChapters(); // refresh active state
+            refreshSlides();
+        }
+
+        async function refreshSlides() {
+            if (!currentChapter) return;
+            const res = await fetch(`/api/slides/${currentChapter}`);
+            const slides = await res.json();
+            const list = document.getElementById('slide-list');
+            list.innerHTML = '';
+            
+            if (slides.length === 0) {
+                list.innerHTML = '<div style="color:#718096; padding:10px;">No slides found. Run build first or ensure slides.md exists.</div>';
+                return;
+            }
+
+            slides.forEach(s => {
+                const div = document.createElement('div');
+                div.className = `list-item ${s === currentSlide ? 'active' : ''}`;
+                div.textContent = s;
+                div.onclick = () => selectSlide(s);
+                list.appendChild(div);
+            });
+
+            // If current slide is no longer valid or none selected, pick the first
+            if (!slides.includes(currentSlide)) {
+                selectSlide(slides[0]);
+            } else {
+                // Refresh the iframe content
+                const frame = document.getElementById('slide-frame');
+                frame.src = `/${currentChapter}/slides/${currentSlide}?t=${Date.now()}`;
+            }
+        }
+
+        function selectSlide(s) {
+            currentSlide = s;
+            const frame = document.getElementById('slide-frame');
+            frame.src = `/${currentChapter}/slides/${currentSlide}`;
+            
+            // update active state in UI
+            document.querySelectorAll('#slide-list .list-item').forEach(el => {
+                el.classList.toggle('active', el.textContent === s);
+            });
+        }
+
+        fetchChapters();
+    </script>
+</body>
+</html>

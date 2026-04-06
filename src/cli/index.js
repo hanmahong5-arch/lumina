@@ -64,6 +64,21 @@ program
     }
   });
 
+// Studio command
+program
+  .command('studio')
+  .description('Launch Lumina Studio (Live Web Preview)')
+  .option('-p, --port <number>', 'Port to run the studio on', '3000')
+  .action((options) => {
+    console.log(chalk.magenta('🚀 Launching Lumina Studio...'));
+    const args = [path.join(rootDir, 'src/studio/server.js'), '--port', options.port];
+    const serverProcess = spawn('node', args, { cwd: rootDir, stdio: 'inherit' });
+    
+    serverProcess.on('error', (err) => {
+      console.error(chalk.red(`Failed to start Studio: ${err.message}`));
+    });
+  });
+
 function runBuild(options) {
   if (options.chapter) {
     const spinner = ora(`Building chapter ${chalk.cyan(options.chapter)}...`).start();

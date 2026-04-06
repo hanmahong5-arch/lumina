@@ -24,6 +24,7 @@ const { chromium } = require('playwright');
 const html2pptx = require(
   path.resolve(__dirname, 'pptx-skill', 'pptx', 'scripts', 'html2pptx.js')
 );
+const { compileMarkdownToHtml } = require('./src/core/md-compiler.js');
 
 // Graceful shutdown: close browser on SIGINT/SIGTERM
 let activeBrowser = null;
@@ -47,6 +48,9 @@ async function buildChapter(chapterName, options = {}) {
   const chapterDir = path.resolve(__dirname, chapterName);
   const slidesDir = path.join(chapterDir, 'slides');
   const outputFile = path.join(chapterDir, `${chapterName}.pptx`);
+
+  // Run Lumina MDX Engine if a slides.md file is present
+  compileMarkdownToHtml(chapterDir, 'slides.md');
 
   // Verify the slides directory exists
   if (!fs.existsSync(slidesDir)) {
@@ -103,7 +107,7 @@ async function buildChapter(chapterName, options = {}) {
         successCount++;
       } catch (err) {
         const msg = err.message;
-        console.error(`    ERROR: ${msg.split('\n')[0]}`);
+        console.error(`    ERROR: ${msg}`);
         if (strict) {
           throw err; // Fail immediately in strict mode
         }
