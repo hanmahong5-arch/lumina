@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .ref-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid;
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .ref-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; }
+  .ref-desc  { font-size: 6.5pt; color: var(--text-secondary); margin: 0; line-height: 1.35; }
+  .link-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid var(--accent-teal);
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .link-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; color: var(--accent-teal); }
+  .link-url   { font-size: 6pt; color: var(--text-muted); margin: 0; font-family: "Courier New", monospace; word-break: break-all; }
+  .link-why   { font-size: 6.5pt; color: var(--text-secondary); margin: 0; }
+  .section-note {
+    background: var(--bg-secondary);
+    border-radius: 3pt;
+    padding: 3pt 6pt;
+    margin-top: 4pt;
+  }
+  .section-note p { font-size: 6.5pt; color: var(--text-muted); margin: 0; }
+</style>
+</head><body style="background:var(--bg-primary);">
+
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 03 · See Also</p>
+  <p class="page-num">References</p>
+</div>
+
+<div class="slide-content-compact" style="padding:12pt 28pt 6pt 28pt;" style="display:flex; gap:10pt;">
+
+  <!-- Left: Cross-Chapter Links -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-indigo); margin-bottom:2pt; font-size:10pt;">Cross-Chapter Links / 跨章关联</h3>
+
+    <div class="ref-card" style="border-left-color: var(--accent-indigo);">
+      <p class="ref-title" style="color:var(--accent-indigo);">Ch01 Core Engine → 权限入口</p>
+      <p class="ref-desc">权限检查嵌入 QueryEngine 的 tool dispatch 阶段 — toolExecution.ts 调用 N-Tier Pipeline</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-teal);">
+      <p class="ref-title" style="color:var(--accent-teal);">Ch02 Multi-Agent ← 使用 Permission</p>
+      <p class="ref-desc">swarmWorkerHandler 为子 Agent 实现独立权限层，coordinator 有额外审批逻辑</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-green);">
+      <p class="ref-title" style="color:var(--accent-green);">Ch05 Tools & MCP ← 使用 Permission</p>
+      <p class="ref-desc">每个 tool 的 isReadOnly/needsPermission 属性决定进入哪个权限层级</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-coral);">
+      <p class="ref-title" style="color:var(--accent-coral);">Ch06 Resilience → 拒绝弹性</p>
+      <p class="ref-desc">权限拒绝后的 graceful degradation — 拒绝消息转换为 tool_result error 继续循环</p>
+    </div>
+
+    <div class="section-note">
+      <p>Permission 是安全门控层 — 向上对接 Core dispatch，向下限制 Tool 执行和 Agent 行为。</p>
+    </div>
+  </div>
+
+  <!-- Right: Further Reading -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-teal); margin-bottom:2pt; font-size:10pt;">Further Reading / 延伸阅读</h3>
+
+    <div class="link-card">
+      <p class="link-title">OWASP Top 10 for LLM Applications</p>
+      <p class="link-url">https://owasp.org/www-project-top-10-for-large-language-model-applications/</p>
+      <p class="link-why">LLM01-Prompt Injection、LLM07-Insecure Plugin Design 与 Permission Pipeline 直接相关</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">Anthropic — Tool Use Safety Guidelines</p>
+      <p class="link-url">https://docs.anthropic.com/en/docs/build-with-claude/tool-use#best-practices</p>
+      <p class="link-why">官方安全最佳实践 — human-in-the-loop 审批、tool 白名单、危险命令拦截</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">Principle of Least Privilege (NIST)</p>
+      <p class="link-url">https://csrc.nist.gov/glossary/term/least_privilege</p>
+      <p class="link-why">N-Tier Pipeline 的设计哲学基础 — 默认拒绝、逐层放行、最小权限原则</p>
+    </div>
+
+    <div class="section-note">
+      <p>安全是持续演进的 — OWASP LLM Top 10 每年更新，建议定期对照检查 Permission 层。</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Permission System</p>
+  <p>See Also</p>
+</div>
+
+</body></html>

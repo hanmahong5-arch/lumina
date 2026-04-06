@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Micro Cached</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --text-code-str: var(--text-code-str);
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.diagram { background: var(--bg-card); border-radius: 5pt; padding: 10pt; margin-bottom: 6pt; text-align: center; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">06 / 22</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-green);">Micro Path 2: Cached 缓存感知微压缩</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">利用 cache_edits 服务端删除，保持 prefix 缓存命中率</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="diagram">
+        <p style="font-size:9pt; color:var(--text-muted);">消息序列 (prefix cached)</p>
+        <p style="font-size:10pt; margin-top:4pt;">
+          <span style="background:var(--accent-green); color:var(--bg-primary); padding:2pt 6pt; border-radius:2pt;">CACHED PREFIX</span>
+          <span style="color:var(--text-muted);"> | </span>
+          <span style="background:var(--accent-amber); color:var(--bg-primary); padding:2pt 6pt; border-radius:2pt;">NEW TAIL</span>
+        </p>
+        <p style="font-size:8pt; color:var(--text-muted); margin-top:4pt;">cache_edits 删除 cached prefix 中的旧工具结果</p>
+        <p style="font-size:10pt; margin-top:4pt;">
+          <span style="background:var(--accent-green); color:var(--bg-primary); padding:2pt 6pt; border-radius:2pt;">SHORTER PREFIX</span>
+          <span style="color:var(--text-muted);"> | </span>
+          <span style="background:var(--accent-amber); color:var(--bg-primary); padding:2pt 6pt; border-radius:2pt;">NEW TAIL</span>
+        </p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-green);">cache_edits 机制</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">服务端支持对已缓存的 prefix 进行局部删除。删除旧工具结果后，前缀仍然命中缓存。</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">关键约束：只能删除，不能修改或插入。</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// Cached micro-compact</p>
+        <p style="color:var(--text-muted);">// Only delete from cached prefix</p>
+        <p style="color:var(--text-muted);">// to preserve cache hit rate</p>
+        <p></p>
+        <p><span style="color:var(--text-code-kw);">const</span> edits = oldResults.map(r =&gt; ({</p>
+        <p>  type: <span style="color:var(--text-code-str);">'delete'</span>,</p>
+        <p>  index: r.messageIndex,</p>
+        <p>  contentIndex: r.contentIndex</p>
+        <p>}));</p>
+        <p></p>
+        <p><span style="color:var(--text-muted);">// Send with cache_edits</span></p>
+        <p>apiCall({</p>
+        <p>  messages,</p>
+        <p>  cache_edits: edits</p>
+        <p>});</p>
+      </div>
+      <div class="card" style="border-left:3pt solid var(--accent-green);">
+        <h4 style="color:var(--accent-green);">缓存命中率保障</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">与 time-based 路径不同，cached 路径直接通知服务端删除，不修改本地消息数组前缀部分。</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">prefix 结构不变 = 缓存继续命中</p>
+      </div>
+      <div class="card" style="border-left:3pt solid var(--accent-amber);">
+        <h4 style="color:var(--accent-amber);">与 Path 1 的互补</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">Path 1(time-based): cold cache, 本地裁剪</p>
+        <p style="font-size:8pt; color:var(--accent-green);">Path 2(cached): hot cache, 服务端删除</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

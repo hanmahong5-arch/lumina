@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 | INK UI ARCHITECTURE</p>
+  <p class="page-num">17c / 20</p>
+</div>
+<div class="slide-content-compact" style="padding:14pt 28pt 8pt 28pt;">
+  <h3 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:12pt;">横向对比: Terminal UI Frameworks</h3>
+
+  <!-- Header row (5 columns: dimension + 4 competitors) -->
+  <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:1.1; background:var(--bg-table-header); border-radius:3pt; padding:3pt 4pt;">
+      <p style="font-size:6.5pt; font-weight:700; color:var(--accent-teal); margin:0;">维度 Dimension</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 4pt; border:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; font-weight:700; color:var(--accent-indigo); margin:0;">Ink (React for Terminal)</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 4pt;">
+      <p style="font-size:6.5pt; font-weight:700; color:var(--accent-amber); margin:0;">Blessed</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 4pt;">
+      <p style="font-size:6.5pt; font-weight:700; color:var(--accent-coral); margin:0;">Bubbletea (Go)</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 4pt;">
+      <p style="font-size:6.5pt; font-weight:700; color:var(--text-secondary); margin:0;">readline (Node)</p>
+    </div>
+  </div>
+
+  <!-- Row 1: Rendering Model -->
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1.1; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">渲染模型 Rendering Model</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6pt; color:var(--text-primary); margin:0;">声明式 JSX + Yoga Flexbox + ANSI diff</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">命令式 Widget 树 + 自有布局引擎</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">Elm Architecture: Model-View 纯函数渲染</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">命令式 stdout.write 全量重绘</p>
+    </div>
+  </div>
+
+  <!-- Row 2: Component System -->
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1.1; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">组件系统 Component System</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6pt; color:var(--text-primary); margin:0;">React Components + Hooks + Compiler auto-memo</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">Widget 继承体系; 完整 TUI 控件</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">Model-Update-View; Lipgloss 样式库</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">无组件系统; 手动拼接字符串</p>
+    </div>
+  </div>
+
+  <!-- Row 3: State Management -->
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1.1; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">状态管理 State Management</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6pt; color:var(--text-primary); margin:0;">Hooks + Zustand + useDeferredValue 并发调度</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">手动事件监听 + 全局 mutable state</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">Msg-Update 单向数据流 + goroutine</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">全局变量; 无框架级状态抽象</p>
+    </div>
+  </div>
+
+  <!-- Row 4: Streaming Perf -->
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1.1; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">流式性能 Streaming Perf</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6pt; color:var(--text-primary); margin:0;">16ms render batch + ref bypass reconciliation</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">手动节流; 高频更新易闪烁</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">tea.Batch 命令合并; 性能优秀</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">无框架级优化; 逐字符写入</p>
+    </div>
+  </div>
+
+  <!-- Row 5: Ecosystem -->
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1.1; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">生态与维护 Ecosystem</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6pt; color:var(--text-primary); margin:0;">React 生态直接复用; 活跃维护</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">自有生态; 已停滞维护 (archived)</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">Go + Charm 工具链; 活跃维护</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">Node 标准库; 稳定但功能有限</p>
+    </div>
+  </div>
+
+  <!-- Row 6: Cross-platform -->
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1.1; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">跨平台兼容 Cross-platform</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 4pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6pt; color:var(--text-primary); margin:0;">运行时检测 VT mode; 修饰键 fallback</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">terminfo 驱动; 广泛终端支持</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">跨平台二进制; 终端兼容性好</p>
+    </div>
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 4pt;">
+      <p style="font-size:6pt; color:var(--text-secondary); margin:0;">依赖 Node runtime; 基础兼容</p>
+    </div>
+  </div>
+
+</div>
+<div class="slide-footer">
+  <p>Sources: REPL.tsx, Spinner.tsx, defaultBindings.ts, AppState.tsx | Blessed npm | Bubbletea GitHub | Node.js readline docs</p>
+  <p>Chapter 09 - Ink UI Architecture</p>
+</div>
+</body></html>

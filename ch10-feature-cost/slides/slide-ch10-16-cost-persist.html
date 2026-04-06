@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 10 - Cost Persistence</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:15pt;font-weight:700;margin:0 0 5pt 0;line-height:1.15}
+h4{font-size:9pt;font-weight:700;margin:0 0 1pt 0;line-height:1.2}
+p{font-size:8pt;line-height:1.3;margin:0 0 1pt 0}
+ul{font-size:8pt;line-height:1.3;margin:0;padding-left:12pt}
+li{margin-bottom:1pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:4pt 6pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:6pt 8pt;margin-bottom:4pt}
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:5pt 8pt;margin-bottom:3pt}
+.pipeline{display:flex;gap:6pt;align-items:stretch;margin-bottom:6pt}
+.pipeline-step{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;text-align:center;border-top:2pt solid var(--accent-indigo)}
+.pipeline-arrow{display:flex;align-items:center;color:var(--text-muted);font-size:14pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 10 | FEATURE GATE + COST</p>
+  <p class="page-num">16 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>持久化: 会话成本存储</h2>
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <h4>API Response</h4>
+      <p style="font-size:8pt;color:var(--text-secondary);">usage field</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <h4>addToTotal</h4>
+      <p style="font-size:8pt;color:var(--text-secondary);">In-memory accumulator</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <h4>saveCurrentSession</h4>
+      <p style="font-size:8pt;color:var(--text-secondary);">Write to projectConfig</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <h4>Restore</h4>
+      <p style="font-size:8pt;color:var(--text-secondary);">On session resume</p>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p>// saveCurrentSessionCosts()</p>
+        <p>async function saveCurrentSessionCosts() {</p>
+        <p>&nbsp;&nbsp;const costState = getCurrentCostState();</p>
+        <p>&nbsp;&nbsp;await writeProjectConfig(sessionId, {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;costs: {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;totalUSD: costState.totalSessionCost,</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modelUsage: costState.modelUsage,</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdated: Date.now(),</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;}</p>
+        <p>&nbsp;&nbsp;});</p>
+        <p>}</p>
+      </div>
+      <div class="card">
+        <h4>Save Triggers</h4>
+        <ul>
+          <li><p>After each API response (debounced)</p></li>
+          <li><p>On graceful exit (process.on('exit'))</p></li>
+          <li><p>On compact/clear operations</p></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-accent-teal">
+        <h4>Session Resume</h4>
+        <p>When resuming a conversation with <span style="font-family:'Courier New',monospace;color:var(--accent-teal);">--resume</span>, the persisted cost state is loaded and the accumulator continues from where it left off. This gives accurate total cost for long-running sessions.</p>
+      </div>
+      <div class="card">
+        <h4>Storage Location</h4>
+        <div class="code-block">
+          <p>~/.claude/projects/</p>
+          <p>&nbsp;&nbsp;{project-hash}/</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;sessions/</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{session-id}.json  // costs here</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Source: src/utils/statsCache.ts, src/utils/sessionStorage.ts</p>
+  <p>Ch10 Feature Gate + Cost</p>
+</div>
+</body>
+</html>

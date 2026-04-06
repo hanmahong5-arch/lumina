@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Tool Isolation</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 1pt 0; }
+ul { font-size: 9pt; line-height: 1.3; margin: 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 10pt 28pt 4pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-50 { flex: 0 0 48%; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.card-accent-teal { background: var(--bg-card); border-left: 3pt solid var(--accent-teal); border-radius: 0 5pt 5pt 0; padding: 4pt 10pt; margin-bottom: 3pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 3pt 8pt; margin-bottom: 2pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">12 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>工具隔离 Tool Isolation</h2>
+  <div class="two-col">
+    <div class="col-50">
+      <div class="card-accent-teal">
+        <h4>resolveAgentTools() 白名单机制</h4>
+        <ul>
+          <li>从 AgentDefinition.tools 读取工具列表</li>
+          <li>通过 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">filterToolsForAgent()</span> 三层过滤</li>
+          <li>MCP工具始终允许 (以 mcp__ 开头)</li>
+          <li>返回 resolvedTools + invalidTools 校验</li>
+        </ul>
+      </div>
+      <div class="card-sm">
+        <h4>三层过滤逻辑</h4>
+        <ul>
+          <li><span style="color: var(--accent-coral);">Layer 1:</span> ALL_AGENT_DISALLOWED_TOOLS - 全局禁止 (TaskOutput, ExitPlanMode, EnterPlanMode, AskUser, TaskStop)</li>
+          <li><span style="color: var(--accent-amber);">Layer 2:</span> CUSTOM_AGENT_DISALLOWED_TOOLS - 自定义agent额外禁止</li>
+          <li><span style="color: var(--accent-teal);">Layer 3:</span> ASYNC_AGENT_ALLOWED_TOOLS - 异步agent白名单 (仅isAsync时生效)</li>
+        </ul>
+      </div>
+      <div class="card-sm" style="border-left: 2pt solid var(--accent-green);">
+        <h4 style="color: var(--accent-green);">最小权限原则</h4>
+        <p>allowedTools替换session规则: 当提供时, 替换所有allow rules, agent只能使用显式列出的工具</p>
+      </div>
+    </div>
+    <div class="col-50">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">agentToolUtils.ts - filterToolsForAgent</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">function</span> <span style="color:var(--text-code-fn);">filterToolsForAgent</span>({</p>
+        <p style="margin:0;">  tools, isBuiltIn, isAsync, permissionMode</p>
+        <p style="margin:0;">}) {</p>
+        <p style="margin:0;">  <span style="color:var(--text-code-kw);">return</span> tools.<span style="color:var(--text-code-fn);">filter</span>(tool =&gt; {</p>
+        <p style="margin:0;">    <span style="color:var(--text-muted);">// MCP tools always allowed</span></p>
+        <p style="margin:0;">    <span style="color:var(--text-code-kw);">if</span> (tool.name.startsWith(<span style="color:var(--text-code-const);">'mcp__'</span>))</p>
+        <p style="margin:0;">      <span style="color:var(--text-code-kw);">return true</span>;</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;">    <span style="color:var(--text-muted);">// ExitPlanMode for plan agents</span></p>
+        <p style="margin:0;">    <span style="color:var(--text-code-kw);">if</span> (isExitPlanMode &amp;&amp;</p>
+        <p style="margin:0;">        permissionMode === <span style="color:var(--text-code-const);">'plan'</span>)</p>
+        <p style="margin:0;">      <span style="color:var(--text-code-kw);">return true</span>;</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;">    <span style="color:var(--text-muted);">// Global deny list</span></p>
+        <p style="margin:0;">    <span style="color:var(--text-code-kw);">if</span> (ALL_AGENT_DISALLOWED.has(name))</p>
+        <p style="margin:0;">      <span style="color:var(--text-code-kw);">return false</span>;</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;">    <span style="color:var(--text-muted);">// Async whitelist check</span></p>
+        <p style="margin:0;">    <span style="color:var(--text-code-kw);">if</span> (isAsync &amp;&amp;</p>
+        <p style="margin:0;">        !ASYNC_ALLOWED.has(name))</p>
+        <p style="margin:0;">      <span style="color:var(--text-code-kw);">return false</span>;</p>
+        <p style="margin:0;">  });</p>
+        <p style="margin:0;">}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>12 / 22</p>
+</div>
+</body>
+</html>

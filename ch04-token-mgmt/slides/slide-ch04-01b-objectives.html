@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">Ch04 Token Management · Learning Objectives</p>
+  <p class="page-num">Objectives</p>
+</div>
+<div class="slide-content-compact">
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt;">After this chapter you will be able to:</h2>
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt; font-size:14pt;">学完本章后你将能够：</h2>
+  <ol style="font-size:9pt; color:var(--text-primary); line-height:1.6;">
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Calculate the 4 context-pressure thresholds (warning, error, auto-compact, blocking) from a given context window size using AUTOCOMPACT_BUFFER_TOKENS and WARNING_THRESHOLD_BUFFER_TOKENS / 利用 AUTOCOMPACT_BUFFER_TOKENS 和 WARNING_THRESHOLD_BUFFER_TOKENS 从给定上下文窗口大小计算 4 个上下文压力阈值（警告、错误、自动压缩、阻塞）</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Order the 4-level compaction cascade (Micro → Snip → Auto LLM Summary → 413 PTL Recovery) by ascending cost and invasiveness, and state each level's trigger condition / 按成本和侵入性递增排列 4 级压缩级联（微压缩 → 裁剪 → 自动 LLM 摘要 → 413 PTL 恢复），并说明每级的触发条件</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">List the 9 sections of the compaction summary template and explain why the Analysis-Summary two-phase structure improves summary quality via Chain-of-Thought / 列出压缩摘要模板的 9 个章节，并解释 Analysis-Summary 两阶段结构如何通过思维链提升摘要质量</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Distinguish time-based microcompact from cached microcompact, identify which tools appear in COMPACTABLE_TOOLS, and explain how cache_edits preserve prompt cache across compaction / 区分基于时间的微压缩和基于缓存的微压缩，识别 COMPACTABLE_TOOLS 中的工具，并解释 cache_edits 如何在压缩过程中保持 prompt 缓存</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Trace the runPostCompactCleanup() reset chain and explain why sub-agent compactions must skip main-thread state resets (isMainThreadCompact guard) / 追踪 runPostCompactCleanup() 的重置链，并解释为何子 Agent 压缩必须跳过主线程状态重置（isMainThreadCompact 守卫）</p></li>
+  </ol>
+  <div style="background:#16213E; border-radius:4pt; padding:6pt 10pt; margin-top:8pt; border-left:2pt solid #FFB84D;">
+    <p style="font-size:8pt; color:#FFB84D; font-weight:700; margin:0;">Prerequisites / 前置知识</p>
+    <p style="font-size:7.5pt; color:#A0AEC0; margin:0;">Ch01 Core Engine (reactive_compact and auto_compact Continue reasons, token budget tracker). Basic understanding of LLM context windows and prompt caching economics. / Ch01 核心引擎（reactive_compact 和 auto_compact Continue 原因、token 预算追踪器）。基本理解 LLM 上下文窗口和 prompt 缓存经济学。</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Token Management & Context Compaction</p>
+  <p>Duration: ~60min | 22 Slides</p>
+</div>
+</body></html>

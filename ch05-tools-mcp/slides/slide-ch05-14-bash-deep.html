@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - BashTool Deep Dive</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-str:#A5D6FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt}
+.card-accent-indigo{background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">14 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>BashTool 深入 / Sandbox &amp; Classification</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Sandbox integration, progress feedback, command categorization</p>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <h3 style="color:var(--accent-teal);font-size:10pt;">Sandbox Integration</h3>
+        <ul style="font-size:9pt;">
+          <li>macOS: Apple Sandbox seatbelt profiles</li>
+          <li>Linux: Docker/namespace isolation</li>
+          <li>Windows: restricted token execution</li>
+          <li>Network access controlled per-command</li>
+        </ul>
+      </div>
+      <div class="card-accent-indigo">
+        <h3 style="font-size:10pt;color:var(--accent-amber);">PROGRESS_THRESHOLD</h3>
+        <p style="font-size:9pt;">Commands running &gt; <span style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);">2000ms</span> trigger progress indicator. Shows elapsed time and partial stdout to user. Prevents "is it stuck?" anxiety.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3 style="color:var(--accent-coral);font-size:10pt;">Command Classification</h3>
+          <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">Category</p>
+    </div>
+    <div style="flex:2; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">Commands</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">search</p>
+    </div>
+    <div style="flex:2; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">grep, rg, find, ag</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">read</p>
+    </div>
+    <div style="flex:2; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">cat, head, tail, less</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#6C63FF; margin:0;">list</p>
+    </div>
+    <div style="flex:2; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">ls, tree, dir</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FFB84D; margin:0;">neutral</p>
+    </div>
+    <div style="flex:2; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">git status, pwd, echo</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">write</p>
+    </div>
+    <div style="flex:2; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">rm, mv, cp, chmod, npm</p>
+    </div>
+  </div>
+
+        <p style="font-size:8pt;color:var(--text-muted);">Classification feeds into YOLO classifier and speculative check for auto-approval decisions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

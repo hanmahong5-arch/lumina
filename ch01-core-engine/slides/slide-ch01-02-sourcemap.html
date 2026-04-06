@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Source Map</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+h1{font-size:24pt;font-weight:700;margin:0 0 12pt 0;line-height:1.2}
+.source-index{display:flex;flex-direction:column;gap:8pt}
+.source-item{display:flex;gap:8pt;align-items:baseline;background:var(--bg-card);border-radius:4pt;padding:8pt 12pt}
+.source-path{font-family:'Courier New',monospace;font-size:9pt;color:var(--accent-teal);min-width:200pt}
+.source-desc{font-size:9pt;color:var(--text-secondary)}
+.source-lines{font-size:8pt;color:var(--text-muted);min-width:60pt}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">2 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>源码地图</h1>
+  <div class="source-index">
+    <div class="source-item">
+      <p class="source-path">src/QueryEngine.ts</p>
+      <p class="source-lines">(1295行)</p>
+      <p class="source-desc">QueryEngine class, submitMessage(), ask()</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/query.ts</p>
+      <p class="source-lines">(1729行)</p>
+      <p class="source-desc">queryLoop(), State type, 7 continue paths</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/tools.ts</p>
+      <p class="source-lines">(390行)</p>
+      <p class="source-desc">getAllBaseTools(), assembleToolPool()</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/utils/systemPrompt.ts</p>
+      <p class="source-lines"></p>
+      <p class="source-desc">buildEffectiveSystemPrompt()</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

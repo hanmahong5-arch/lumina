@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Constants</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:16pt;font-weight:700;margin:0 0 4pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.35;margin:0 0 2pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 32pt 12pt 32pt}
+.const-table{display:flex;flex-direction:column;gap:1pt}
+.const-row{display:flex;gap:8pt;align-items:baseline;padding:2pt 0}
+.const-name{font-family:Courier New,monospace;font-size:7.5pt;color:var(--text-code-fn);min-width:220pt}
+.const-val{font-family:Courier New,monospace;font-size:7.5pt;color:var(--text-code-const);min-width:80pt}
+.const-desc{font-size:7.5pt;color:var(--text-muted)}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 06 Resilience</p>
+  <p class="page-num">18 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>10 个关键常量 / Key Constants</h2>
+  <p style="color:var(--text-secondary);margin-bottom:10pt;">Critical thresholds governing resilience behavior</p>
+  <div class="const-table">
+    <div class="const-row" style="border-bottom:1pt solid var(--border-subtle);">
+      <p class="const-name" style="font-weight:700;color:var(--text-secondary);">Constant</p>
+      <p class="const-val" style="font-weight:700;color:var(--text-secondary);">Value</p>
+      <p class="const-desc" style="font-weight:700;color:var(--text-secondary);">Description</p>
+    </div>
+    <div class="const-row"><p class="const-name">DEFAULT_MAX_RETRIES</p><p class="const-val">10</p><p class="const-desc">Max retry attempts for transient errors</p></div>
+    <div class="const-row"><p class="const-name">BASE_DELAY</p><p class="const-val">500ms</p><p class="const-desc">Initial backoff delay</p></div>
+    <div class="const-row"><p class="const-name">MAX_BACKOFF</p><p class="const-val">32s</p><p class="const-desc">Exponential backoff ceiling</p></div>
+    <div class="const-row"><p class="const-name">JITTER_FACTOR</p><p class="const-val">25%</p><p class="const-desc">Random jitter range (+/- 25%)</p></div>
+    <div class="const-row"><p class="const-name">MAX_529_CONSECUTIVE</p><p class="const-val">3</p><p class="const-desc">529s before model fallback trigger</p></div>
+    <div class="const-row"><p class="const-name">HEARTBEAT_INTERVAL</p><p class="const-val">30s</p><p class="const-desc">Status message interval during retry wait</p></div>
+    <div class="const-row"><p class="const-name">PERSISTENT_MAX_BACKOFF</p><p class="const-val">5min</p><p class="const-desc">Max backoff in persistent mode</p></div>
+    <div class="const-row"><p class="const-name">PERSISTENT_TOTAL_LIMIT</p><p class="const-val">6h</p><p class="const-desc">Total retry time safety valve</p></div>
+    <div class="const-row"><p class="const-name">FAST_MODE_COOLDOWN</p><p class="const-val">10min</p><p class="const-desc">Min cooldown before retrying fast model</p></div>
+    <div class="const-row"><p class="const-name">BATCH_FLUSH_INTERVAL</p><p class="const-val">100ms</p><p class="const-desc">JSONL write batch interval</p></div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Resilience</p></div>
+</body></html>

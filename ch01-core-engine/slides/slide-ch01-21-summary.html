@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Summary</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 10pt 0;line-height:1.2}
+.takeaway-list{display:flex;flex-direction:column;gap:6pt;flex:1}
+.takeaway-item{display:flex;gap:10pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:8pt 14pt}
+.takeaway-num{font-size:16pt;font-weight:700;color:var(--accent-indigo);min-width:24pt;line-height:1}
+p{font-size:10pt;line-height:1.45;margin:0}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">21 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>核心洞见</h1>
+  <div class="takeaway-list">
+    <div class="takeaway-item">
+      <p class="takeaway-num">1</p>
+      <p>双层状态模型平衡了会话持久性和 Turn 隔离性</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">2</p>
+      <p>7种 continue 路径把"恢复"作为一等公民</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">3</p>
+      <p>withhold-then-recover 对上层屏蔽可恢复错误</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">4</p>
+      <p>四级压缩管线实现渐进式 Token 预算管理</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">5</p>
+      <p>缓存感知的工具排序保护 prompt cache 稳定性</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

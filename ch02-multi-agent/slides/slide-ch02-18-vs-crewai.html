@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - vs CrewAI</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 14pt 28pt 6pt 28pt; }
+.compare-grid { display: flex; gap: 12pt; margin-bottom: 6pt; flex: 1; }
+.compare-col { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 10pt 12pt; }
+.compare-col-highlight { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 10pt 12pt; border: 1.5pt solid var(--accent-indigo); }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">18 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>对比: CrewAI vs Claude Code</h2>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color: var(--accent-coral);">CrewAI</h4>
+      <ul>
+        <li>预定义DAG工作流 (Process: sequential/hierarchical)</li>
+        <li>共享memory (Short-term + Long-term + Entity)</li>
+        <li>无权限隔离 - 所有agent共享同一工具集</li>
+        <li>静态角色分配 (Agent.role + Agent.goal)</li>
+        <li>固定任务依赖图, 编译时确定</li>
+        <li>Python优先, 单进程多线程</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color: var(--accent-teal);">Claude Code v2.1.88</h4>
+      <ul>
+        <li>动态派生 (Sync/Async/Fork/Remote 4种模式)</li>
+        <li>隔离上下文 (每agent独立readFileState)</li>
+        <li>三层权限隔离 (Permission + Tool + Context)</li>
+        <li>动态角色 (AgentDefinition + 运行时选择)</li>
+        <li>LLM驱动编排, 运行时动态决策</li>
+        <li>TypeScript, 支持跨进程/跨机器</li>
+      </ul>
+    </div>
+  </div>
+  <!-- Header row -->
+  <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:25; background:#1E2D4A; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">维度 Dimension</p>
+    </div>
+    <div style="flex:37; background:#1E2D4A; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">CrewAI</p>
+    </div>
+    <div style="flex:38; background:#1E2D4A; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">Claude Code</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">编排方式</p>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">预定义DAG / Hierarchical Process</p>
+    </div>
+    <div style="flex:38; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">LLM动态编排 / Coordinator Mode</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Memory隔离</p>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">共享 (SharedMemory class)</p>
+    </div>
+    <div style="flex:38; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">隔离 (clone / fresh cache)</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">安全模型</p>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">无隔离, 信任所有agent</p>
+    </div>
+    <div style="flex:38; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">向上继承, 最小权限原则</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Cache优化</p>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">无</p>
+    </div>
+    <div style="flex:38; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Fork prompt cache sharing</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">并行能力</p>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Task-level parallelism</p>
+    </div>
+    <div style="flex:38; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Async agent + Worktree isolation</p>
+    </div>
+  </div>
+
+  <div style="margin-top:3pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:3pt 6pt;">
+    <p style="font-size:7pt; color:var(--text-secondary); line-height:1.35; margin:0;"><strong style="color:var(--accent-indigo);">Why Different:</strong> CrewAI 是"DAG编排器"——你设计依赖图，它执行。Claude Code 是"LLM协调器"——运行时动态决定子Agent需求。安全上，CrewAI 全Agent共享工具，Claude Code <strong style="color:var(--accent-green);">三层隔离 + Fork cache 共享</strong>。</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>18 / 22</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CH-05 · Code Walkthrough</p>
+  <p class="page-num">Code</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:10pt;">
+  <div style="flex:6;">
+    <h3 style="color:var(--accent-teal); margin-bottom:3pt; font-size:11pt;">runToolUse 6-Stage Pipeline</h3>
+    <p style="font-size:7pt; color:var(--text-muted); margin-bottom:4pt;">toolExecution.ts:337-490</p>
+    <div style="background:#0D1117; border-radius:4pt; padding:6pt 8pt;">
+      <p style="font-family:'Courier New',monospace; font-size:7.5pt; color:#FFFFFF; margin:0; line-height:1.5;">async function* runToolUse(
+&#160;&#160;toolUse: ToolUseBlock,
+&#160;&#160;canUseTool: CanUseToolFn,
+&#160;&#160;context: ToolUseContext,
+): AsyncGenerator&lt;MessageUpdate&gt; {
+&#160;&#160;// Stage 1: Resolve tool by name/alias
+&#160;&#160;let tool = findToolByName(tools, name)
+
+&#160;&#160;// Stage 2: Validate existence
+&#160;&#160;if (!tool) yield error("No such tool")
+
+&#160;&#160;// Stage 3: Check abort signal
+&#160;&#160;if (signal.aborted) yield CANCEL
+
+&#160;&#160;// Stage 4-6: Permission + Execute
+&#160;&#160;for await (const update of
+&#160;&#160;&#160;&#160;streamedCheckPermissionsAndCallTool())
+&#160;&#160;&#160;&#160;yield update
+}</p>
+    </div>
+  </div>
+  <div style="flex:4;">
+    <h4 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:9pt;">Key Points / 要点</h4>
+    <ul style="font-size:7.5pt; color:var(--text-secondary); line-height:1.5;">
+      <li><p style="margin:0; font-size:7.5pt;">AsyncGenerator enables streaming permission prompts mid-execution</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">6 stages: resolve, validate, abort, Zod parse, permission, execute</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Abort check before expensive permission/execution (fail fast)</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">streamedCheckPermissionsAndCallTool handles the 3-tier pipeline</p></li>
+    </ul>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Tools &amp; MCP</p>
+  <p>src/services/tools/toolExecution.ts</p>
+</div>
+</body></html>

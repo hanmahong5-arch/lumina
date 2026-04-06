@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - vs MCP Tools</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:16pt 32pt 8pt 32pt}
+
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:5pt 10pt;margin-bottom:3pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+.mcp-badge{display:inline-block;background:var(--accent-indigo);color:#fff;font-size:7pt;font-weight:700;padding:1pt 5pt 1pt 6pt;border-radius:2pt;letter-spacing:0.5pt;vertical-align:middle}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">17 / 21</p>
+</div>
+<div class="slide-content">
+  <h2>对比 / vs MCP Tool Ecosystem</h2>
+  <p style="color:var(--text-secondary);margin-bottom:4pt;">MCP server integration across platforms</p>
+
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">Dimension</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#FF6B6B; margin:0;">OpenAI FC + MCP<span class="mcp-badge spec">Proposed</span></p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#FFB84D; margin:0;">LangChain MCP<span class="mcp-badge Py">Python</span></p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#6C63FF; margin:0;">Claude Code MCP</p>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Transport</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">HTTP / SSE only</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">stdio + HTTP</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">stdio (primary) + HTTP</p>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Discovery</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">Manual registration</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FFB84D; margin:0;">tools/initialize() call</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">Auto via feature() + DCE</p>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Cache Awareness</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">No cache optimization</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">No cache optimization</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">MCP config in prompt cache budget</p>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Tool Lifecycle</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Stateless per-call</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FFB84D; margin:0;">init() per session</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">spawn → warmup → drain → cleanup</p>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Configuration</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Single API config</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Python code / langgraph.json</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">Project → Global → Enterprise layers</p>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Security</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">Trust-all by default</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FFB84D; margin:0;">App-level only</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">Permission gate + allow/deny rules</p>
+    </div>
+  </div>
+
+  <div class="card-accent-teal">
+    <h3 style="font-size:10pt;color:var(--accent-teal);">Why Different: Claude Code MCP is Cache-Aware, Not Just Connected</h3>
+    <p style="font-size:9pt;">大多数 MCP client 只管"能否连上"。Claude Code 的 MCP 系统不仅连接——它还知道 MCP server 配置是 prompt 缓存的一部分，通过 prefix-sorted 静态前缀最大化缓存命中，并在 tool lifecycle 中管理 warmup 和 graceful shutdown。</p>
+  </div>
+
+  <div style="margin-top:2pt; background:var(--bg-code); border-radius:3pt; padding:3pt 6pt;">
+    <p style="font-size:7pt; color:var(--text-muted); margin:0;">
+      <span style="color:var(--accent-teal);">// Claude Code .claude/settings.json: 多层 MCP 配置</span><br/>
+      {<br/>
+      &nbsp;&nbsp;<span style="color:var(--text-code-str)">"mcpServers"</span>: {<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text-code-str)">"filesystem"</span>: { <span style="color:var(--text-code-str)">"command"</span>: <span style="color:var(--text-code-str)">"npx"</span>, <span style="color:var(--text-code-str)">"args"</span>: [<span style="color:var(--text-code-str)">"@modelcontextprotocol/server-filesystem"</span>, <span style="color:var(--text-code-str)">"./"</span>] },<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text-code-str)">"playwright"</span>: { <span style="color:var(--text-code-str)">"command"</span>: <span style="color:var(--text-code-str)">"npx"</span>, <span style="color:var(--text-code-str)">"args"</span>: [<span style="color:var(--text-code-str)">"@anthropic/mcp-playwright"</span>] }<br/>
+      &nbsp;&nbsp;}<br/>
+      }<br/>
+      <span style="color:var(--text-muted);">// → 启动时自动 feature() 注册, 纳入 cache budget 管理, 受 permission 网关约束</span>
+    </p>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

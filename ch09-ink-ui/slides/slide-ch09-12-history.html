@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 09 - History Search</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:8pt 28pt 4pt 28pt}
+h2{font-size:15pt;font-weight:700;margin:0 0 4pt 0;line-height:1.15}
+h4{font-size:9pt;font-weight:700;margin:0 0 1pt 0;line-height:1.2}
+p{font-size:8pt;line-height:1.25;margin:0 0 1pt 0}
+ul{font-size:8pt;line-height:1.25;margin:0;padding-left:12pt}
+li{margin-bottom:1pt}
+.two-col{display:flex;gap:10pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:4pt 6pt;font-family:'Courier New',monospace;font-size:7pt;color:var(--accent-teal);margin-bottom:3pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:6pt 8pt;margin-bottom:4pt}
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:5pt 8pt;margin-bottom:3pt}
+.step-list{display:flex;flex-direction:column;gap:3pt}
+.step-item{display:flex;gap:6pt;align-items:flex-start}
+.step-num{font-size:11pt;font-weight:700;color:var(--accent-indigo);min-width:16pt}
+.step-content{flex:1}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 | INK UI</p>
+  <p class="page-num">12 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>历史搜索: Ctrl+R</h2>
+  <div class="two-col">
+    <div class="col">
+      <div class="step-list">
+        <div class="step-item">
+          <p class="step-num">1</p>
+          <div class="step-content">
+            <h4>Ctrl+R Trigger</h4>
+            <p>Switch PromptInput to history search mode, show search prefix</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">2</p>
+          <div class="step-content">
+            <h4>makeHistoryReader()</h4>
+            <p>Create AsyncGenerator that reads session files in reverse chronological order</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">3</p>
+          <div class="step-content">
+            <h4>Stream &amp; Filter</h4>
+            <p>Reverse-iterate sessions, extract user prompts, fuzzy match against query</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">4</p>
+          <div class="step-content">
+            <h4>Deduplicate</h4>
+            <p>seenPrompts Set filters exact duplicates across sessions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="code-block">
+        <p>// makeHistoryReader() - AsyncGenerator</p>
+        <p>async function* makeHistoryReader() {</p>
+        <p>&nbsp;&nbsp;const sessions = await listSessions();</p>
+        <p>&nbsp;&nbsp;const seenPrompts = new Set();</p>
+        <p>&nbsp;&nbsp;</p>
+        <p>&nbsp;&nbsp;// Reverse chronological order</p>
+        <p>&nbsp;&nbsp;for (const session of sessions.reverse()) {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;const msgs = await readSession(session);</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;for (const msg of msgs.reverse()) {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (msg.role !== 'user') continue;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const text = extractText(msg);</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (seenPrompts.has(text)) continue;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;seenPrompts.add(text);</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;yield text;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;}</p>
+        <p>&nbsp;&nbsp;}</p>
+        <p>}</p>
+      </div>
+      <div class="card-accent-teal">
+        <h4>Lazy Loading</h4>
+        <p>AsyncGenerator reads session files on-demand. Only loads next session when user scrolls past current results. Keeps memory bounded.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Source: src/hooks/useHistorySearch.ts</p>
+  <p>Ch09 Ink UI</p>
+</div>
+</body>
+</html>

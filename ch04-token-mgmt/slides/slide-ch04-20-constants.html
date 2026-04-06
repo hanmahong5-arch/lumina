@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Constants</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.const-table { display: flex; flex-direction: column; gap: 3pt; }
+.const-row { display: flex; gap: 8pt; align-items: baseline; padding: 4pt 8pt; background: var(--bg-card); border-radius: 3pt; }
+.const-name { font-family: Courier New, monospace; font-size: 8pt; color: var(--text-code-fn); min-width: 240pt; }
+.const-val { font-family: Courier New, monospace; font-size: 8pt; color: var(--text-code-const); min-width: 80pt; }
+.const-desc { font-size: 8pt; color: var(--text-muted); }
+.section-label { font-size: 9pt; color: var(--accent-indigo); font-weight: 700; margin: 6pt 0 3pt 0; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">20 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>关键常量 Constants Reference</h2>
+  <p style="color:var(--text-secondary); margin-bottom:4pt;">Token 管理系统中的核心数值配置</p>
+
+  <p class="section-label">Auto Compact</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">AUTOCOMPACT_BUFFER</p>
+      <p class="const-val">13,000</p>
+      <p class="const-desc">auto compact 安全缓冲 token 数</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MAX_COMPACT_FAILURES</p>
+      <p class="const-val">3</p>
+      <p class="const-desc">连续失败熔断阈值</p>
+    </div>
+  </div>
+
+  <p class="section-label">Token Warnings</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">TOKEN_WARNING_THRESHOLD</p>
+      <p class="const-val">20,000</p>
+      <p class="const-desc">模型输出预留 token</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">TOKEN_ERROR_THRESHOLD</p>
+      <p class="const-val">20,000</p>
+      <p class="const-desc">错误级别预留 (与 warning 合并)</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MANUAL_COMPACT_THRESHOLD</p>
+      <p class="const-val">3,000</p>
+      <p class="const-desc">手动 /compact 的最小 token 要求</p>
+    </div>
+  </div>
+
+  <p class="section-label">Summary & Recovery</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">MAX_OUTPUT_FOR_SUMMARY</p>
+      <p class="const-val">20,000</p>
+      <p class="const-desc">摘要生成的最大输出 token</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MAX_PTL_RETRIES</p>
+      <p class="const-val">3</p>
+      <p class="const-desc">413 截断重试次数上限</p>
+    </div>
+  </div>
+
+  <p class="section-label">Rebuild Budget</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">FILE_BUDGET (5 files x 5K)</p>
+      <p class="const-val">50,000</p>
+      <p class="const-desc">压缩后文件重注入预算</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">SKILL_BUDGET (5 skills x 5K)</p>
+      <p class="const-val">25,000</p>
+      <p class="const-desc">压缩后 skill 重载预算</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

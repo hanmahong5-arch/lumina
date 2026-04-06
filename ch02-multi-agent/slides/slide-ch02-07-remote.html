@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Remote Agent + Worktree</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 1pt 0; }
+ul { font-size: 9pt; line-height: 1.3; margin: 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 10pt 28pt 4pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-50 { flex: 0 0 48%; }
+.card-accent-coral { background: var(--bg-card); border-left: 3pt solid var(--accent-coral); border-radius: 0 5pt 5pt 0; padding: 4pt 10pt; margin-bottom: 3pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 3pt 8pt; margin-bottom: 2pt; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.compare-grid { display: flex; gap: 8pt; margin-bottom: 4pt; }
+.compare-col { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 5pt 8pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">7 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>远程/Worktree Agent Remote + Worktree</h2>
+  <div class="compare-grid">
+    <div class="compare-col" style="border-top: 2pt solid var(--accent-coral);">
+      <h4 style="color: var(--accent-coral);">isolation: 'remote'</h4>
+      <ul>
+        <li>完全独立进程</li>
+        <li>跨机器通信能力</li>
+        <li>最高级别隔离</li>
+        <li>独立文件系统命名空间</li>
+      </ul>
+    </div>
+    <div class="compare-col" style="border-top: 2pt solid var(--accent-green);">
+      <h4 style="color: var(--accent-green);">isolation: 'worktree'</h4>
+      <ul>
+        <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">git worktree add</span> 创建隔离工作目录</li>
+        <li>共享 git object store (高效)</li>
+        <li>独立文件修改, 不影响主分支</li>
+        <li>完成后 worktree 自动清理</li>
+      </ul>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col-50">
+      <div class="card-accent-coral">
+        <h4>Worktree隔离优势</h4>
+        <ul>
+          <li>并行修改同一代码库的不同部分</li>
+          <li>避免文件冲突: 每个agent独立branch</li>
+          <li>利用git共享objects节省磁盘空间</li>
+          <li>worktreePath持久化到metadata用于恢复</li>
+        </ul>
+      </div>
+      <div class="card-sm" style="border-left: 2pt solid var(--accent-amber);">
+        <p><span style="color: var(--accent-amber); font-weight: 700;">Note:</span> worktree模式通过 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">EnterWorktreeTool</span> / <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">ExitWorktreeTool</span> 管理进出</p>
+      </div>
+    </div>
+    <div class="col-50">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">runAgent.ts - worktree metadata</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">export async function*</span> <span style="color:var(--text-code-fn);">runAgent</span>({</p>
+        <p style="margin:0;">  ...,</p>
+        <p style="margin:0;">  worktreePath,  <span style="color:var(--text-muted);">// isolation path</span></p>
+        <p style="margin:0;">  description,   <span style="color:var(--text-muted);">// original task</span></p>
+        <p style="margin:0;">}) {</p>
+        <p style="margin:0;">  <span style="color:var(--text-muted);">// Persist to metadata for resume</span></p>
+        <p style="margin:0;">  <span style="color:var(--text-code-fn);">writeAgentMetadata</span>(agentId, {</p>
+        <p style="margin:0;">    worktreePath,</p>
+        <p style="margin:0;">    description,</p>
+        <p style="margin:0;">    agentType: agentDefinition.agentType,</p>
+        <p style="margin:0;">  });</p>
+        <p style="margin:0;">}</p>
+      </div>
+      <div class="card-sm">
+        <h4>清理流程</h4>
+        <p style="font-size: 9pt;">agent完成 &#8594; killShellTasksForAgent() &#8594; MCP cleanup &#8594; worktree remove &#8594; Perfetto unregister</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>7 / 22</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 09 - StatusLine</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:15pt;font-weight:700;margin:0 0 5pt 0;line-height:1.15}
+h4{font-size:9pt;font-weight:700;margin:0 0 1pt 0;line-height:1.2}
+p{font-size:8pt;line-height:1.3;margin:0 0 1pt 0}
+ul{font-size:8pt;line-height:1.3;margin:0;padding-left:12pt}
+li{margin-bottom:1pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:4pt 6pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:6pt 8pt;margin-bottom:4pt}
+.card-accent-amber{background:var(--bg-card);border-left:3pt solid var(--accent-amber);border-radius:0 5pt 5pt 0;padding:5pt 8pt;margin-bottom:3pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 | INK UI</p>
+  <p class="page-num">13 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>StatusLine: 防抖状态栏</h2>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p>// StatusLine.tsx - 300ms debounce pattern</p>
+        <p>const latestRef = useRef(currentState);</p>
+        <p>latestRef.current = currentState;</p>
+        <p>&nbsp;</p>
+        <p>const [displayState, setDisplayState] =</p>
+        <p>&nbsp;&nbsp;useState(currentState);</p>
+        <p>&nbsp;</p>
+        <p>useEffect(() =&gt; {</p>
+        <p>&nbsp;&nbsp;const timer = setTimeout(() =&gt; {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;setDisplayState(latestRef.current);</p>
+        <p>&nbsp;&nbsp;}, 300);</p>
+        <p>&nbsp;&nbsp;return () =&gt; clearTimeout(timer);</p>
+        <p>}, [currentState]);</p>
+      </div>
+      <div class="card-accent-amber">
+        <h4>Why 300ms?</h4>
+        <p>Tool executions can complete in &lt;100ms. Without debounce, status bar would flash rapidly between states. 300ms provides stable visual feedback.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4>buildStatusLineCommandInput()</h4>
+        <ul>
+          <li><p>Model name + provider display</p></li>
+          <li><p>Permission mode indicator</p></li>
+          <li><p>Token count (input/output)</p></li>
+          <li><p>Cost accumulator</p></li>
+          <li><p>Active tool name during execution</p></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Layout Structure</h4>
+        <div class="code-block">
+          <p>[Model] [Mode] [Tokens] [Cost] [Tool]</p>
+          <p>&nbsp;</p>
+          <p>// Example rendered output:</p>
+          <p>// sonnet-4 | auto | 12.3K/4.1K | $0.08</p>
+        </div>
+        <p>Flexbox layout adapts to terminal width, truncating from right when narrow.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Source: src/components/StatusLine.tsx</p>
+  <p>Ch09 Ink UI</p>
+</div>
+</body>
+</html>

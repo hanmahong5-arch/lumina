@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch7 - Trailing Extraction</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 07 Memory</p>
+  <p class="page-num">14 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>尾随提取 / Trailing Extraction</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">Incremental extraction captures knowledge from ongoing conversation turns</p>
+  <div class="two-col">
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-teal);">pendingContext Buffer</h4>
+        <p style="font-size:9pt;">New conversation turns are accumulated in a <span style="font-family:Courier New,monospace;color:var(--text-code-fn);">pendingContext</span> buffer. When the buffer exceeds a threshold, an incremental extraction round triggers automatically.</p>
+      </div>
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-indigo);">Incremental Rounds</h4>
+        <ul style="font-size:9pt;">
+          <li><p style="font-size:9pt;">Only process turns since last extraction cursor</p></li>
+          <li><p style="font-size:9pt;">Cursor persisted in extraction state</p></li>
+          <li><p style="font-size:9pt;">Avoids re-processing entire conversation</p></li>
+          <li><p style="font-size:9pt;">Merges with existing memory files</p></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div style="background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-amber);">Timeline</h4>
+        <div style="display:flex;flex-direction:column;gap:4pt;margin-top:6pt;">
+          <div style="display:flex;gap:8pt;align-items:center;">
+            <div style="background:var(--accent-indigo);width:8pt;height:8pt;border-radius:50%;"></div>
+            <p style="font-size:8pt;margin:0;">Turn 1-5: conversation starts</p>
+          </div>
+          <div style="display:flex;gap:8pt;align-items:center;">
+            <div style="background:var(--accent-teal);width:8pt;height:8pt;border-radius:50%;"></div>
+            <p style="font-size:8pt;margin:0;">Turn 6: pendingContext threshold met</p>
+          </div>
+          <div style="display:flex;gap:8pt;align-items:center;">
+            <div style="background:var(--accent-amber);width:8pt;height:8pt;border-radius:50%;"></div>
+            <p style="font-size:8pt;margin:0;">Background: extraction round 1 (turns 1-6)</p>
+          </div>
+          <div style="display:flex;gap:8pt;align-items:center;">
+            <div style="background:var(--accent-indigo);width:8pt;height:8pt;border-radius:50%;"></div>
+            <p style="font-size:8pt;margin:0;">Turn 7-12: conversation continues</p>
+          </div>
+          <div style="display:flex;gap:8pt;align-items:center;">
+            <div style="background:var(--accent-teal);width:8pt;height:8pt;border-radius:50%;"></div>
+            <p style="font-size:8pt;margin:0;">Turn 13: threshold met again</p>
+          </div>
+          <div style="display:flex;gap:8pt;align-items:center;">
+            <div style="background:var(--accent-amber);width:8pt;height:8pt;border-radius:50%;"></div>
+            <p style="font-size:8pt;margin:0;">Background: extraction round 2 (turns 7-13)</p>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--bg-card);border:1.5pt solid var(--accent-coral);border-radius:5pt;padding:6pt 10pt;">
+        <p style="font-size:8pt;color:var(--text-secondary);margin:0;">Key benefit: Long conversations don't lose early insights to context window overflow because extraction runs incrementally.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Memory System</p></div>
+</body></html>

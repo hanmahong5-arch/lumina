@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Withhold-Recover</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 8pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.two-col{display:flex;gap:16pt;flex:1}
+.col-60{flex:0 0 58%}
+.col-40{flex:0 0 38%}
+.step-list{display:flex;flex-direction:column;gap:5pt}
+.step-item{display:flex;gap:8pt;align-items:flex-start}
+.step-num{font-size:14pt;font-weight:700;color:var(--accent-indigo);min-width:18pt;line-height:1}
+.step-content{flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt 10pt}
+h3{font-size:10pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+.card-accent-amber{background:var(--bg-card);border-left:3pt solid var(--accent-amber);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.fn{font-family:'Courier New',monospace;color:var(--text-code-fn);font-size:8pt}
+.flow-arrow{text-align:center;color:var(--text-muted);font-size:10pt;margin:2pt 0}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">14 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>Withhold-then-Recover: 无感恢复</h1>
+  <div class="two-col">
+    <div class="col-60">
+      <div class="step-list">
+        <div class="step-item">
+          <p class="step-num">1</p>
+          <div class="step-content">
+            <h3>检测可恢复错误</h3>
+            <p>413 Prompt Too Long / max_output_tokens</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">2</p>
+          <div class="step-content">
+            <h3>设置 withheld = true</h3>
+            <p>扣留错误消息, 不 yield 给上层 (SDK/REPL)</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">3</p>
+          <div class="step-content">
+            <h3>尝试恢复策略</h3>
+            <p><span class="fn">collapse_drain</span> &rarr; <span class="fn">reactive_compact</span> &rarr; <span class="fn">truncate</span></p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">4</p>
+          <div class="step-content">
+            <h3>结果分流</h3>
+            <p>成功: 上层永远不知道发生了错误<br>失败: 释放扣留的错误, 终止会话</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-40">
+      <div class="card-accent-amber">
+        <h3>为什么需要 Withhold?</h3>
+        <p>SDK 调用方 (desktop/cowork) 收到 error 字段会立即终止会话。过早暴露可恢复错误导致不必要的 UX 中断。</p>
+      </div>
+      <div class="card-accent-teal">
+        <h3>覆盖的错误类型</h3>
+        <p><span class="fn">isWithheldPromptTooLong()</span><br>
+        <span class="fn">isWithheldMaxOutputTokens()</span></p>
+        <p style="color:var(--text-muted);font-size:7pt;margin-top:4pt">两个守卫函数镜像设计, 逻辑对称</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

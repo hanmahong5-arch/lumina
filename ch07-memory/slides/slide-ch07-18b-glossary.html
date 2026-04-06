@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 07 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:10pt;">
+  <div style="flex:1;">
+    <!-- Memory System -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:8.5pt; font-weight:700; color:#00D4AA; margin:0;">Memory System / 记忆系统</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">File-based persistent knowledge organized by type (user, feedback, project, reference). Survives across conversations.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像笔记本——记住用户偏好和项目状态，下次对话直接用。</p>
+    </div>
+    <!-- Semantic Retrieval -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:8.5pt; font-weight:700; color:#00D4AA; margin:0;">Semantic Retrieval / 语义检索</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Using an LLM to select the most relevant memories for the current task, rather than keyword or vector matching.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像问秘书"这个项目相关的笔记有哪些"——秘书理解语义后筛选。</p>
+    </div>
+    <!-- Memory Types -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:8.5pt; font-weight:700; color:#00D4AA; margin:0;">Memory Types / 记忆类型</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Four categories: user (preferences), feedback (corrections), project (context), reference (documentation).</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像笔记本的分类标签——偏好、反馈、项目、参考资料各归各处。</p>
+    </div>
+    <!-- Team Memory -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:8.5pt; font-weight:700; color:#6C63FF; margin:0;">Team Memory / 团队记忆</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Shared memory directory accessible by all team members, with secret filtering to prevent credential leakage.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像团队的共享文档——大家都能读写，但密码会被自动隐去。</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Secret Guard -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:8.5pt; font-weight:700; color:#FF6B6B; margin:0;">Secret Guard / 秘钥守卫</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Filter that prevents secrets (API keys, passwords) from being written into team memory files via pattern matching.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像银行柜台的隐私挡板——防止敏感信息被旁人看到。</p>
+    </div>
+    <!-- Session Storage -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:8.5pt; font-weight:700; color:#6C63FF; margin:0;">Session Storage / 会话存储</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Append-only JSONL log of all messages, enabling conversation reconstruction after restart.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像自动保存的文档——随时可以从上次断开的地方继续。</p>
+    </div>
+    <!-- Non-Derivability -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:8.5pt; font-weight:700; color:#FF6B6B; margin:0;">Non-Derivability / 不可推导性</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Principle that only non-obvious insights should be stored as memories; facts easily derivable from code should not be persisted.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像只记重点笔记——能从课本查到的不用抄，只记老师的独到讲解。</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

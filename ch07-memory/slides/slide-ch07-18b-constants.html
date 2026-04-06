@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 07 - Constants Reference</title>
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 07 | MEMORY</p>
+  <p class="page-num">18 / 20</p>
+</div>
+<div class="slide-content">
+  <h1>关键常量速查表</h1>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">MAX_ENTRYPOINT_LINES</p>
+      <p class="const-val">200</p>
+      <p class="const-desc">MEMORY.md 索引行数上限</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MAX_ENTRYPOINT_BYTES</p>
+      <p class="const-val">25,000</p>
+      <p class="const-desc">MEMORY.md 字节硬上限 (~25KB)</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MAX_SELECTED_MEMORIES</p>
+      <p class="const-val">5</p>
+      <p class="const-desc">每次语义检索最多加载的记忆文件数</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">SIDEQUERY_MAX_TOKENS</p>
+      <p class="const-val">256</p>
+      <p class="const-desc">Sonnet 选择调用的 token 预算</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">FORK_AGENT_MAX_TURNS</p>
+      <p class="const-val">5</p>
+      <p class="const-desc">自动提取 Fork Agent 轮次硬上限</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">CACHE_HIT_RATE</p>
+      <p class="const-val">60%+</p>
+      <p class="const-desc">Fork Agent 共享主对话 prompt cache 的命中率</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MEMORY_TYPES</p>
+      <p class="const-val">4</p>
+      <p class="const-desc">封闭分类：user / feedback / project / reference</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

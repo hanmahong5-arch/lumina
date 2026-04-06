@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 08 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:10pt;">
+  <div style="flex:1;">
+    <!-- MCP -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:8.5pt; font-weight:700; color:#00D4AA; margin:0;">MCP (Model Context Protocol) / 模型上下文协议</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Open standard for connecting LLM applications with external data sources and tools. Supports stdio, SSE, and HTTP transports.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像 USB 协议——定义了 AI 应用和外部工具之间的"通用接口"。</p>
+    </div>
+    <!-- MCP Transports -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:8.5pt; font-weight:700; color:#00D4AA; margin:0;">MCP Transports / MCP 传输层</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Three transport modes: stdio (local process), SSE (Server-Sent Events over HTTP), and streamable HTTP (bidirectional).</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像快递方式——同城骑手（stdio）、普通快递（SSE）、专线物流（HTTP）。</p>
+    </div>
+    <!-- Tool Use ID -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:8.5pt; font-weight:700; color:#6C63FF; margin:0;">Tool Use ID / 工具调用标识</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Unique identifier linking a tool_use request block to its corresponding tool_result response, ensuring correct pairing.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像快递单号——确保寄出的包裹和收到的回执一一对应。</p>
+    </div>
+    <!-- Tool Result -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:8.5pt; font-weight:700; color:#6C63FF; margin:0;">Tool Result / 工具结果</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">The response returned after executing a tool, containing the output content and success/error status.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像函数的返回值——调用完成后告诉你结果是什么。</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Message UUID -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:8.5pt; font-weight:700; color:#6C63FF; margin:0;">Message UUID / 消息唯一标识</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Universally unique identifier assigned to each message, enabling deduplication and conversation chain reconstruction.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像身份证号——每条消息都有独一无二的编号，防止重复和混淆。</p>
+    </div>
+    <!-- Streaming -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:8.5pt; font-weight:700; color:#FFB84D; margin:0;">Streaming / 流式传输</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Real-time delivery of model responses via Server-Sent Events (SSE), showing partial output as it is generated.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像直播和录播的区别——streaming 让你实时看到模型"打字"。</p>
+    </div>
+    <!-- parentUuid Chain -->
+    <div style="background:var(--bg-card); border-radius:4pt; padding:4pt 6pt; margin-bottom:3pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:8.5pt; font-weight:700; color:#FFB84D; margin:0;">parentUuid Chain / 父级链</p>
+      <p style="font-size:7pt; color:var(--text-secondary); margin:0;">Linked list of message UUIDs enabling conversation reconstruction: each message points to its parent via parentUuid.</p>
+      <p style="font-size:6.5pt; color:var(--text-muted); margin:0; font-style:italic;">就像拼图——根据每块的编号重新拼出完整画面。</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

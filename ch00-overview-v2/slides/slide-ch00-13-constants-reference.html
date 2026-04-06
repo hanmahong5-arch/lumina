@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .const-sec { margin-bottom: 3pt; }
+  .sec-hdr { font-size: 6.5pt; font-weight: 700; margin: 0 0 1pt 0; }
+  .cr { display:flex; gap:2pt; margin-bottom:0pt; }
+  .cr > div { border-radius:2pt; padding:1pt 3pt; }
+  .cr p { font-size:5pt; margin:0; }
+  .cr .cn { font-family:'Courier New',monospace; color:#00D4AA; font-weight:700; }
+  .cr .cv { font-family:'Courier New',monospace; color:#FFB84D; text-align:right; }
+  .cr .cd { color:#718096; }
+  .bg1 { background:#131B2E; }
+  .bg2 { background:#16213E; }
+</style>
+</head><body style="background:#0F0F1A;">
+
+<div class="header-bar">
+  <p class="chapter-tag">Course Overview · Critical Constants Reference Card</p>
+  <p class="page-num">13 / 16</p>
+</div>
+
+<div class="slide-content-compact">
+
+  <h2 style="color:#00D4AA; margin-bottom:2pt; font-size:15pt;">全系统关键常量速查卡 · Critical Constants Reference Card</h2>
+
+  <div style="display:flex; gap:8pt;">
+
+  <!-- Left Column: Ch1 + Ch3 + Ch4 -->
+  <div style="flex:1;">
+    <div class="const-sec">
+      <p class="sec-hdr" style="color:#6C63FF;">Ch1 Core Engine (query.ts)</p>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">MAX_OUTPUT_TOKENS_RECOVERY_LIMIT</p></div><div style="flex:14;" class="bg1"><p class="cv">3</p></div><div style="flex:44;" class="bg1"><p class="cd">最大递增恢复次数</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">ESCALATED_MAX_TOKENS</p></div><div style="flex:14;" class="bg2"><p class="cv">64,000</p></div><div style="flex:44;" class="bg2"><p class="cd">8K→64K逐级升级上限</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">State.turnCount</p></div><div style="flex:14;" class="bg1"><p class="cv">init: 1</p></div><div style="flex:44;" class="bg1"><p class="cd">loop迭代计数器</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">transition.reason types</p></div><div style="flex:14;" class="bg2"><p class="cv">17种</p></div><div style="flex:44;" class="bg2"><p class="cd">7 continue + 10 terminal</p></div></div>
+    </div>
+
+    <div class="const-sec">
+      <p class="sec-hdr" style="color:#FF6B6B;">Ch3 Permission (YOLO Classifier)</p>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">Stage 1 max_tokens</p></div><div style="flex:14;" class="bg1"><p class="cv">64</p></div><div style="flex:44;" class="bg1"><p class="cd">快速决策 (deny/allow)</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">Stage 1 (fast-only)</p></div><div style="flex:14;" class="bg2"><p class="cv">256</p></div><div style="flex:44;" class="bg2"><p class="cd">含reason的单阶段模式</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">Stage 2 max_tokens</p></div><div style="flex:14;" class="bg1"><p class="cv">4,096</p></div><div style="flex:44;" class="bg1"><p class="cd">思考链深度审查</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">SAFE_YOLO_ALLOWLIST</p></div><div style="flex:14;" class="bg2"><p class="cv">25+tools</p></div><div style="flex:44;" class="bg2"><p class="cd">跳过分类器的安全工具</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">TwoStageMode</p></div><div style="flex:14;" class="bg1"><p class="cv">3 modes</p></div><div style="flex:44;" class="bg1"><p class="cd">both | fast | thinking</p></div></div>
+    </div>
+
+    <div class="const-sec">
+      <p class="sec-hdr" style="color:#FFB84D;">Ch4 Token Mgmt (compact/)</p>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">AUTOCOMPACT_BUFFER_TOKENS</p></div><div style="flex:14;" class="bg1"><p class="cv">13,000</p></div><div style="flex:44;" class="bg1"><p class="cd">自动压缩触发缓冲区</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">WARNING_THRESHOLD_BUFFER</p></div><div style="flex:14;" class="bg2"><p class="cv">20,000</p></div><div style="flex:44;" class="bg2"><p class="cd">黄色警告阈值</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">ERROR_THRESHOLD_BUFFER</p></div><div style="flex:14;" class="bg1"><p class="cv">20,000</p></div><div style="flex:44;" class="bg1"><p class="cd">红色错误阈值</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">MANUAL_COMPACT_BUFFER</p></div><div style="flex:14;" class="bg2"><p class="cv">3,000</p></div><div style="flex:44;" class="bg2"><p class="cd">手动压缩最小余量</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">MAX_OUTPUT_FOR_SUMMARY</p></div><div style="flex:14;" class="bg1"><p class="cv">20,000</p></div><div style="flex:44;" class="bg1"><p class="cd">摘要最大输出token</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">MAX_CONSECUTIVE_FAILURES</p></div><div style="flex:14;" class="bg2"><p class="cv">3</p></div><div style="flex:44;" class="bg2"><p class="cd">连续压缩失败上限</p></div></div>
+    </div>
+  </div>
+
+  <!-- Right Column: Ch6 + Ch7 + Ch8 + Ch10 -->
+  <div style="flex:1;">
+    <div class="const-sec">
+      <p class="sec-hdr" style="color:#48BB78;">Ch6 Resilience (withRetry.ts)</p>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">DEFAULT_MAX_RETRIES</p></div><div style="flex:14;" class="bg1"><p class="cv">10</p></div><div style="flex:44;" class="bg1"><p class="cd">通用最大重试次数</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">MAX_529_RETRIES</p></div><div style="flex:14;" class="bg2"><p class="cv">3</p></div><div style="flex:44;" class="bg2"><p class="cd">过载错误专用上限</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">BASE_DELAY_MS</p></div><div style="flex:14;" class="bg1"><p class="cv">500</p></div><div style="flex:44;" class="bg1"><p class="cd">指数退避起始值</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">PERSISTENT_MAX_BACKOFF_MS</p></div><div style="flex:14;" class="bg2"><p class="cv">300,000</p></div><div style="flex:44;" class="bg2"><p class="cd">5分钟最大退避</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">PERSISTENT_RESET_CAP_MS</p></div><div style="flex:14;" class="bg1"><p class="cv">21,600,000</p></div><div style="flex:44;" class="bg1"><p class="cd">6小时重置上限</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">HEARTBEAT_INTERVAL_MS</p></div><div style="flex:14;" class="bg2"><p class="cv">30,000</p></div><div style="flex:44;" class="bg2"><p class="cd">心跳间隔</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">FLOOR_OUTPUT_TOKENS</p></div><div style="flex:14;" class="bg1"><p class="cv">3,000</p></div><div style="flex:44;" class="bg1"><p class="cd">输出最低保证</p></div></div>
+    </div>
+
+    <div class="const-sec">
+      <p class="sec-hdr" style="color:#9F7AEA;">Ch7 Memory (memdir/)</p>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">MAX_ENTRYPOINT_LINES</p></div><div style="flex:14;" class="bg1"><p class="cv">200</p></div><div style="flex:44;" class="bg1"><p class="cd">MEMORY.md最大行数</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">MAX_ENTRYPOINT_BYTES</p></div><div style="flex:14;" class="bg2"><p class="cv">25,000</p></div><div style="flex:44;" class="bg2"><p class="cd">MEMORY.md最大字节</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">sideQuery max selection</p></div><div style="flex:14;" class="bg1"><p class="cv">5</p></div><div style="flex:44;" class="bg1"><p class="cd">每轮最多召回5条记忆</p></div></div>
+    </div>
+
+    <div class="const-sec">
+      <p class="sec-hdr" style="color:#FF6B6B;">Ch8 Protocol (bridge/)</p>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">connInitialMs</p></div><div style="flex:14;" class="bg1"><p class="cv">2,000</p></div><div style="flex:44;" class="bg1"><p class="cd">首次连接退避</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">connCapMs</p></div><div style="flex:14;" class="bg2"><p class="cv">120,000</p></div><div style="flex:44;" class="bg2"><p class="cd">连接退避上限(2min)</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">SPAWN_SESSIONS_DEFAULT</p></div><div style="flex:14;" class="bg1"><p class="cv">32</p></div><div style="flex:44;" class="bg1"><p class="cd">默认并发会话数</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">STATUS_UPDATE_INTERVAL</p></div><div style="flex:14;" class="bg2"><p class="cv">1,000</p></div><div style="flex:44;" class="bg2"><p class="cd">状态更新间隔</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">BoundedUUIDSet capacity</p></div><div style="flex:14;" class="bg1"><p class="cv">2,000</p></div><div style="flex:44;" class="bg1"><p class="cd">环形缓冲去重容量</p></div></div>
+    </div>
+
+    <div class="const-sec">
+      <p class="sec-hdr" style="color:#FFB84D;">Ch10 Feature Gate (960 call sites)</p>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">feature('KAIROS')</p></div><div style="flex:14;" class="bg1"><p class="cv">154次</p></div><div style="flex:44;" class="bg1"><p class="cd">调用最频繁的gate</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">feature('TRANSCRIPT_CLASSIFIER')</p></div><div style="flex:14;" class="bg2"><p class="cv">107次</p></div><div style="flex:44;" class="bg2"><p class="cd">权限分类器gate</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">feature('TEAMMEM')</p></div><div style="flex:14;" class="bg1"><p class="cv">51次</p></div><div style="flex:44;" class="bg1"><p class="cd">团队记忆同步</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">feature('VOICE_MODE')</p></div><div style="flex:14;" class="bg2"><p class="cv">46次</p></div><div style="flex:44;" class="bg2"><p class="cd">语音模式gate</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg1"><p class="cn">feature('BASH_CLASSIFIER')</p></div><div style="flex:14;" class="bg1"><p class="cv">45次</p></div><div style="flex:44;" class="bg1"><p class="cd">Bash命令分类器</p></div></div>
+      <div class="cr"><div style="flex:42;" class="bg2"><p class="cn">Unique feature flags</p></div><div style="flex:14;" class="bg2"><p class="cv">89</p></div><div style="flex:44;" class="bg2"><p class="cd">全系统独立flag总数</p></div></div>
+    </div>
+  </div>
+
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Constants extracted via grep from source · All values verified against v2.1.88</p>
+  <p>Ch5 Tools: 40+内置工具 · COMPACTABLE_TOOLS: Read,Bash,Grep,Glob,WebSearch,WebFetch,Edit,Write</p>
+</div>
+
+</body></html>

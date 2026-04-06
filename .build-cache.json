@@ -1,0 +1,46 @@
+{
+  "ch00-overview-v2": {
+    "fingerprint": "d7e5c43e3dd3320d36b2b0f4d2155a5a",
+    "timestamp": "2026-04-05T17:13:08.234Z"
+  },
+  "ch01-core-engine": {
+    "fingerprint": "d42d1ba40ceeeab9baf7a6bed8ca0a24",
+    "timestamp": "2026-04-05T17:13:09.856Z"
+  },
+  "ch02-multi-agent": {
+    "fingerprint": "c09ea54b6cc38e74c06df9c4aac45810",
+    "timestamp": "2026-04-05T17:13:10.550Z"
+  },
+  "ch03-permission": {
+    "fingerprint": "5faba59e00780dc769e63c83794dbfba",
+    "timestamp": "2026-04-05T17:13:14.446Z"
+  },
+  "ch05-tools-mcp": {
+    "fingerprint": "d4cde948169bf950584e694bc1e1aa93",
+    "timestamp": "2026-04-05T17:13:16.068Z"
+  },
+  "ch04-token-mgmt": {
+    "fingerprint": "65af6e64c8e51e0ec43e38a46e5b0ca0",
+    "timestamp": "2026-04-05T17:13:17.199Z"
+  },
+  "ch06-resilience": {
+    "fingerprint": "b2a14f2f059a72b9aca1fe1b85b9721e",
+    "timestamp": "2026-04-05T17:13:20.244Z"
+  },
+  "ch07-memory": {
+    "fingerprint": "a3c9bb098d4a4374600978a1d3a76d17",
+    "timestamp": "2026-04-05T17:13:22.035Z"
+  },
+  "ch08-protocol": {
+    "fingerprint": "4eadc7cd5719cd4ef0e5ce40efe72821",
+    "timestamp": "2026-04-05T17:13:23.059Z"
+  },
+  "ch09-ink-ui": {
+    "fingerprint": "fea89b1d7bc8ee5b91d66ff510077386",
+    "timestamp": "2026-04-05T17:13:25.329Z"
+  },
+  "ch10-feature-cost": {
+    "fingerprint": "ec162d7b908559e79bead8391f7a22e5",
+    "timestamp": "2026-04-05T17:13:26.574Z"
+  }
+}

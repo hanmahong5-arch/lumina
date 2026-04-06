@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Source Map</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body {
+  width: 720pt; height: 405pt;
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; line-height: 1.2; }
+h3 { font-size: 13pt; font-weight: 700; margin: 0 0 3pt 0; line-height: 1.3; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8pt 32pt; background: var(--bg-secondary);
+}
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.source-index { display: flex; flex-direction: column; gap: 6pt; }
+.source-item { display: flex; gap: 8pt; align-items: baseline; background: var(--bg-card); border-radius: 4pt; padding: 7pt 10pt; }
+.source-path { font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); min-width: 210pt; }
+.source-desc { font-size: 9pt; color: var(--text-secondary); }
+.source-tag { font-size: 7pt; color: var(--bg-primary); background: var(--accent-indigo); border-radius: 2pt; padding: 1pt 4pt 1pt 4pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">02 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>源码地图 Source Map</h2>
+  <p style="color:var(--text-secondary); margin-bottom:10pt;">核心权限模块分布于 <span style="font-family:Courier New,monospace; color:var(--accent-teal);">src/utils/permissions/</span> 目录</p>
+  <div class="source-index">
+    <div class="source-item">
+      <p class="source-path">permissions.ts</p>
+      <p class="source-desc">权限判定主入口，3-tier pipeline 编排  <span class="source-tag">CORE</span></p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">yoloClassifier.ts</p>
+      <p class="source-desc">2-stage ML 分类器，auto mode 核心决策引擎  <span class="source-tag">ML</span></p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">classifierDecision.ts</p>
+      <p class="source-desc">分类结果结构体，快速路径逻辑，SAFE_YOLO_ALLOWLISTED_TOOLS</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">PermissionMode.ts</p>
+      <p class="source-desc">6 种权限模式枚举定义，模式切换状态机</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">permissionRuleParser.ts</p>
+      <p class="source-desc">Rule DSL 解析器，Tool(content) glob/regex 匹配</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">bashPermissions.ts</p>
+      <p class="source-desc">Bash 工具专用权限，投机分类 speculative classification</p>
+    </div>
+  </div>
+  <p style="margin-top:8pt; font-size:8pt; color:var(--text-muted);">辅助文件: filesystem.ts (路径安全检查), permissionSetup.ts (初始化), bypassPermissionsKillswitch.ts (紧急开关)</p>
+</div>
+</body>
+</html>

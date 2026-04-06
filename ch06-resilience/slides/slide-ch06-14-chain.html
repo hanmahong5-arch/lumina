@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Chain Walk</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-str:#A5D6FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt}
+.card-accent-indigo{background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 06 Resilience</p>
+  <p class="page-num">14 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>Chain Walk / 链式遍历</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">buildConversationChain(): reverse walk from leaf, like Git commit chain</p>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+<p style="margin:0;font-size:8pt;"><span style="color:var(--text-code-kw)">function</span> <span style="color:var(--text-code-fn)">buildConversationChain</span>(</p>
+<p style="margin:0;font-size:8pt;">  messages, leafUuid</p>
+<p style="margin:0;font-size:8pt;">) {</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">const</span> byUuid = <span style="color:var(--text-code-kw)">new</span> Map(</p>
+<p style="margin:0;font-size:8pt;">    messages.map(m =&gt; [m.uuid, m])</p>
+<p style="margin:0;font-size:8pt;">  );</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">const</span> chain = [];</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">let</span> cur = byUuid.get(leafUuid);</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">while</span> (cur) {</p>
+<p style="margin:0;font-size:8pt;">    chain.unshift(cur);</p>
+<p style="margin:0;font-size:8pt;">    cur = byUuid.get(cur.parentUuid);</p>
+<p style="margin:0;font-size:8pt;">  }</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">return</span> chain;</p>
+<p style="margin:0;font-size:8pt;">}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-accent-indigo">
+        <h3 style="font-size:10pt;color:var(--accent-indigo);">Git Commit Analogy</h3>
+        <ul style="font-size:9pt;">
+          <li><strong>Git:</strong> Each commit points to parent commit</li>
+          <li><strong>Here:</strong> Each message points to parentUuid</li>
+          <li><strong>Branch:</strong> Compact creates a new branch (tombstone old)</li>
+          <li><strong>Walk:</strong> Start from leaf, follow parent links</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent-teal);font-size:10pt;">Why Reverse Walk?</h3>
+        <ul style="font-size:9pt;">
+          <li>JSONL may contain orphaned messages from aborted turns</li>
+          <li>Forward scan would include dead branches</li>
+          <li>Reverse walk from leaf guarantees a clean linear chain</li>
+          <li>O(n) with Map lookup, no recursion needed</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Resilience</p></div>
+</body></html>

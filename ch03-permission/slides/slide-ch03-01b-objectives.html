@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">Ch03 Permission System · Learning Objectives</p>
+  <p class="page-num">Objectives</p>
+</div>
+<div class="slide-content-compact">
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt;">After this chapter you will be able to:</h2>
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt; font-size:14pt;">学完本章后你将能够：</h2>
+  <ol style="font-size:9pt; color:var(--text-primary); line-height:1.6;">
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Route a tool-call request through the 3-tier decision pipeline (static rules → AI classifier → user prompt) and predict the exit tier for 5 representative operations / 将工具调用请求路由经三层决策管线（静态规则 → AI 分类器 → 用户审批）并预判 5 个典型操作各自的退出层</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Compare the 5 permission modes (Default, Plan, AcceptEdits, BypassPermissions, DontAsk) by their auto-approve scope, visual indicator, and applicable use-case / 对比 5 种权限模式（默认、计划、接受编辑、绕过权限、不询问）的自动批准范围、视觉标识和适用场景</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Explain the YOLO classifier's 2-stage architecture (fast path + deep thinking), its transcript filtering defense against prompt injection, and the structured tool-call output format / 解释 YOLO 分类器的两阶段架构（快速路径 + 深度思考）、其转录过滤的提示注入防御，以及结构化工具调用输出格式</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Calculate when shouldFallbackToPrompting() triggers using DENIAL_LIMITS (consecutive=3, total=20) and describe the UX impact of the auto-degradation mechanism / 利用 DENIAL_LIMITS（连续=3，总计=20）计算 shouldFallbackToPrompting() 的触发时机，并描述自动降级机制的用户体验影响</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Write a permission rule in the DSL (e.g. "Bash(prefix:git *)") and trace its parsing through permissionRuleValueFromString() to toolMatchesRule() matching / 用规则 DSL 编写权限规则（如 "Bash(prefix:git *)"），并追踪其从 permissionRuleValueFromString() 解析到 toolMatchesRule() 匹配的全过程</p></li>
+  </ol>
+  <div style="background:#16213E; border-radius:4pt; padding:6pt 10pt; margin-top:8pt; border-left:2pt solid #FFB84D;">
+    <p style="font-size:8pt; color:#FFB84D; font-weight:700; margin:0;">Prerequisites / 前置知识</p>
+    <p style="font-size:7.5pt; color:#A0AEC0; margin:0;">Ch01 tool execution flow (canUseTool dependency injection). Awareness of Bash AST concepts (pipes, redirections, subcommands). / Ch01 工具执行流程（canUseTool 依赖注入）。了解 Bash AST 概念（管道、重定向、子命令）。</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Permission System</p>
+  <p>Duration: ~55min | 20 Slides</p>
+</div>
+</body></html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - Constants</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:16pt 32pt 8pt 32pt}
+.const-table{display:flex;flex-direction:column;gap:3pt}
+.const-row{display:flex;gap:8pt;align-items:baseline;padding:3pt 0}
+.const-name{font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt}
+.const-val{font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt}
+.const-desc{font-size:8pt;color:var(--text-muted)}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">18 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>关键常量表 / Key Constants</h2>
+  <p style="color:var(--text-secondary);margin-bottom:10pt;">Critical thresholds and configuration values for the tool system</p>
+  <div class="const-table">
+    <div class="const-row" style="border-bottom:1pt solid var(--border-subtle);">
+      <p class="const-name" style="font-weight:700;color:var(--text-secondary);">Constant</p>
+      <p class="const-val" style="font-weight:700;color:var(--text-secondary);">Value</p>
+      <p class="const-desc" style="font-weight:700;color:var(--text-secondary);">Description</p>
+    </div>
+    <div class="const-row"><p class="const-name">PROGRESS_THRESHOLD</p><p class="const-val">2000ms</p><p class="const-desc">Show progress after this delay</p></div>
+    <div class="const-row"><p class="const-name">MCP_LRU_POOL_SIZE</p><p class="const-val">20</p><p class="const-desc">Max concurrent MCP connections</p></div>
+    <div class="const-row"><p class="const-name">MCP_STDIO_BATCH</p><p class="const-val">3</p><p class="const-desc">Concurrent local stdio spawns</p></div>
+    <div class="const-row"><p class="const-name">MCP_REMOTE_BATCH</p><p class="const-val">20</p><p class="const-desc">Concurrent remote SSE connects</p></div>
+    <div class="const-row"><p class="const-name">MCP_POST_TIMEOUT</p><p class="const-val">60s</p><p class="const-desc">Tool call POST timeout</p></div>
+    <div class="const-row"><p class="const-name">MCP_AUTH_TTL</p><p class="const-val">15min</p><p class="const-desc">OAuth token cache TTL</p></div>
+    <div class="const-row"><p class="const-name">SESSION_EXPIRED_CODE</p><p class="const-val">-32001</p><p class="const-desc">JSON-RPC session expired error</p></div>
+    <div class="const-row"><p class="const-name">MAX_SESSION_RECONNECT</p><p class="const-val">3</p><p class="const-desc">Max reconnect attempts</p></div>
+    <div class="const-row"><p class="const-name">DEFERRED_TOKEN_SAVINGS</p><p class="const-val">6K-15K</p><p class="const-desc">Tokens saved by deferring 30 tools</p></div>
+    <div class="const-row"><p class="const-name">TOOL_RESULT_MAX_SIZE</p><p class="const-val">~100KB</p><p class="const-desc">Truncation threshold for tool output</p></div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

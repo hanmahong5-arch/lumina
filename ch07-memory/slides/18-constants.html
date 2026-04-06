@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch7 - Constants</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 07 Memory</p>
+  <p class="page-num">18 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>关键常量表 / Key Constants</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">All tunable parameters of the memory system</p>
+  <div style="display:flex;flex-direction:column;gap:3pt;">
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">ENTRYPOINT</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">'MEMORY.md'</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Index file name per scope</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">MAX_LINES</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">200</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Line truncation limit for entrypoint</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">MAX_BYTES</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">25000</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Byte hard limit for entrypoint content</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">MAX_SELECTED_FILES</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">5</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Max topic files per semantic query</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">SELECTION_MAX_TOKENS</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">256</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">LLM token budget for selection call</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">EXTRACTION_MAX_TURNS</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">5</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Max turns for fork extraction agent</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">CACHE_SHARE_RATE</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">~60%</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Typical cache reuse in fork extraction</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">MEMORY_TYPES</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">4</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">user, feedback, project, reference</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">SELECTION_MODEL</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">sonnet</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Model used for memory selection</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:220pt;margin:0;">TEAM_DIR</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-const);min-width:80pt;margin:0;">'team/'</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Subdirectory for shared team memory</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Memory System</p></div>
+</body></html>

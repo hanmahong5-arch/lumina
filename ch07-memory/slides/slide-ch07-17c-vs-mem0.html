@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 07 | MEMORY SYSTEM</p>
+  <p class="page-num">17c / 20</p>
+</div>
+<div class="slide-content-compact" style="padding:14pt 28pt 8pt 28pt;">
+  <h3 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:12pt;">横向对比: Memory System Approaches</h3>
+
+  <!-- Header row -->
+  <div style="display:flex; gap:4pt; margin-bottom:2pt;">
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-teal); margin:0;">维度 Dimension</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt; border:1pt solid var(--accent-indigo);">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-indigo); margin:0;">Claude Code</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-amber); margin:0;">Mem0</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-coral); margin:0;">LangChain Memory</p>
+    </div>
+  </div>
+
+  <!-- Row 1: Memory Types -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">记忆类型 Memory Types</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">封闭四类: user / feedback / project / reference + 不可推导约束</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">自由标签 fact extraction; 无分类边界约束</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无分类; Buffer / Summary / Entity 按策略区分</p>
+    </div>
+  </div>
+
+  <!-- Row 2: Semantic Retrieval -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">语义检索 Semantic Retrieval</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">Sonnet sideQuery 从 frontmatter 清单选 &lt;=5 文件, 任务级相关性</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">向量嵌入 (Qdrant/Chroma) + 余弦相似度, 词汇级匹配</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">向量相似度 / 关键词匹配, 取决于后端配置</p>
+    </div>
+  </div>
+
+  <!-- Row 3: Isolation -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">隔离机制 Isolation</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">个人目录 + team/ 子目录; secretGuard 防泄露扫描</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">API key 级别隔离; 无内建秘密过滤</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Memory 实例绑定 Chain; 无团队共享机制</p>
+    </div>
+  </div>
+
+  <!-- Row 4: Persistence -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">持久化 Persistence</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">纯文件系统 .md, 用户可编辑 / git 管理 / grep 搜索</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">向量数据库 + Dashboard 管理; 需运维基础设施</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">内存 / Redis / 向量 DB; 取决于后端选择</p>
+    </div>
+  </div>
+
+  <!-- Row 5: Extraction Pipeline -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">提取管线 Extraction Pipeline</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">Fork Agent 共享 prompt cache (60%+ hit), 沙箱权限, 增量游标</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">独立 LLM 调用做 fact extraction; 无 cache 共享</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">手动 Chain 编排或 ConversationEntityMemory</p>
+    </div>
+  </div>
+
+  <!-- Row 6: Scalability -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">可扩展性 Scalability</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">小规模最优 (&lt;1000 文件); 大规模需分层索引演进</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">大规模友好 (O(log n) ANN); 小规模 infra 开销高</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">取决于向量 DB 后端; 无内建容量管理</p>
+    </div>
+  </div>
+
+  <div style="margin-top:4pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:3pt 6pt;">
+    <p style="font-size:6.5pt; color:var(--text-secondary); line-height:1.35; margin:0;"><strong style="color:var(--accent-indigo);">Why Claude Code's Memory is Different:</strong> Mem0 是"事实抽取"思路——LLM 调用抽取 facts，存入向量数据库。LangChain Memory 是"对话摘要"思路——超限就 LLM 压缩。Claude Code 是<strong style="color:var(--accent-green);">"文件系统即知识"思路</strong>——纯 .md 文件，用户可编辑 / git 管理 / grep 搜索，Fork Agent 共享 prompt cache（60%+ hit），secretGuard 自动扫描防泄露。记忆不是向量空间，是开发者每天写的文件。</p>
+  </div>
+
+</div>
+<div class="slide-footer">
+  <p>Sources: memdir.ts, findRelevantMemories.ts, extractMemories.ts, teamMemSecretGuard.ts | Mem0 docs | LangChain Memory docs</p>
+  <p>Chapter 07 - Memory System</p>
+</div>
+</body></html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Feature Gates</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 8pt 28pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">12 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>11+ Feature Gates / 特性门控</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Feature flags controlling protocol behavior and gradual rollout</p>
+  <div style="display:flex;flex-direction:column;gap:3pt;">
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_v2_enabled</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Enable v2 env-less protocol</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_sse_transport</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Use SSE instead of WebSocket</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_jwt_auto_refresh</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">CCRClient automatic JWT renewal</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_seq_recovery</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Sequence-based message recovery</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_epoch_bump</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Epoch-based stale message rejection</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_heartbeat</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">20s ping/pong liveness check</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_dedup</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">BoundedUUIDSet deduplication</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_v1_fallback</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-amber);min-width:50pt;margin:0;">GATE</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Allow fallback to v1 on v2 failure</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_title_generation</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">LLM-generated session titles</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_dead_token_backoff</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Cross-process dead token detection</p>
+    </div>
+    <div style="display:flex;gap:8pt;align-items:baseline;padding:5pt 8pt;background:var(--bg-card);border-radius:3pt;">
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-code-fn);min-width:200pt;margin:0;">bridge_control_messages</p>
+      <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-green);min-width:50pt;margin:0;">ON</p>
+      <p style="font-size:8pt;color:var(--text-muted);margin:0;">Control plane message handling</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

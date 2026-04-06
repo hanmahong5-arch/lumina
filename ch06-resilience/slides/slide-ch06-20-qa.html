@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Q&A</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:24pt;font-weight:700;margin:0 0 16pt 0;line-height:1.2}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.qa-slide{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60pt;background:var(--bg-primary);flex:1}
+.qa-slide h2{font-size:24pt;color:var(--accent-indigo);margin-bottom:16pt}
+</style></head><body>
+<div class="qa-slide">
+  <h2>Q &amp; A</h2>
+  <p style="font-size:14pt;color:var(--text-secondary);margin-bottom:20pt;">隐式持久化 vs 显式 checkpoint，哪个更可靠?</p>
+  <p style="font-size:10pt;color:var(--text-muted);">Implicit append-only vs explicit checkpoint -- which is more reliable?</p>
+  <div style="margin-top:30pt;background:var(--bg-card);border-radius:5pt;padding:12pt 20pt;">
+    <p style="font-size:9pt;color:var(--text-secondary);margin:0;">Discussion Topics: WAL vs append-only tradeoffs / Partial write detection / Cross-process recovery / Cloud checkpoint sync</p>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - v2 Flow</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">6 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>v2 协议流程 / v2 Protocol Flow</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">Env-less session with SSE primary transport and automatic JWT refresh</p>
+  <div style="display:flex;gap:6pt;align-items:stretch;margin-bottom:8pt;">
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-teal);">
+      <h4 style="color:var(--accent-teal);font-size:9pt;">1. OAuth Session</h4>
+      <p style="font-size:7pt;">Authenticate via OAuth flow</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--text-muted);font-size:12pt;"><p>-&gt;</p></div>
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-teal);">
+      <h4 style="color:var(--accent-teal);font-size:9pt;">2. /bridge Endpoint</h4>
+      <p style="font-size:7pt;">Connect to bridge service</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--text-muted);font-size:12pt;"><p>-&gt;</p></div>
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-teal);">
+      <h4 style="color:var(--accent-teal);font-size:9pt;">3. SSE Stream</h4>
+      <p style="font-size:7pt;">Server-Sent Events channel</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--text-muted);font-size:12pt;"><p>-&gt;</p></div>
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-teal);">
+      <h4 style="color:var(--accent-teal);font-size:9pt;">4. JWT Refresh</h4>
+      <p style="font-size:7pt;">CCRClient auto-refresh cycle</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:12pt;">
+    <div style="flex:1;">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-teal);">Key Improvements over v1</h4>
+        <ul style="font-size:8pt;">
+          <li><p style="font-size:8pt;">No environment variables required</p></li>
+          <li><p style="font-size:8pt;">SSE = push-based, no polling waste</p></li>
+          <li><p style="font-size:8pt;">Sequence numbers enable cross-transport recovery</p></li>
+          <li><p style="font-size:8pt;">Automatic JWT refresh via CCRClient</p></li>
+          <li><p style="font-size:8pt;">Epoch bumping for clean reconnection</p></li>
+        </ul>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <div style="background:var(--bg-code);border-radius:4pt;padding:8pt 10pt;margin-bottom:6pt;">
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-muted);margin:0;">// v2 initialization</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin:0;">const auth = await oauthSession();</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin:0;">const bridge = connect('/bridge', {</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin:0;">  transport: 'sse',</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin:0;">  jwtClient: new CCRClient(auth),</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin:0;">  heartbeat: 20_000</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin:0;">});</p>
+      </div>
+      <div style="display:flex;gap:8pt;">
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt;text-align:center;">
+          <p style="font-size:12pt;font-weight:700;color:var(--accent-green);margin:0;">SSE</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">primary transport</p>
+        </div>
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt;text-align:center;">
+          <p style="font-size:12pt;font-weight:700;color:var(--accent-indigo);margin:0;">20s</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">heartbeat interval</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 02 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Multi-Agent -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Multi-Agent / 多智能体</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Multiple agents collaborate with own context and tools — 像项目组，架构师带开发者并行工作</p>
+    </div>
+    <!-- Coordinator -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Coordinator / 协调者</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Distributes tasks to Workers, synthesizes results — 像项目经理，自己不写代码但整合结果</p>
+    </div>
+    <!-- Worker -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Worker / 工作者</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Task-executing agent with restricted tool access — 像团队成员，接受任务、执行、汇报</p>
+    </div>
+    <!-- Subagent -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Subagent (sync/async/fork) / 子智能体</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Child agent for subtasks: sync, async, or fork mode — 像外包，把子任务委派出去</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Fan-Out / Fan-In -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Fan-Out / Fan-In / 扇出与扇入</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Spawn parallel sub-tasks then merge results — 像分组讨论再汇报，先分头再合并</p>
+    </div>
+    <!-- Tool Isolation -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Tool Isolation / 工具隔离</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Restrict subagent tool access to prevent escalation — 像最小权限原则，实习生没有管理员密码</p>
+    </div>
+    <!-- Prompt Cache Sharing -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Prompt Cache Sharing / 提示缓存共享</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Forked agents reuse parent prefix for ~60%+ cache hits — 像预制菜，常用前菜提前备好</p>
+    </div>
+    <!-- Send Message -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">SendMessage / 发送消息</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Coordinator tool to dispatch tasks to workers — 像项目经理发工单，写清任务发给工人</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

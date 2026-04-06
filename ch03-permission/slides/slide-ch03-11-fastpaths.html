@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - 3 Fast Paths</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.step-list { display: flex; flex-direction: column; gap: 5pt; flex: 1; }
+.step-item { display: flex; gap: 10pt; align-items: flex-start; background: var(--bg-card); border-radius: 5pt; padding: 8pt 12pt; }
+.step-num { font-size: 16pt; font-weight: 700; min-width: 24pt; }
+.step-content { flex: 1; }
+.code-inline { font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); }
+.badge { display: inline-block; font-size: 7pt; padding: 1pt 5pt; border-radius: 2pt; }
+.flow-note { background: var(--bg-card); border: 1pt solid var(--border-subtle); border-radius: 4pt; padding: 6pt 10pt; margin-top: 4pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">11 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>3 级快速路径 Fast Paths</h2>
+  <p style="color:var(--text-secondary); margin-bottom:8pt;">在调用 ML 分类器 API 之前的零延迟静态检查，按优先级依次执行</p>
+
+  <div class="step-list">
+    <div class="step-item">
+      <p class="step-num" style="color:var(--accent-teal);">1</p>
+      <div class="step-content">
+        <h4 style="color:var(--accent-teal);">acceptEdits 模拟</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">auto mode 内置 acceptEdits 行为：<span class="code-inline">Edit</span> / <span class="code-inline">Write</span> / <span class="code-inline">NotebookEdit</span> 等文件编辑工具自动放行。与 acceptEdits 模式行为一致，但额外叠加分类器保护。</p>
+        <p style="font-size:8pt;"><span class="badge" style="background:var(--accent-green); color:var(--bg-primary);">ALLOW</span> <span style="color:var(--text-muted);">延迟: 0ms | 覆盖: ~30% of auto-mode calls</span></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <p class="step-num" style="color:var(--accent-indigo);">2</p>
+      <div class="step-content">
+        <h4 style="color:var(--accent-indigo);">SAFE_YOLO_ALLOWLISTED_TOOLS (~25 工具)</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">硬编码白名单，包含 <span class="code-inline">Read</span> / <span class="code-inline">Glob</span> / <span class="code-inline">Grep</span> / <span class="code-inline">TodoWrite</span> / <span class="code-inline">Agent</span> 等无副作用或低风险工具。任何模式下均可直接放行。</p>
+        <p style="font-size:8pt;"><span class="badge" style="background:var(--accent-green); color:var(--bg-primary);">ALLOW</span> <span style="color:var(--text-muted);">延迟: 0ms | 覆盖: ~40% of remaining calls</span></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <p class="step-num" style="color:var(--accent-amber);">3</p>
+      <div class="step-content">
+        <h4 style="color:var(--accent-amber);">分类器 API 调用</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">仅 Bash / MCP / 未知工具进入此路径。Stage 1 快速判定，必要时 Stage 2 深度推理。API 不可用时 fail-closed 返回 block。</p>
+        <p style="font-size:8pt;"><span class="badge" style="background:var(--accent-indigo); color:var(--text-primary);">CLASSIFY</span> <span style="color:var(--text-muted);">延迟: 0.5-5s | 覆盖: ~30% of all calls</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-note">
+    <p style="font-size:8pt; color:var(--text-muted);">classifierDecision.ts 中定义 | 快速路径命中率 ~70%，仅 30% 需要实际 API 调用 | 大幅降低权限判定延迟和 API 成本</p>
+  </div>
+</div>
+</body>
+</html>

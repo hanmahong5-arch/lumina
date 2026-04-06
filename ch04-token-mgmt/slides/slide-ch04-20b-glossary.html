@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 04 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Context Window -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Context Window / 上下文窗口</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Max tokens per request (Claude: 200K) — 像工作台面积，越大能摊开的文件越多</p>
+    </div>
+    <!-- Context Pressure -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Context Pressure / 上下文压力</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Used-to-available token ratio; near 100% must compress — 像硬盘使用率，快满了需要清理</p>
+    </div>
+    <!-- Token Budget -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Token Budget / 令牌预算</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Allocated allowance per operation (e.g. 50K rebuild) — 像每月生活费预算，各有额度</p>
+    </div>
+    <!-- Snip -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Snip / 裁剪</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Delete oldest messages to free tokens; cheapest but lossy — 像删除旧聊天记录，空间释放信息没了</p>
+    </div>
+    <!-- Micro Compact -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Micro Compact / 微压缩</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">In-place reduction of oversized tool results — 像新闻摘要，把长文章压缩成几个要点</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Compaction -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Compaction / 压缩</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Summarize conversation to reduce tokens, keep essentials — 像会议纪要，2小时讨论压成1页</p>
+    </div>
+    <!-- Context Collapse -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Context Collapse / 上下文坍缩</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Non-destructive compression; originals kept, view collapsed — 像数据库View，原始数据不变</p>
+    </div>
+    <!-- Post-Compact Rebuild -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Post-Compact Rebuild / 压缩后重建</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Re-read up to 5 key files (50K budget) after compaction — 像搬家后重新布置书桌摆常用资料</p>
+    </div>
+    <!-- Prompt Cache -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Prompt Cache / 提示缓存</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Reuse cached prefix across requests for ~50% cost cut — 像预制菜，常用前菜提前备好更便宜</p>
+    </div>
+    <!-- Lost in the Middle -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Lost in the Middle / 中间遗忘</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">LLMs recall start/end better than middle of long context — 像读厚书，开头结尾记得清中间容易忘</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

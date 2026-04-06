@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">Ch05 Tools &amp; MCP · Learning Objectives</p>
+  <p class="page-num">Objectives</p>
+</div>
+<div class="slide-content-compact">
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt;">After this chapter you will be able to:</h2>
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt; font-size:14pt;">学完本章后你将能够：</h2>
+  <ol style="font-size:9pt; color:var(--text-primary); line-height:1.6;">
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Catalog 40+ tools across 6 functional categories (File, Shell, Web, Agent, Plan, MCP) and explain how conditional require + Bun DCE eliminates 15+ tools from external builds at compile time / 将 40 多种工具按 6 个功能类别（文件、Shell、Web、Agent、计划、MCP）编目，并解释条件 require + Bun DCE 如何在编译期从外部构建中消除 15 种以上工具</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Walk through assembleToolPool()'s partitioned sort strategy (built-in prefix + MCP suffix) and explain why this ordering preserves prompt cache stability / 逐步跟踪 assembleToolPool() 的分区排序策略（内置前缀 + MCP 后缀），并解释此排序为何能保持 prompt 缓存稳定性</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Trace the 6-stage tool execution pipeline (Route → Permission → Validate → Execute → Process → Analytics) and identify where the speculative classifier runs in parallel / 追踪工具执行管线的 6 个阶段（路由 → 权限 → 验证 → 执行 → 处理 → 分析），并识别推测性分类器的并行运行位置</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Resolve MCP server configuration through the 5-layer hierarchy (Enterprise → Plugin → Project → Global → Remote) and predict which layer wins when two layers define the same server name / 通过 5 层层级（企业 → 插件 → 项目 → 全局 → 远程）解析 MCP 服务器配置，并预判两层定义同名服务器时哪层生效</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Explain how ToolSearchTool's deferred loading reduces token overhead from O(N) to O(K) when N MCP tools are available but only K are needed per query / 解释 ToolSearchTool 的延迟加载如何在 N 个 MCP 工具可用但每次查询仅需 K 个时将 token 开销从 O(N) 降至 O(K)</p></li>
+  </ol>
+  <div style="background:#16213E; border-radius:4pt; padding:6pt 10pt; margin-top:8pt; border-left:2pt solid #FFB84D;">
+    <p style="font-size:8pt; color:#FFB84D; font-weight:700; margin:0;">Prerequisites / 前置知识</p>
+    <p style="font-size:7.5pt; color:#A0AEC0; margin:0;">Ch01 tool execution within queryLoop (tool_use blocks, runTools). Ch03 permission pipeline (canUseTool, deny rules). Basic understanding of MCP protocol and JSON Schema. / Ch01 queryLoop 中的工具执行（tool_use 块、runTools）。Ch03 权限管线（canUseTool、deny 规则）。基本了解 MCP 协议和 JSON Schema。</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Tools &amp; MCP Architecture</p>
+  <p>Duration: ~55min | 20 Slides</p>
+</div>
+</body></html>

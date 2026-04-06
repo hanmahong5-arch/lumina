@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Message Filters</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--accent-purple:#9F7AEA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 8pt 28pt}
+.step-list{display:flex;flex-direction:column;gap:5pt}
+.step-item{display:flex;gap:10pt;align-items:flex-start}
+.step-num{font-size:14pt;font-weight:700;color:var(--accent-indigo);min-width:20pt}
+.step-content{flex:1}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 06 Resilience</p>
+  <p class="page-num">16 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>四层消息清洗 / 4-Stage Message Filtering</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Sequential pipeline: each stage fixes one class of corruption</p>
+  <div class="step-list">
+    <div class="step-item">
+      <p class="step-num">1</p>
+      <div class="step-content">
+        <h3 style="font-size:11pt;color:var(--accent-teal);">filterUnresolvedToolUses</h3>
+        <p style="font-size:9pt;">Remove tool_use blocks that have no matching tool_result. Occurs when assistant requested a tool but process crashed before execution. Without cleanup, API rejects the message array.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <p class="step-num">2</p>
+      <div class="step-content">
+        <h3 style="font-size:11pt;color:var(--accent-amber);">filterOrphanedThinking</h3>
+        <p style="font-size:9pt;">Remove thinking blocks that are orphaned (no subsequent content). Extended thinking generates &lt;thinking&gt; before the response. If interrupted, the thinking block exists without a conclusion.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <p class="step-num">3</p>
+      <div class="step-content">
+        <h3 style="font-size:11pt;color:var(--accent-coral);">filterWhitespace</h3>
+        <p style="font-size:9pt;">Remove messages that contain only whitespace or empty content blocks. These can accumulate from partial streaming responses that were interrupted mid-token.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <p class="step-num">4</p>
+      <div class="step-content">
+        <h3 style="font-size:11pt;color:var(--accent-indigo);">Sentinel Validation</h3>
+        <p style="font-size:9pt;">Final pass ensures message array alternates user/assistant correctly, no two consecutive same-role messages, and first message is from user. Fixes any remaining structural issues.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:4pt;">
+    <h3 style="color:var(--accent-green);font-size:10pt;">Order Matters</h3>
+    <p style="font-size:9pt;">Step 1 may create empty assistant messages (all tool_use blocks removed). Step 3 then cleans those. Step 4 validates the final structure. Reordering breaks the pipeline.</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Resilience</p></div>
+</body></html>

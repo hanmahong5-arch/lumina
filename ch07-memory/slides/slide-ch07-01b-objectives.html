@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">Ch07 Memory · Learning Objectives</p>
+  <p class="page-num">Objectives</p>
+</div>
+<div class="slide-content-compact">
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt;">After this chapter you will be able to:</h2>
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt; font-size:14pt;">学完本章后你将能够：</h2>
+  <ol style="font-size:9pt; color:var(--text-primary); line-height:1.6;">
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Diagram the 2-layer memory architecture (MEMORY.md index layer with 200-line/25KB limits vs. on-demand content .md files) and calculate the token budget advantage over single-layer full-load / 绘制两层记忆架构图（MEMORY.md 索引层 200 行/25KB 限制 vs. 按需加载的 .md 内容文件），并计算相对于单层全量加载的 token 预算优势</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Classify a given piece of information into one of the 4 closed memory types (user, feedback, project, reference) and apply the non-derivability constraint to reject derivable facts / 将给定信息归入 4 种封闭记忆类型之一（user、feedback、project、reference），并应用不可推导性约束拒绝可推导事实</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Trace the findRelevantMemories() sideQuery pipeline: scanMemoryFiles() → formatMemoryManifest() → Sonnet selection of up to 5 files → validFilenames guard against hallucination / 追踪 findRelevantMemories() 的 sideQuery 管线：scanMemoryFiles() → formatMemoryManifest() → Sonnet 选择最多 5 个文件 → validFilenames 防幻觉守卫</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Explain the Fork Agent extraction pipeline: cursor-based incremental processing (lastMemoryMessageUuid), mutual-exclusion with manual writes, trailing-run stash, and the 60%+ cache hit rate achieved via cacheSafeParams / 解释 Fork Agent 提取管线：基于游标的增量处理（lastMemoryMessageUuid）、与手动写入的互斥、trailing-run 暂存，以及通过 cacheSafeParams 实现的 60%+ 缓存命中率</p></li>
+    <li style="margin-bottom:6pt;"><p style="margin:0; font-size:9pt;">Argue why LLM-as-retriever outperforms vector similarity search at sub-1000 file scale, citing semantic gap, zero-infra cost, and user editability advantages / 论证在千文件以下规模为何 LLM 充当检索器优于向量相似度搜索，引用语义鸿沟、零基础设施成本和用户可编辑性优势</p></li>
+  </ol>
+  <div style="background:#16213E; border-radius:4pt; padding:6pt 10pt; margin-top:8pt; border-left:2pt solid #FFB84D;">
+    <p style="font-size:8pt; color:#FFB84D; font-weight:700; margin:0;">Prerequisites / 前置知识</p>
+    <p style="font-size:7.5pt; color:#A0AEC0; margin:0;">Ch01 stop hooks (where extractMemories is triggered). Ch02 Fork Agent concept (shared prompt cache). Familiarity with frontmatter-based Markdown files. / Ch01 stop hooks（extractMemories 的触发点）。Ch02 Fork Agent 概念（共享 prompt 缓存）。熟悉基于 frontmatter 的 Markdown 文件。</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Memory System</p>
+  <p>Duration: ~55min | 20 Slides</p>
+</div>
+</body></html>

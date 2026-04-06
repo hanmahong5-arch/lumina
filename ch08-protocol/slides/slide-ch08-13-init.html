@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Init</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">13 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>initReplBridge() / 初始化流程</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">OAuth authentication, version detection, title derivation, and v1/v2 routing</p>
+  <div style="display:flex;flex-direction:column;gap:5pt;">
+    <div style="display:flex;gap:10pt;align-items:flex-start;">
+      <div style="min-width:20pt;"><p style="font-size:14pt;font-weight:700;color:var(--accent-indigo);margin:0;">1</p></div>
+      <div style="flex:1;background:var(--bg-card);border-radius:5pt;padding:8pt 12pt;">
+        <h4 style="color:var(--accent-teal);">OAuth Authentication</h4>
+        <p style="font-size:8pt;">Validate existing OAuth token or trigger login flow. Retrieve user profile and organization context.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10pt;align-items:flex-start;">
+      <div style="min-width:20pt;"><p style="font-size:14pt;font-weight:700;color:var(--accent-indigo);margin:0;">2</p></div>
+      <div style="flex:1;background:var(--bg-card);border-radius:5pt;padding:8pt 12pt;">
+        <h4 style="color:var(--accent-indigo);">Version Detection</h4>
+        <p style="font-size:8pt;">Check feature gates: is v2 enabled? Is SSE transport available? Fall back to v1 if gates are off.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10pt;align-items:flex-start;">
+      <div style="min-width:20pt;"><p style="font-size:14pt;font-weight:700;color:var(--accent-indigo);margin:0;">3</p></div>
+      <div style="flex:1;background:var(--bg-card);border-radius:5pt;padding:8pt 12pt;">
+        <h4 style="color:var(--accent-amber);">Title Derivation</h4>
+        <p style="font-size:8pt;">Generate session title via <span style="font-family:Courier New,monospace;color:var(--text-code-fn);">deriveTitle()</span> (max 50 chars). Optionally use Haiku model for LLM-generated title (15s timeout).</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10pt;align-items:flex-start;">
+      <div style="min-width:20pt;"><p style="font-size:14pt;font-weight:700;color:var(--accent-indigo);margin:0;">4</p></div>
+      <div style="flex:1;background:var(--bg-card);border-radius:5pt;padding:8pt 12pt;">
+        <h4 style="color:var(--accent-coral);">v1/v2 Route</h4>
+        <p style="font-size:8pt;">Based on version detection, instantiate either HybridTransport (v1) or SSETransport (v2), wrap in ReplBridgeHandle, and return to caller.</p>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;margin-top:6pt;">
+    <p style="font-family:Courier New,monospace;font-size:7pt;color:var(--text-muted);margin:0;">// initReplBridge.ts</p>
+    <p style="font-family:Courier New,monospace;font-size:7pt;color:var(--accent-teal);margin:0;">oauth() -&gt; detectVersion() -&gt; deriveTitle() -&gt; v2Enabled ? SSETransport : HybridTransport -&gt; ReplBridgeHandle</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

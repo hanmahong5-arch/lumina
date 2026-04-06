@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CH-10 · Code Walkthrough</p>
+  <p class="page-num">Code</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:10pt;">
+  <div style="flex:6;">
+    <h3 style="color:var(--accent-teal); margin-bottom:3pt; font-size:11pt;">ClaudeCodeStats Interface</h3>
+    <p style="font-size:7pt; color:var(--text-muted); margin-bottom:4pt;">stats.ts:53-87</p>
+    <div style="background:#0D1117; border-radius:4pt; padding:6pt 8pt;">
+      <p style="font-family:'Courier New',monospace; font-size:7.5pt; color:#E6EDF3; margin:0; line-height:1.5;">type ClaudeCodeStats = {
+&#160;&#160;// Activity
+&#160;&#160;totalSessions: number
+&#160;&#160;totalMessages: number
+&#160;&#160;totalDays: number
+&#160;&#160;activeDays: number
+&#160;&#160;streaks: StreakInfo
+
+&#160;&#160;// Token usage per model
+&#160;&#160;dailyModelTokens: DailyModelTokens[]
+&#160;&#160;modelUsage: { [model: string]: ModelUsage }
+
+&#160;&#160;// Session analytics
+&#160;&#160;longestSession: SessionStats | null
+&#160;&#160;peakActivityDay: string | null
+&#160;&#160;peakActivityHour: number | null
+
+&#160;&#160;// Performance
+&#160;&#160;totalSpeculationTimeSavedMs: number
+&#160;&#160;shotDistribution?: { [shots: number]: number }
+&#160;&#160;oneShotRate?: number
+}</p>
+    </div>
+  </div>
+  <div style="flex:4;">
+    <h4 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:9pt;">Key Points / 要点</h4>
+    <ul style="font-size:7.5pt; color:var(--text-secondary); line-height:1.5;">
+      <li><p style="margin:0; font-size:7.5pt;">Aggregates activity, tokens, streaks, and model usage per user</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">dailyModelTokens enables per-model cost attribution charts</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Speculation time saved quantifies speculative classifier benefit</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">shotDistribution tracks one-shot vs multi-shot task completion rates</p></li>
+    </ul>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Feature Cost Analysis</p>
+  <p>src/utils/stats.ts</p>
+</div>
+</body></html>

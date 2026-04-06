@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Permission Modes</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --accent-purple: #9F7AEA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body {
+  width: 720pt; height: 405pt;
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text-primary);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.spectrum { display: flex; gap: 4pt; margin: 8pt 0 6pt 0; height: 6pt; }
+.spectrum-seg { flex: 1; border-radius: 3pt; }
+.modes { display: flex; gap: 6pt; flex-wrap: wrap; margin-top: 6pt; }
+.mode-card { flex: 1; min-width: 100pt; background: var(--bg-card); border-radius: 5pt; padding: 8pt 8pt 6pt 8pt; border-top: 2.5pt solid var(--accent-indigo); }
+.mode-name { font-family: Courier New, monospace; font-size: 8pt; margin: 0 0 3pt 0; }
+.mode-desc { font-size: 8pt; color: var(--text-secondary); margin: 0 0 2pt 0; }
+.mode-trust { font-size: 7pt; margin: 0; }
+.arrow-bar { display: flex; justify-content: space-between; margin: 2pt 0; }
+.arrow-label { font-size: 7pt; color: var(--text-muted); margin: 0; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">03 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>6 种权限模式 Permission Mode Spectrum</h2>
+  <p style="color:var(--text-secondary);">从最严格到最宽松，构成一条信任梯度谱</p>
+
+  <div class="arrow-bar">
+    <p class="arrow-label">STRICT (严格)</p>
+    <p class="arrow-label">PERMISSIVE (宽松)</p>
+  </div>
+  <div class="spectrum">
+    <div class="spectrum-seg" style="background:var(--accent-coral);"></div>
+    <div class="spectrum-seg" style="background:var(--accent-amber);"></div>
+    <div class="spectrum-seg" style="background:var(--accent-amber);"></div>
+    <div class="spectrum-seg" style="background:var(--accent-green);"></div>
+    <div class="spectrum-seg" style="background:var(--accent-teal);"></div>
+    <div class="spectrum-seg" style="background:var(--accent-indigo);"></div>
+  </div>
+
+  <div class="modes">
+    <div class="mode-card" style="border-top-color:var(--accent-coral);">
+      <p class="mode-name" style="color:var(--accent-coral);">default</p>
+      <p class="mode-desc">每次工具调用都需确认</p>
+      <p class="mode-trust" style="color:var(--accent-coral);">Trust: 0%</p>
+    </div>
+    <div class="mode-card" style="border-top-color:var(--accent-amber);">
+      <p class="mode-name" style="color:var(--accent-amber);">plan</p>
+      <p class="mode-desc">只读工具自动放行，写操作需确认</p>
+      <p class="mode-trust" style="color:var(--accent-amber);">Trust: 20%</p>
+    </div>
+    <div class="mode-card" style="border-top-color:var(--accent-amber);">
+      <p class="mode-name" style="color:var(--accent-amber);">acceptEdits</p>
+      <p class="mode-desc">文件编辑自动放行，Bash仍需确认</p>
+      <p class="mode-trust" style="color:var(--accent-amber);">Trust: 40%</p>
+    </div>
+    <div class="mode-card" style="border-top-color:var(--accent-green);">
+      <p class="mode-name" style="color:var(--accent-green);">bypassPermissions</p>
+      <p class="mode-desc">全部放行 (safety-check 除外)</p>
+      <p class="mode-trust" style="color:var(--accent-green);">Trust: 80%</p>
+    </div>
+    <div class="mode-card" style="border-top-color:var(--accent-teal);">
+      <p class="mode-name" style="color:var(--accent-teal);">dontAsk</p>
+      <p class="mode-desc">--dangerously-skip-permissions</p>
+      <p class="mode-trust" style="color:var(--accent-teal);">Trust: 90%</p>
+    </div>
+    <div class="mode-card" style="border-top-color:var(--accent-indigo);">
+      <p class="mode-name" style="color:var(--accent-indigo);">auto</p>
+      <p class="mode-desc">ML分类器自动决策，3级快速路径</p>
+      <p class="mode-trust" style="color:var(--accent-indigo);">Trust: ML-gated</p>
+    </div>
+  </div>
+
+  <p style="margin-top:8pt; font-size:8pt; color:var(--text-muted);">PermissionMode.ts 定义枚举 | getNextPermissionMode() 实现模式切换 | safety-check 在任何模式下都不可绕过</p>
+</div>
+</body>
+</html>

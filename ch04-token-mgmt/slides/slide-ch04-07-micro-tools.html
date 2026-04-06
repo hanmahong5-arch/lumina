@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - COMPACTABLE_TOOLS</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.tool-grid { display: flex; flex-direction: column; gap: 4pt; }
+.tool-item { display: flex; align-items: center; gap: 8pt; padding: 4pt 8pt; background: var(--bg-card); border-radius: 3pt; }
+.tool-name { font-family: Courier New, monospace; font-size: 9pt; min-width: 80pt; }
+.tool-type { font-size: 7pt; padding: 1pt 5pt; border-radius: 2pt; }
+.tool-desc { font-size: 8pt; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">07 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>COMPACTABLE_TOOLS 白名单</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">信息类工具可压缩，确认类工具必须保留</p>
+
+  <div class="two-col">
+    <div class="col">
+      <h4 style="color:var(--accent-green); margin-bottom:4pt;">可压缩 (informational)</h4>
+      <div class="tool-grid">
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-green);">Read</p>
+          <div style="background:var(--accent-green); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">INFO</p></div>
+          <p class="tool-desc">文件内容可重新读取</p>
+        </div>
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-green);">Bash</p>
+          <div style="background:var(--accent-green); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">INFO</p></div>
+          <p class="tool-desc">命令输出可重新执行获取</p>
+        </div>
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-green);">Grep</p>
+          <div style="background:var(--accent-green); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">INFO</p></div>
+          <p class="tool-desc">搜索结果可重新搜索</p>
+        </div>
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-green);">Glob</p>
+          <div style="background:var(--accent-green); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">INFO</p></div>
+          <p class="tool-desc">文件列表可重新枚举</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:6pt; border-left:3pt solid var(--accent-green);">
+        <p style="font-size:8pt; color:var(--accent-green); font-weight:700;">核心判据：结果可重现</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">这些工具的输出是"查询"性质，压缩后模型可以重新调用获取最新结果。</p>
+      </div>
+    </div>
+    <div class="col">
+      <h4 style="color:var(--accent-coral); margin-bottom:4pt;">不可压缩 (confirmation)</h4>
+      <div class="tool-grid">
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-coral);">Edit</p>
+          <div style="background:var(--accent-coral); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">CONFIRM</p></div>
+          <p class="tool-desc">编辑确认必须保留</p>
+        </div>
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-coral);">Write</p>
+          <div style="background:var(--accent-coral); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">CONFIRM</p></div>
+          <p class="tool-desc">写入确认必须保留</p>
+        </div>
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-coral);">Agent</p>
+          <div style="background:var(--accent-coral); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">CONFIRM</p></div>
+          <p class="tool-desc">子代理结果不可重现</p>
+        </div>
+        <div class="tool-item">
+          <p class="tool-name" style="color:var(--accent-coral);">AskUser</p>
+          <div style="background:var(--accent-coral); border-radius:2pt; padding:1pt 5pt; display:inline-block;"><p style="font-size:7pt; color:var(--bg-primary); margin:0;">CONFIRM</p></div>
+          <p class="tool-desc">用户回答不可重复</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:6pt; border-left:3pt solid var(--accent-coral);">
+        <p style="font-size:8pt; color:var(--accent-coral); font-weight:700;">核心判据：结果不可重现</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">这些工具的输出是"确认/变更"性质，压缩后丢失会导致模型重复操作或丢失用户意图。</p>
+      </div>
+      <div class="card">
+        <p style="font-size:8pt; color:var(--accent-amber); font-weight:700;">设计启示</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">区分 info 与 confirm 是所有压缩策略的基础判据。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

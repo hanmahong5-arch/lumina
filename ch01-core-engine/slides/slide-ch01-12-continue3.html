@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Continue Paths 6-7</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-purple:#9F7AEA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 10pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.two-col{display:flex;gap:14pt;flex:1}
+.col{flex:1}
+h3{font-size:11pt;font-weight:700;margin:0 0 4pt 0;line-height:1.3}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;height:100%;box-sizing:border-box}
+.fn{font-family:'Courier New',monospace;color:var(--text-code-fn);font-size:8pt}
+.ct{font-family:'Courier New',monospace;color:var(--text-code-const);font-size:8pt}
+ul{font-size:8pt;line-height:1.5;margin:3pt 0 0 0;padding-left:10pt}
+li{margin-bottom:2pt}
+.tag{display:inline-block;font-size:7pt;padding:1pt 4pt;border-radius:2pt;color:#fff}
+.tag-purple{background:var(--accent-purple)}
+.tag-amber{background:var(--accent-amber)}
+.num{font-size:20pt;font-weight:700;color:var(--accent-indigo);margin:0 0 4pt 0}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:5pt 8pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin:4pt 0}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">12 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>恢复路径 6-7: Hook 与预算</h1>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <p class="num">6</p>
+        <h3>stop_hook_blocking <span class="tag tag-purple">hooks</span></h3>
+        <p>Stop hooks 返回 blockingErrors 时触发</p>
+        <ul>
+          <li>将 blockingErrors 注入为 user message</li>
+          <li>设置 <span class="fn">stopHookActive</span> = <span class="ct">true</span></li>
+          <li>模型看到错误后修正行为</li>
+          <li>若 hook 返回 <span class="fn">'stopped'</span> &rarr; 终止 (hook_stopped)</li>
+          <li>若 hook 返回 <span class="fn">'prevented'</span> &rarr; 终止 (stop_hook_prevented)</li>
+        </ul>
+        <div class="code-block">
+<p>handleStopHooks() &rarr;<br>
+&nbsp;&nbsp;{ blockingErrors } &rarr; continue<br>
+&nbsp;&nbsp;{ stopped } &rarr; terminal</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <p class="num">7</p>
+        <h3>token_budget_continuation <span class="tag tag-amber">budget</span></h3>
+        <p>feature('TOKEN_BUDGET') 启用时的预算续写</p>
+        <ul>
+          <li><span class="fn">checkTokenBudget()</span> 评估剩余预算</li>
+          <li>返回 <span class="fn">decision.nudgeMessage</span> 引导模型</li>
+          <li>注入 nudge 作为 user message</li>
+          <li><span class="fn">incrementBudgetContinuationCount()</span></li>
+          <li>允许模型在预算内继续自主执行</li>
+        </ul>
+        <div class="code-block">
+<p>budgetTracker.check() &rarr;<br>
+&nbsp;&nbsp;{ continue: true, nudge } &rarr; inject<br>
+&nbsp;&nbsp;{ continue: false } &rarr; completed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

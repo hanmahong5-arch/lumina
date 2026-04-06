@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Cover</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body {
+  width: 720pt; height: 405pt;
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+h1 { font-size: 28pt; font-weight: 700; margin: 0 0 10pt 0; line-height: 1.2; }
+p  { font-size: 12pt; line-height: 1.45; margin: 0 0 3pt 0; color: var(--text-secondary); }
+.chapter-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50pt 60pt;
+  background: var(--bg-primary);
+  flex: 1;
+}
+.chapter-number {
+  font-size: 56pt;
+  font-weight: 700;
+  color: var(--accent-indigo);
+  opacity: 0.2;
+  margin: 0;
+  line-height: 1;
+}
+.tag-row { display: flex; gap: 8pt; margin-top: 14pt; }
+.tag {
+  font-size: 8pt;
+  font-weight: 700;
+  color: var(--accent-teal);
+  padding: 2pt 8pt;
+  margin: 0;
+}
+.slide-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4pt 32pt 8pt 32pt;
+  font-size: 7pt;
+  color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+<div class="chapter-cover">
+  <p class="chapter-number">02</p>
+  <h1>多Agent系统</h1>
+  <p>派生、协调与隔离机制</p>
+  <p>Deep Dive into Agent Spawn Modes, Coordinator Orchestration &amp; Security Isolation</p>
+  <div class="tag-row">
+    <p class="tag">AGENT SPAWN</p>
+    <p class="tag">COORDINATOR</p>
+    <p class="tag">ISOLATION</p>
+    <p class="tag">FORK</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>1 / 22</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .pattern-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2pt solid;
+    padding: 3pt 7pt;
+    margin-bottom: 3pt;
+  }
+  .pc-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; }
+  .pc-desc  { font-size: 6.5pt; color: var(--text-secondary); margin: 0 0 1pt 0; }
+  .pc-code  { font-family: "Courier New", monospace; font-size: 6.5pt; color: var(--accent-teal); margin: 0; }
+  .pc-chaps { font-size: 6pt; color: var(--text-muted); margin: 0; }
+
+  .insight-grid { display: flex; gap: 6pt; }
+  .ig-card { flex: 1; background: var(--bg-card); border-radius: 3pt; padding: 4pt 6pt; border-top: 2pt solid; }
+  .ig-num { font-size: 12pt; font-weight: 700; margin: 0; }
+  .ig-lbl { font-size: 6.5pt; color: var(--text-secondary); margin: 0; }
+  .ig-detail { font-size: 6pt; color: var(--text-muted); margin: 0; }
+</style>
+</head><body style="background:var(--bg-primary);">
+
+<div class="header-bar">
+  <p class="chapter-tag">Course Overview · Cross-Cutting Patterns + Engineering Insights</p>
+  <p class="page-num">16 / 16</p>
+</div>
+
+<div class="slide-content-compact">
+
+  <h2 style="color:var(--accent-indigo); margin-bottom:2pt; font-size:15pt;">跨章工程模式 · Cross-Cutting Engineering Patterns</h2>
+  <p style="font-size:7.5pt; color:var(--text-secondary); margin-bottom:4pt;">
+    8大设计模式在10章中反复出现 — 理解这些模式是掌握整个代码库的捷径
+  </p>
+
+  <div class="two-col" style="gap:8pt;">
+
+  <!-- Left: 4 patterns -->
+  <div class="col">
+    <div class="pattern-card" style="border-left-color: var(--accent-indigo);">
+      <p class="pc-title" style="color:var(--accent-indigo);">P1: AsyncGenerator 状态机</p>
+      <p class="pc-desc">用 yield/return 建模 Continue/Terminal 状态转换，17种transition reason</p>
+      <p class="pc-code">async function* queryLoop() → AsyncGenerator&lt;Event, Terminal&gt;</p>
+      <p class="pc-chaps">Ch1 queryLoop · Ch2 runAgent · Ch5 runToolUse · Ch6 withRetry</p>
+    </div>
+
+    <div class="pattern-card" style="border-left-color: var(--accent-teal);">
+      <p class="pc-title" style="color:var(--accent-teal);">P2: Withhold-Recover (错误扣留)</p>
+      <p class="pc-desc">错误消息先withhold，尝试recovery成功后丢弃，用户无感知；失败才surface</p>
+      <p class="pc-code">isWithheldMaxOutputTokens(msg) → collapse/compact → retry</p>
+      <p class="pc-chaps">Ch1 query.ts:789 · Ch4 autoCompact · Ch6 withRetry 413/529</p>
+    </div>
+
+    <div class="pattern-card" style="border-left-color: var(--accent-coral);">
+      <p class="pc-title" style="color:var(--accent-coral);">P3: N-Tier Permission Pipeline</p>
+      <p class="pc-desc">Deny → Allow → Ask 三层管道，每层可短路跳过后续层级</p>
+      <p class="pc-code">getDenyRule → toolAlwaysAllowed → checkPermissions → classifier</p>
+      <p class="pc-chaps">Ch3 permissions.ts · Ch5 toolExecution · Ch2 Agent权限隔离</p>
+    </div>
+
+    <div class="pattern-card" style="border-left-color: var(--accent-amber);">
+      <p class="pc-title" style="color:var(--accent-amber);">P4: Prompt-Cache-Aware Fork</p>
+      <p class="pc-desc">复制父消息前缀 + placeholder tool_result → 子进程共享 API prompt cache</p>
+      <p class="pc-code">buildForkedMessages() → FORK_PLACEHOLDER_RESULT → ~60%+ cache hit</p>
+      <p class="pc-chaps">Ch2 forkSubagent · Ch7 extractMemories fork · Ch4 compact sideQuery</p>
+    </div>
+  </div>
+
+  <!-- Right: 4 more patterns -->
+  <div class="col">
+    <div class="pattern-card" style="border-left-color: var(--accent-green);">
+      <p class="pc-title" style="color:var(--accent-green);">P5: 4级压缩瀑布 (Compaction Cascade)</p>
+      <p class="pc-desc">micro → snip → collapse → autocompact，每级独立触发，可组合</p>
+      <p class="pc-code">applySnip → microCompact → collapseReadSearch → shouldAutoCompact</p>
+      <p class="pc-chaps">Ch4 compact/ · Ch1 queryLoop pre-API hooks · Ch6 recovery</p>
+    </div>
+
+    <div class="pattern-card" style="border-left-color: var(--accent-purple);">
+      <p class="pc-title" style="color:var(--accent-purple);">P6: sideQuery Semantic Selection</p>
+      <p class="pc-desc">用独立 Sonnet API 调用做语义过滤/选择，不消耗主对话context</p>
+      <p class="pc-code">sideQuery({ system, messages, max_tokens }) → jsonParse(result)</p>
+      <p class="pc-chaps">Ch7 findRelevantMemories · Ch3 YOLO Stage2 · Ch4 compact summary</p>
+    </div>
+
+    <div class="pattern-card" style="border-left-color: var(--accent-teal);">
+      <p class="pc-title" style="color:var(--accent-teal);">P7: BoundedRingBuffer 去重</p>
+      <p class="pc-desc">固定容量环形缓冲 + Set，O(1)添加+查询+自动淘汰，防止幂等性问题</p>
+      <p class="pc-code">BoundedUUIDSet(capacity=2000) → add()/has()/ring eviction</p>
+      <p class="pc-chaps">Ch8 remoteBridgeCore 消息去重 · 通用幂等性保证</p>
+    </div>
+
+    <div class="pattern-card" style="border-left-color: var(--accent-amber);">
+      <p class="pc-title" style="color:var(--accent-amber);">P8: feature() DCE Pattern</p>
+      <p class="pc-desc">960处 feature() 调用，89个独立flag，构建时dead code elimination</p>
+      <p class="pc-code">feature('KAIROS') × 154 · feature('TRANSCRIPT_CLASSIFIER') × 107</p>
+      <p class="pc-chaps">Ch10 betas.ts + 全部9章 (所有模块都包含feature gate)</p>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- Bottom: numeric insights -->
+  <div class="insight-grid" style="margin-top:4pt;">
+    <div class="ig-card" style="border-top-color:var(--accent-indigo);">
+      <p class="ig-num" style="color:var(--accent-indigo);">17</p>
+      <p class="ig-lbl">Transition Reasons</p>
+      <p class="ig-detail">7 continue + 10 terminal</p>
+    </div>
+    <div class="ig-card" style="border-top-color:var(--accent-coral);">
+      <p class="ig-num" style="color:var(--accent-coral);">25+</p>
+      <p class="ig-lbl">SAFE_YOLO Tools</p>
+      <p class="ig-detail">跳过ML分类器直通</p>
+    </div>
+    <div class="ig-card" style="border-top-color:var(--accent-teal);">
+      <p class="ig-num" style="color:var(--accent-teal);">40+</p>
+      <p class="ig-lbl">Built-in Tools</p>
+      <p class="ig-detail">43 tool directories</p>
+    </div>
+    <div class="ig-card" style="border-top-color:var(--accent-amber);">
+      <p class="ig-num" style="color:var(--accent-amber);">8</p>
+      <p class="ig-lbl">COMPACTABLE Tools</p>
+      <p class="ig-detail">Read/Bash/Grep/Glob/...</p>
+    </div>
+    <div class="ig-card" style="border-top-color:var(--accent-green);">
+      <p class="ig-num" style="color:var(--accent-green);">32</p>
+      <p class="ig-lbl">SPAWN_SESSIONS</p>
+      <p class="ig-detail">Bridge默认并发会话</p>
+    </div>
+    <div class="ig-card" style="border-top-color:var(--accent-purple);">
+      <p class="ig-num" style="color:var(--accent-purple);">2,000</p>
+      <p class="ig-lbl">UUID Dedup Buffer</p>
+      <p class="ig-detail">环形缓冲去重容量</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · 8大工程模式覆盖全部10章 · 掌握这些模式 = 掌握整个代码库</p>
+  <p>P1(AsyncGen) + P2(Withhold) + P3(N-Tier) 是最核心的三个模式 — 在培训中反复出现</p>
+</div>
+
+</body></html>

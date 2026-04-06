@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Hook</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">15 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>useReplBridge / React Hook</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Client-side bridge management with failure tracking and auto-dismiss</p>
+  <div class="two-col">
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-teal);">Failure Tracking</h4>
+        <ul style="font-size:9pt;">
+          <li><p style="font-size:9pt;">Count consecutive connection failures</p></li>
+          <li><p style="font-size:9pt;">After <span style="font-family:Courier New,monospace;color:var(--text-code-const);">MAX_FAILURES=3</span>, stop retrying</p></li>
+          <li><p style="font-size:9pt;">Display error notification to user</p></li>
+          <li><p style="font-size:9pt;">Reset counter on successful connect</p></li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-amber);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-amber);">Auto-Dismiss</h4>
+        <p style="font-size:9pt;"><span style="font-family:Courier New,monospace;color:var(--text-code-const);">FAILURE_DISMISS = 10s</span></p>
+        <p style="font-size:8pt;">Error notifications auto-dismiss after 10 seconds. Prevents notification pile-up during unstable connections.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div style="background:var(--bg-code);border-radius:4pt;padding:8pt 10pt;margin-bottom:6pt;">
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-muted);margin:0;">// useReplBridge.tsx</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;color:var(--text-code-fn);">useReplBridge() {</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  failures: <span style="color:var(--text-code-const);">0</span></p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  MAX_FAILURES: <span style="color:var(--text-code-const);">3</span></p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  FAILURE_DISMISS: <span style="color:var(--text-code-const);">10_000</span>ms</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:2pt 0;color:var(--text-muted);">&nbsp;</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  onConnect: reset(failures)</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  onError: failures++</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  if failures &gt;= MAX: giveUp()</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">}</p>
+      </div>
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-coral);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-coral);">Reconnection Strategy</h4>
+        <p style="font-size:8pt;">On disconnect: attempt reconnect with exponential backoff. If bridge handle supports reconnect(), use seq-num recovery. Otherwise, reinitialize from scratch.</p>
+      </div>
+      <div style="display:flex;gap:8pt;">
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt;text-align:center;">
+          <p style="font-size:14pt;font-weight:700;color:var(--accent-coral);margin:0;">3</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">max failures</p>
+        </div>
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt;text-align:center;">
+          <p style="font-size:14pt;font-weight:700;color:var(--accent-amber);margin:0;">10s</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">dismiss timeout</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

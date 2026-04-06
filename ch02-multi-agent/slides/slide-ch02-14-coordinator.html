@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Coordinator Mode</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-purple: #9F7AEA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 14pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-50 { flex: 0 0 48%; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-accent-indigo { background: var(--bg-card); border-left: 3pt solid var(--accent-indigo); border-radius: 0 5pt 5pt 0; padding: 8pt 12pt; margin-bottom: 5pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; margin-bottom: 4pt; }
+.metric-row { display: flex; gap: 8pt; margin-bottom: 6pt; }
+.metric-card { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 8pt 10pt; text-align: center; }
+.metric-value { font-size: 16pt; font-weight: 700; color: var(--accent-purple); margin: 0; }
+.metric-label { font-size: 8pt; color: var(--text-secondary); margin: 0; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">14 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>Coordinator模式 Coordinator Mode</h2>
+  <div class="metric-row">
+    <div class="metric-card" style="border-top: 2pt solid var(--accent-purple);">
+      <p class="metric-value">Agent</p>
+      <p class="metric-label">Spawn Workers</p>
+    </div>
+    <div class="metric-card" style="border-top: 2pt solid var(--accent-purple);">
+      <p class="metric-value">SendMessage</p>
+      <p class="metric-label">Continue Workers</p>
+    </div>
+    <div class="metric-card" style="border-top: 2pt solid var(--accent-purple);">
+      <p class="metric-value">TaskStop</p>
+      <p class="metric-label">Stop Workers</p>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col-50">
+      <div class="card-accent-indigo">
+        <h4>纯编排者角色</h4>
+        <ul>
+          <li>Coordinator不直接执行代码</li>
+          <li>仅使用3个工具派生和管理worker</li>
+          <li>通过环境变量 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">CLAUDE_CODE_COORDINATOR_MODE</span> 启用</li>
+          <li>需要 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">COORDINATOR_MODE</span> feature flag</li>
+          <li>与 Fork模式互斥</li>
+        </ul>
+      </div>
+      <div class="card-sm">
+        <h4>Worker工具集</h4>
+        <p>Worker拥有完整工具: Bash, Read, Edit, Write, Grep, Glob, WebSearch, WebFetch, Skill, NotebookEdit, TodoWrite, ToolSearch, Worktree...</p>
+      </div>
+    </div>
+    <div class="col-50">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">coordinatorMode.ts - system prompt</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">function</span> <span style="color:var(--text-code-fn);">getCoordinatorSystemPrompt</span>() {</p>
+        <p style="margin:0;">  <span style="color:var(--text-code-kw);">return</span> `You are a</p>
+        <p style="margin:0;">    <span style="color:var(--text-code-const);">**coordinator**</span>.</p>
+        <p style="margin:0;">    Your job is to:</p>
+        <p style="margin:0;">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> Help user achieve their goal</p>
+        <p style="margin:0;">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> Direct workers to research,</p>
+        <p style="margin:0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implement and verify</p>
+        <p style="margin:0;">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> Synthesize results</p>
+        <p style="margin:0;">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> Answer questions directly</p>
+        <p style="margin:0;">      when possible`;</p>
+        <p style="margin:0;">}</p>
+      </div>
+      <div class="card-sm" style="border-left: 2pt solid var(--accent-amber);">
+        <p><span style="color: var(--accent-amber); font-weight: 700;">Session Match:</span> matchSessionMode() 在resume时自动切换coordinator/normal模式, 确保session状态一致</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>14 / 22</p>
+</div>
+</body>
+</html>

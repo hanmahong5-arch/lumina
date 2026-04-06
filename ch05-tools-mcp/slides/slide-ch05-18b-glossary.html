@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 05 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Tool -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Tool / 工具</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Function agent calls to interact with external world — 像厨师的刀和锅，模型是厨师</p>
+    </div>
+    <!-- MCP -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">MCP / 模型上下文协议</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Open standard for LLM-to-tool connections via stdio/SSE/HTTP — 像USB协议，AI和工具的通用接口</p>
+    </div>
+    <!-- MCP Server -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">MCP Server / MCP 服务器</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Service exposing tools/resources via MCP protocol — 像USB设备，插上就能被主机识别使用</p>
+    </div>
+    <!-- Tool Schema -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Tool Schema / 工具模式</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">JSON Schema defining tool name, description, params — 像说明书，告诉模型工具怎么用</p>
+    </div>
+    <!-- Tool Pool -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Tool Pool / 工具池</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Centralized registry assembled per-turn with cache sorting — 像工具箱，集中管理按分区排序</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Deferred Tool -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Deferred Tool / 延迟工具</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Schema fetched on-demand, only name visible initially — 像懒加载图片，滚到才加载</p>
+    </div>
+    <!-- Function Calling -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Function Calling / 函数调用</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">LLM generates structured JSON to request execution — 像语音助手调用APP，"帮我叫个车"</p>
+    </div>
+    <!-- Structured Output -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Structured Output / 结构化输出</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Force model output to conform to JSON schema — 像填表，按固定格式填写不自由发挥</p>
+    </div>
+    <!-- Skill Tool -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Skill Tool / 技能工具</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Injects domain-specific prompts and workflows on demand — 像专家顾问，带着专业知识随叫随到</p>
+    </div>
+    <!-- Lazy Loading -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Lazy Loading / 懒加载</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Defer resource loading until needed to save memory — 像网页懒加载图片，滚到才加载</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

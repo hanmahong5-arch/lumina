@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 03 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Permission Mode -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Permission Mode / 权限模式</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Five trust levels from "always ask" to "bypass all" — 像手机定位权限：始终允许/询问/拒绝</p>
+    </div>
+    <!-- Deny by Default -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Deny by Default / 默认拒绝</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Uncertain actions are rejected rather than allowed — 像机场安检，不确定就不放行</p>
+    </div>
+    <!-- YOLO Classifier -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #9F7AEA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#9F7AEA; margin:0;">YOLO Classifier / YOLO 分类器</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Two-stage LLM classifier: fast 64-token + deep 4096-token — 像法院简易程序和普通程序</p>
+    </div>
+    <!-- Chain-of-Thought -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #9F7AEA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#9F7AEA; margin:0;">Chain-of-Thought (CoT) / 思维链</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Model reasons step-by-step for 30%+ accuracy gain — 像"请展示解题步骤"，先想清楚再答</p>
+    </div>
+    <!-- Prompt Injection -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Prompt Injection / 提示注入</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Malicious instructions hidden in content to hijack model — 像信件里夹带给邮递员的假指令</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Circuit Breaker -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Circuit Breaker / 熔断器</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Stop retrying after N failures to prevent cascade — 像保险丝，电流过载自动断电保护</p>
+    </div>
+    <!-- Denial Tracking -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Denial Tracking / 拒绝追踪</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Auto-fallback after 3 consecutive or 20 total denials — 像信用卡连续输错密码被锁定</p>
+    </div>
+    <!-- Human-in-the-Loop -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Human-in-the-Loop / 人在回路</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Pauses for human approval before dangerous actions — 像手术前签字确认，关键操作需人类点头</p>
+    </div>
+    <!-- Speculative Check -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #9F7AEA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#9F7AEA; margin:0;">Speculative Check / 推测性检查</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Pre-compute classification in parallel for readiness — 像餐厅预判点菜，提前备菜上菜更快</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

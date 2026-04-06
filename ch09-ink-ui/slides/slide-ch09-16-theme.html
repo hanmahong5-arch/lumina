@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 09 - Theme</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:15pt;font-weight:700;margin:0 0 5pt 0;line-height:1.15}
+h4{font-size:9pt;font-weight:700;margin:0 0 1pt 0;line-height:1.2}
+p{font-size:8pt;line-height:1.3;margin:0 0 1pt 0}
+ul{font-size:8pt;line-height:1.3;margin:0;padding-left:12pt}
+li{margin-bottom:1pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:4pt 6pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:6pt 8pt;margin-bottom:4pt}
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:5pt 8pt;margin-bottom:3pt}
+.compare-grid{display:flex;gap:8pt;margin-bottom:6pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;border:1.5pt solid var(--accent-indigo)}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 | INK UI</p>
+  <p class="page-num">16 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>ThemeProvider: 主题系统</h2>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-indigo);">Dark Mode</h4>
+      <p>Default theme. Optimized for typical terminal backgrounds. High contrast ANSI colors.</p>
+    </div>
+    <div class="compare-col">
+      <h4>Light Mode</h4>
+      <p>Inverted palette for light terminal backgrounds. Adjusted contrast ratios.</p>
+    </div>
+    <div class="compare-col">
+      <h4>Auto Mode</h4>
+      <p>Detects terminal background via OSC 11 query. Falls back to dark.</p>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p>// OSC 11 background detection</p>
+        <p>// Send: \x1b]11;?\x07</p>
+        <p>// Receive: \x1b]11;rgb:RRRR/GGGG/BBBB\x07</p>
+        <p>&nbsp;</p>
+        <p>function detectBackground() {</p>
+        <p>&nbsp;&nbsp;process.stdout.write('\x1b]11;?\x07');</p>
+        <p>&nbsp;&nbsp;// Parse response from stdin</p>
+        <p>&nbsp;&nbsp;// Luminance > 0.5 = light theme</p>
+        <p>}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4>Zustand Theme Store</h4>
+        <ul>
+          <li><p>Global state via Zustand (not React context)</p></li>
+          <li><p>Persisted to user settings</p></li>
+          <li><p>OSC 11 watcher for real-time detection</p></li>
+          <li><p>ThemePicker component for manual override</p></li>
+        </ul>
+      </div>
+      <div class="card-accent-teal">
+        <h4>Why Zustand over Context?</h4>
+        <p>Theme changes affect every component. Zustand selector pattern prevents full-tree re-renders. Components subscribe only to their used theme properties.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Source: src/components/design-system/ThemeProvider.tsx, src/components/ThemePicker.tsx</p>
+  <p>Ch09 Ink UI</p>
+</div>
+</body>
+</html>

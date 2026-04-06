@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Async Agent</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 9pt; line-height: 1.35; margin: 0 0 2pt 0; }
+ul { font-size: 9pt; line-height: 1.35; margin: 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 14pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-50 { flex: 0 0 48%; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-accent-indigo { background: var(--bg-card); border-left: 3pt solid var(--accent-indigo); border-radius: 0 5pt 5pt 0; padding: 5pt 10pt; margin-bottom: 3pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 4pt 8pt; margin-bottom: 3pt; }
+.pipeline { display: flex; gap: 6pt; align-items: stretch; margin-bottom: 6pt; }
+.pipeline-step { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 4pt 6pt; text-align: center; border-top: 2pt solid var(--accent-indigo); }
+.pipeline-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 14pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">5 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>异步Agent模式 Async Agent</h2>
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <p style="font-size: 8pt; color: var(--accent-indigo); font-weight: 700;">1. SPAWN</p>
+      <p style="font-size: 8pt;">LocalAgentTask</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#8594;</p></div>
+    <div class="pipeline-step">
+      <p style="font-size: 8pt; color: var(--accent-indigo); font-weight: 700;">2. RUN</p>
+      <p style="font-size: 8pt;">Independent Loop</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#8594;</p></div>
+    <div class="pipeline-step">
+      <p style="font-size: 8pt; color: var(--accent-indigo); font-weight: 700;">3. NOTIFY</p>
+      <p style="font-size: 8pt;">XML Notification</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#8594;</p></div>
+    <div class="pipeline-step">
+      <p style="font-size: 8pt; color: var(--accent-indigo); font-weight: 700;">4. CLEANUP</p>
+      <p style="font-size: 8pt;">Shell Kill + MCP</p>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col-50">
+      <div class="card-accent-indigo">
+        <h4>核心特征</h4>
+        <ul>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">独立AbortController</span> - 硬编码创建, 与父级解耦</li>
+          <li>后台运行: 不阻塞父级查询循环</li>
+          <li>通过 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">LocalAgentTask</span> 管理生命周期</li>
+          <li>结果通过 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">&lt;task-notification&gt;</span> XML注入父对话</li>
+        </ul>
+      </div>
+      <div class="card-sm">
+        <h4>工具限制</h4>
+        <p>异步agent仅可使用 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">ASYNC_AGENT_ALLOWED_TOOLS</span> 白名单中的工具:</p>
+        <p style="font-size: 8pt; color: var(--text-secondary);">Read, Grep, Glob, Bash, Edit, Write, NotebookEdit, Skill, WebSearch, WebFetch, TodoWrite, ToolSearch, Worktree</p>
+      </div>
+    </div>
+    <div class="col-50">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">Async dispatch (AgentTool.tsx)</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">const</span> abortController =</p>
+        <p style="margin:0;">  <span style="color:var(--text-code-kw);">new</span> <span style="color:var(--text-code-fn);">AbortController</span>();</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;"><span style="color:var(--text-muted);">// Fire-and-forget in background</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-fn);">runAgentInBackground</span>({</p>
+        <p style="margin:0;">  agentDefinition, isAsync: <span style="color:var(--text-code-const);">true</span>,</p>
+        <p style="margin:0;">  override: { abortController },</p>
+        <p style="margin:0;">});</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;"><span style="color:var(--text-muted);">// On completion:</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-fn);">enqueueAgentNotification</span>(</p>
+        <p style="margin:0;">  agentId, result, <span style="color:var(--text-code-const);">'complete'</span></p>
+        <p style="margin:0;">);</p>
+      </div>
+      <div class="card-sm" style="border-left: 2pt solid var(--accent-amber);">
+        <p><span style="color: var(--accent-amber); font-weight: 700;">Key:</span> 异步agent的AbortController是硬编码新建的, 确保父级取消不会干扰正在运行的子任务</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>5 / 22</p>
+</div>
+</body>
+</html>

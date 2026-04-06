@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Edge Cases</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 10pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.edge-list{display:flex;flex-direction:column;gap:8pt;flex:1}
+.edge-card{display:flex;gap:12pt;background:var(--bg-card);border-radius:5pt;padding:10pt 14pt}
+.edge-num{font-size:18pt;font-weight:700;color:var(--accent-coral);min-width:24pt}
+.edge-content{flex:1}
+h3{font-size:11pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+.metric{font-size:12pt;font-weight:700;color:var(--accent-amber);margin:2pt 0}
+.fn{font-family:'Courier New',monospace;color:var(--text-code-fn);font-size:8pt}
+.ct{font-family:'Courier New',monospace;color:var(--text-code-const);font-size:8pt}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">19 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>边界情况分析</h1>
+  <div class="edge-list">
+    <div class="edge-card">
+      <p class="edge-num">1</p>
+      <div class="edge-content">
+        <h3>413 连续失败</h3>
+        <p class="metric">1,279 sessions / 50+ consecutive failures (up to 3,272)</p>
+        <p>reactive_compact 单次尝试后放弃 (<span class="fn">hasAttemptedReactiveCompact</span> = true)。极端长对话中, 压缩后的摘要本身可能仍然超限。withhold 机制确保最终错误才暴露给用户。</p>
+      </div>
+    </div>
+    <div class="edge-card">
+      <p class="edge-num">2</p>
+      <div class="edge-content">
+        <h3>autocompact 熔断</h3>
+        <p class="metric">MAX_CONSECUTIVE_AUTOCOMPACT_FAILURES = 3</p>
+        <p>连续3次 autocompact 失败后停止尝试, 防止浪费 API 调用。每天约 ~250K API calls 的节省。熔断后回退到 snip/micro 两级压缩。</p>
+      </div>
+    </div>
+    <div class="edge-card">
+      <p class="edge-num">3</p>
+      <div class="edge-content">
+        <h3>fallback model 切换</h3>
+        <p><span class="fn">FallbackTriggeredError</span> &rarr; 清空 assistant 消息 &rarr; 插入 <span class="fn">TombstoneMessage</span> &rarr; 切换到 fallbackModel。保证消息交替规则 (user/assistant) 不被破坏。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

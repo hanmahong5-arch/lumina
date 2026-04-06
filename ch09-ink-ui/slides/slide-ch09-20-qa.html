@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 09 - Q&A</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.qa-slide{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60pt;background:var(--bg-primary);flex:1}
+.qa-slide h2{font-size:24pt;color:var(--accent-indigo);margin:0 0 16pt 0;font-weight:700}
+.qa-slide p{font-size:12pt;color:var(--text-secondary);margin:0 0 8pt 0}
+.question{font-size:14pt;color:var(--accent-amber);margin-top:24pt;font-style:italic}
+</style>
+</head>
+<body>
+<div class="qa-slide">
+  <h2>Q &amp; A</h2>
+  <p>Chapter 09: 终端里的React - Ink渲染引擎与交互工程</p>
+  <p class="question">"React在终端的性能上限在哪?"</p>
+  <p style="font-size:10pt;color:var(--text-muted);margin-top:20pt;">Discussion: Ink 16ms batch vs native curses, ANSI escape overhead,<br/>terminal emulator rendering bottleneck, and when to drop to raw stdout.</p>
+</div>
+</body>
+</html>

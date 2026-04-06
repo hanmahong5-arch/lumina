@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Denial Tracking</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --text-code-str: var(--text-code-str);
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.35; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.metric-row { display: flex; gap: 8pt; margin-bottom: 4pt; }
+.metric-card { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 4pt 6pt; text-align: center; }
+.metric-value { font-size: 16pt; font-weight: 700; color: var(--accent-coral); margin: 0; }
+.metric-label { font-size: 7pt; color: var(--text-secondary); margin: 0; }
+.pipeline { display: flex; gap: 4pt; align-items: stretch; margin: 4pt 0; }
+.pipeline-step { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 4pt 6pt; text-align: center; border-top: 2pt solid var(--accent-coral); }
+.pipeline-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 12pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">12 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>拒绝追踪 Denial Tracking</h2>
+  <p style="color:var(--text-secondary); margin-bottom:4pt;">连续 / 累计拒绝限制 + 熔断器机制，防止模型陷入拒绝循环</p>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <p class="metric-value">3</p>
+      <p class="metric-label">CONSECUTIVE_DENIAL_LIMIT</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value">20</p>
+      <p class="metric-label">TOTAL_DENIAL_LIMIT</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-amber);">abort</p>
+      <p class="metric-label">headless 触发动作</p>
+    </div>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <p style="font-size:9pt; font-weight:700; color:var(--accent-amber);">拒绝 #1</p>
+      <p style="font-size:7pt; color:var(--text-secondary);">记录 +1</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <p style="font-size:9pt; font-weight:700; color:var(--accent-amber);">拒绝 #2</p>
+      <p style="font-size:7pt; color:var(--text-secondary);">记录 +1</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step" style="border-top-color:var(--accent-coral);">
+      <p style="font-size:9pt; font-weight:700; color:var(--accent-coral);">拒绝 #3</p>
+      <p style="font-size:7pt; color:var(--text-secondary);">触发熔断</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step" style="border-top-color:var(--accent-coral); background:var(--accent-coral);">
+      <p style="font-size:9pt; font-weight:700; color:var(--bg-primary);">CIRCUIT BREAK</p>
+      <p style="font-size:7pt; color:var(--bg-primary);">abort / notify</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// autoModeDenials.ts</p>
+        <p><span style="color:var(--text-code-kw);">if</span> (consecutiveDenials &gt;= 3) {</p>
+        <p>  <span style="color:var(--text-code-kw);">if</span> (isHeadless) {</p>
+        <p>    <span style="color:var(--text-code-kw);">throw</span> <span style="color:var(--text-code-kw);">new</span> AbortError(</p>
+        <p>      <span style="color:var(--text-code-str);">'Too many consecutive denials'</span></p>
+        <p>    );</p>
+        <p>  }</p>
+        <p>  notifyUser(denialWarning);</p>
+        <p>}</p>
+        <p></p>
+        <p><span style="color:var(--text-code-kw);">if</span> (totalDenials &gt;= 20) {</p>
+        <p>  forceStopAutoMode();</p>
+        <p>}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-coral);">连续拒绝 (Consecutive)</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">同一轮对话中连续 3 次拒绝 &rarr; 熔断。防止模型反复尝试同一危险操作。任何 allow 重置计数器。</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-amber);">累计拒绝 (Total)</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">会话内累计 20 次拒绝 &rarr; 强制退出 auto mode。表明模型行为可能已偏离预期。</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-indigo);">Headless 特殊处理</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">CI/CD 场景无人值守，熔断直接 abort 进程而非弹窗通知。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

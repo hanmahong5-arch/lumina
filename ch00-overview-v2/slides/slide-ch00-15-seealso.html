@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  /* Compact card styles for See Also slides */
+  .ref-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid;
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .ref-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; }
+  .ref-desc  { font-size: 6.5pt; color: var(--text-secondary); margin: 0; line-height: 1.35; }
+  .link-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid var(--accent-teal);
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .link-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; color: var(--accent-teal); }
+  .link-url   { font-size: 6pt; color: var(--text-muted); margin: 0; font-family: "Courier New", monospace; word-break: break-all; }
+  .link-why   { font-size: 6.5pt; color: var(--text-secondary); margin: 0; }
+  .section-note {
+    background: var(--bg-secondary);
+    border-radius: 3pt;
+    padding: 3pt 6pt;
+    margin-top: 4pt;
+  }
+  .section-note p { font-size: 6.5pt; color: var(--text-muted); margin: 0; }
+</style>
+</head><body style="background:var(--bg-primary);">
+
+<div class="header-bar">
+  <p class="chapter-tag">Ch00 Overview · See Also</p>
+  <p class="page-num">15 / 16</p>
+</div>
+
+<div class="slide-content-compact" style="padding:12pt 28pt 6pt 28pt;" style="display:flex; gap:10pt;">
+
+  <!-- Left: Cross-Chapter Links -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-indigo); margin-bottom:2pt; font-size:10pt;">Cross-Chapter Links / 跨章关联</h3>
+
+    <div class="ref-card" style="border-left-color: var(--accent-indigo);">
+      <p class="ref-title" style="color:var(--accent-indigo);">Ch01 Core Engine — 架构核心</p>
+      <p class="ref-desc">Overview 中的 Architecture Map 直接对应 Ch01 的 QueryEngine 主循环解析</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-teal);">
+      <p class="ref-title" style="color:var(--accent-teal);">Ch04 Token Management — 常量参考</p>
+      <p class="ref-desc">Constants Reference (slide 11) 中的 token 阈值在 Ch04 中有完整推导过程</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-coral);">
+      <p class="ref-title" style="color:var(--accent-coral);">Ch05 Tools & MCP — 工具清单</p>
+      <p class="ref-desc">Top Files (slide 10) 中的 43 个 tool 目录在 Ch05 中按类别逐一解析</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-amber);">
+      <p class="ref-title" style="color:var(--accent-amber);">Ch10 Feature & Cost — Feature Gate</p>
+      <p class="ref-desc">Cross-Cutting Patterns (slide 12) 中的 P8:feature() 在 Ch10 中展开讲解 89 个 flag</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-purple);">
+      <p class="ref-title" style="color:var(--accent-purple);">Ch02-Ch09 — 工程模式全覆盖</p>
+      <p class="ref-desc">8 大 Cross-Cutting Patterns 分别在各章中有独立深度剖析</p>
+    </div>
+
+    <div class="section-note">
+      <p>Overview 是全局索引 — 每个概念都在后续章节中展开。建议先通读 Overview 再按兴趣跳转。</p>
+    </div>
+  </div>
+
+  <!-- Right: Further Reading -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-teal); margin-bottom:2pt; font-size:10pt;">Further Reading / 延伸阅读</h3>
+
+    <div class="link-card">
+      <p class="link-title">Anthropic Messages API Reference</p>
+      <p class="link-url">https://docs.anthropic.com/en/api/messages</p>
+      <p class="link-why">Overview 中所有 API 交互流程的官方参考 — streaming、tool_use、prompt caching</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">Model Context Protocol (MCP) Specification</p>
+      <p class="link-url">https://modelcontextprotocol.io/specification</p>
+      <p class="link-why">Architecture Map 中 MCP 层的协议标准 — transport、tool schema、resource 定义</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">Ink: React for Interactive CLIs</p>
+      <p class="link-url">https://github.com/vadimdemedes/ink</p>
+      <p class="link-why">整个 UI 层的基础框架 — 理解 Overview 中 UI 架构部分的前置知识</p>
+    </div>
+
+    <div class="section-note">
+      <p>提示: 每章的 See Also 页面都包含该章特定的外部资源链接。Overview 仅列出最通用的三个入口。</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Course Overview</p>
+  <p>See Also</p>
+</div>
+
+</body></html>

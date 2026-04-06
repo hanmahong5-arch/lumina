@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - vs OpenAI Assistants</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 10pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">17 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>横向对比: OpenAI Assistants API</h1>
+  <!-- Header row -->
+  <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">维度</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; font-weight:700; color:#6C63FF; margin:0;">Claude Code</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">OpenAI Assistants</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">执行位置</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">本地进程 (客户端)</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">服务端 (hosted Run)</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">状态管理</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">客户端 mutable Messages[]</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">服务端 Run object + Thread</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">透明度</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">完全可观测, transition 可审计</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">黑盒轮询 Run.status</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Token 恢复</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">withhold + 多策略分级恢复</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">truncation_strategy 单一配置</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">工具并发</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">声明式 readOnly 标注</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">模型决定 parallel_tool_calls</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">上下文窗口</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">四级压缩 + cache-aware 排序</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">auto / last_messages 截断</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">离线能力</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">完全离线 (本地工具链)</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:6pt 10pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">依赖服务端在线</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .ref-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid;
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .ref-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; }
+  .ref-desc  { font-size: 6.5pt; color: var(--text-secondary); margin: 0; line-height: 1.35; }
+  .link-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid var(--accent-teal);
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .link-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; color: var(--accent-teal); }
+  .link-url   { font-size: 6pt; color: var(--text-muted); margin: 0; font-family: "Courier New", monospace; word-break: break-all; }
+  .link-why   { font-size: 6.5pt; color: var(--text-secondary); margin: 0; }
+  .section-note {
+    background: var(--bg-secondary);
+    border-radius: 3pt;
+    padding: 3pt 6pt;
+    margin-top: 4pt;
+  }
+  .section-note p { font-size: 6.5pt; color: var(--text-muted); margin: 0; }
+</style>
+</head><body style="background:var(--bg-primary);">
+
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 10 · See Also</p>
+  <p class="page-num">References</p>
+</div>
+
+<div class="slide-content-compact" style="padding:12pt 28pt 6pt 28pt;" style="display:flex; gap:10pt;">
+
+  <!-- Left: Cross-Chapter Links -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-indigo); margin-bottom:2pt; font-size:10pt;">Cross-Chapter Links / 跨章关联</h3>
+
+    <div class="ref-card" style="border-left-color: var(--accent-coral);">
+      <p class="ref-title" style="color:var(--accent-coral);">Ch06 Resilience → Feature Gate + 容错</p>
+      <p class="ref-desc">feature() 返回 false 时的 fallback 路径需要与 Resilience 层的降级策略协同</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-indigo);">
+      <p class="ref-title" style="color:var(--accent-indigo);">Ch01-Ch09 → 全面 Feature Gate 覆盖</p>
+      <p class="ref-desc">960 处 feature() 调用分布在所有 9 章 — 89 个 flag 控制全代码库的功能开关</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-amber);">
+      <p class="ref-title" style="color:var(--accent-amber);">Ch04 Token Management → 成本计算</p>
+      <p class="ref-desc">statsCache 追踪每次 API 调用的 token 消耗 — 与 prompt caching 节省的成本对比</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-purple);">
+      <p class="ref-title" style="color:var(--accent-purple);">Self-Contained — 独立运行</p>
+      <p class="ref-desc">Feature gate 和 cost tracking 不依赖其他章的功能 — betas.ts 是纯函数模块</p>
+    </div>
+
+    <div class="section-note">
+      <p>Feature Gate 是最广泛的横切关注点 — 89 个 flag 影响所有章节的功能可用性。</p>
+    </div>
+  </div>
+
+  <!-- Right: Further Reading -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-teal); margin-bottom:2pt; font-size:10pt;">Further Reading / 延伸阅读</h3>
+
+    <div class="link-card">
+      <p class="link-title">GrowthBook Feature Flagging Docs</p>
+      <p class="link-url">https://docs.growthbook.io/</p>
+      <p class="link-why">开源 feature flag 平台 — 对比 Claude Code 的编译时 flag vs 运行时 A/B 测试方案</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">Anthropic API Pricing</p>
+      <p class="link-url">https://www.anthropic.com/pricing</p>
+      <p class="link-why">input/output/cache token 定价 — statsCache 中的成本计算公式直接参考此页面</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">Martin Fowler — Feature Toggles</p>
+      <p class="link-url">https://martinfowler.com/articles/feature-toggles.html</p>
+      <p class="link-why">Feature Flag 的分类体系 (release/experiment/ops/permission) — Claude Code 主要使用 release toggle</p>
+    </div>
+
+    <div class="section-note">
+      <p>feature() 是编译时常量 — 构建时 Dead Code Elimination 移除未启用分支，零运行时开销。</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Feature Gate &amp; Cost</p>
+  <p>See Also</p>
+</div>
+
+</body></html>

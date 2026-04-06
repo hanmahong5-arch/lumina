@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 10 - Cost State</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:15pt;font-weight:700;margin:0 0 5pt 0;line-height:1.15}
+h4{font-size:9pt;font-weight:700;margin:0 0 1pt 0;line-height:1.2}
+p{font-size:8pt;line-height:1.3;margin:0 0 1pt 0}
+ul{font-size:8pt;line-height:1.3;margin:0;padding-left:12pt}
+li{margin-bottom:1pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:4pt 6pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:6pt 8pt;margin-bottom:4pt}
+.card-accent-indigo{background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:5pt 8pt;margin-bottom:3pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 10 | FEATURE GATE + COST</p>
+  <p class="page-num">14 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>成本状态: 累计追踪</h2>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p>// StoredCostState structure</p>
+        <p>interface StoredCostState {</p>
+        <p>&nbsp;&nbsp;totalSessionCost: number;  // USD</p>
+        <p>&nbsp;&nbsp;modelUsage: Record&lt;string, ModelUsage&gt;;</p>
+        <p>}</p>
+        <p>&nbsp;</p>
+        <p>interface ModelUsage {</p>
+        <p>&nbsp;&nbsp;inputTokens: number;</p>
+        <p>&nbsp;&nbsp;outputTokens: number;</p>
+        <p>&nbsp;&nbsp;cacheReadTokens: number;</p>
+        <p>&nbsp;&nbsp;cacheWriteTokens: number;</p>
+        <p>&nbsp;&nbsp;costUSD: number;</p>
+        <p>&nbsp;&nbsp;requestCount: number;</p>
+        <p>}</p>
+      </div>
+      <div class="code-block">
+        <p>// addToTotalSessionCost()</p>
+        <p>function addToTotalSessionCost(usage) {</p>
+        <p>&nbsp;&nbsp;const cost = calculateUSDCost(usage);</p>
+        <p>&nbsp;&nbsp;state.totalSessionCost += cost;</p>
+        <p>&nbsp;&nbsp;state.modelUsage[model].costUSD += cost;</p>
+        <p>&nbsp;&nbsp;state.modelUsage[model].requestCount++;</p>
+        <p>}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-accent-indigo">
+        <h4>Per-Model Tracking</h4>
+        <p>Each model has separate ModelUsage accumulator. When switching models mid-session (e.g., Sonnet for coding, Haiku for classification), costs are attributed correctly.</p>
+      </div>
+      <div class="card">
+        <h4>Token Categories</h4>
+        <ul>
+          <li><p><span style="color:var(--accent-teal);">inputTokens</span> - User messages + system prompt</p></li>
+          <li><p><span style="color:var(--accent-teal);">outputTokens</span> - Assistant responses + tool calls</p></li>
+          <li><p><span style="color:var(--accent-teal);">cacheReadTokens</span> - Reused cached prompt (90% discount)</p></li>
+          <li><p><span style="color:var(--accent-teal);">cacheWriteTokens</span> - First-time cache creation (1.25x)</p></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>StatusLine Display</h4>
+        <p>Cost is shown in real-time on StatusLine: <span style="font-family:'Courier New',monospace;color:var(--accent-amber);">$0.08</span>. Updated after each API response. Color changes at thresholds ($1, $5, $10).</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Source: src/utils/statsCache.ts</p>
+  <p>Ch10 Feature Gate + Cost</p>
+</div>
+</body>
+</html>

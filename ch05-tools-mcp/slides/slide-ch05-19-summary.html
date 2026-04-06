@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - Summary</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.takeaway-list{display:flex;flex-direction:column;gap:6pt}
+.takeaway-item{display:flex;gap:10pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:8pt 14pt}
+.takeaway-num{font-size:16pt;font-weight:700;color:var(--accent-indigo);min-width:24pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">19 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>5 Takeaways</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">Key lessons from the tool orchestration engine</p>
+  <div class="takeaway-list">
+    <div class="takeaway-item">
+      <p class="takeaway-num">1</p>
+      <div>
+        <p style="font-size:10pt;font-weight:700;color:var(--accent-teal);">Three-layer gating (DCE + require + isEnabled) gives fine-grained control over tool availability at build, load, and runtime.</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">2</p>
+      <div>
+        <p style="font-size:10pt;font-weight:700;color:var(--accent-indigo);">Cache-aware tool ordering (built-in prefix, MCP suffix) is a zero-cost optimization that significantly improves prompt cache hit rates.</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">3</p>
+      <div>
+        <p style="font-size:10pt;font-weight:700;color:var(--accent-amber);">The 6-stage runToolUse() pipeline bakes safety into execution rather than treating it as an afterthought (Zod, speculative, permission, hooks).</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">4</p>
+      <div>
+        <p style="font-size:10pt;font-weight:700;color:var(--accent-coral);">Deferred tool loading via ToolSearch trades one extra round-trip for 6K-15K tokens saved per request -- a clear win for large tool inventories.</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">5</p>
+      <div>
+        <p style="font-size:10pt;font-weight:700;color:var(--accent-green);">MCP transport resilience (session recovery, auth refresh, asymmetric timeouts) makes external tool integration production-grade.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

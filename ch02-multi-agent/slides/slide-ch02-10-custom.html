@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Custom Agents</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-str: #A5D6FF;
+  --text-code-const: #00D4AA;
+  --text-code-type: #FFA657;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 14pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-50 { flex: 0 0 48%; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-accent-indigo { background: var(--bg-card); border-left: 3pt solid var(--accent-indigo); border-radius: 0 5pt 5pt 0; padding: 6pt 10pt; margin-bottom: 3pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 4pt 8pt; margin-bottom: 3pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">10 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>自定义Agent Custom Agents</h2>
+  <div class="two-col">
+    <div class="col-50">
+      <div class="card-accent-indigo">
+        <h4>loadAgentsDir() 加载流程</h4>
+        <ul>
+          <li>扫描 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">.claude/agents/</span> 目录下的 .md 文件</li>
+          <li>解析 YAML frontmatter 获取配置</li>
+          <li>支持 .json 格式的 agent 定义</li>
+          <li>plugin agents 通过 loadPluginAgents() 加载</li>
+          <li>结果与内置agents合并</li>
+        </ul>
+      </div>
+      <div class="card-sm">
+        <h4>Frontmatter 字段</h4>
+        <ul>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">description</span> - agent描述 (用于whenToUse)</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">tools</span> - 允许的工具列表</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">model</span> - 模型别名 (可选)</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">maxTurns</span> - 最大轮次</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">mcpServers</span> - 专属MCP服务器</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">hooks</span> - agent级别hooks配置</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-50">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">Example: .claude/agents/reviewer.md</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">---</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-fn);">description</span>: <span style="color:var(--text-code-str);">Code review agent</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-fn);">tools</span>:</p>
+        <p style="margin:0;">&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> <span style="color:var(--text-code-str);">Read</span></p>
+        <p style="margin:0;">&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> <span style="color:var(--text-code-str);">Grep</span></p>
+        <p style="margin:0;">&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> <span style="color:var(--text-code-str);">Glob</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-fn);">maxTurns</span>: <span style="color:var(--text-code-const);">20</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-fn);">mcpServers</span>:</p>
+        <p style="margin:0;">&nbsp;&nbsp;<span style="color:var(--text-muted);">&#8211;</span> <span style="color:var(--text-code-str);">github</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">---</span></p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;"><span style="color:var(--text-muted);"># System prompt body below</span></p>
+        <p style="margin:0;">You are a code reviewer...</p>
+      </div>
+      <div class="card-sm">
+        <h4>安全限制</h4>
+        <ul>
+          <li>自定义agent额外禁用 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">CUSTOM_AGENT_DISALLOWED_TOOLS</span></li>
+          <li>plugin-only策略下, 用户自定义MCP被跳过</li>
+          <li>MCP servers仅admin-trusted来源可加载</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>10 / 22</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 10 | FEATURE GATES & COST</p>
+  <p class="page-num">17c / 21</p>
+</div>
+<div class="slide-content-compact" style="padding:14pt 28pt 8pt 28pt;">
+  <h3 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:12pt;">横向对比: Cost Tracking & Feature Control</h3>
+
+  <!-- Header row -->
+  <div style="display:flex; gap:4pt; margin-bottom:2pt;">
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-teal); margin:0;">维度 Dimension</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt; border:1pt solid var(--accent-indigo);">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-indigo); margin:0;">Claude Code</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-amber); margin:0;">OpenAI Usage API</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-coral); margin:0;">LangSmith / LangFuse</p>
+    </div>
+  </div>
+
+  <!-- Row 1: Cost Tracking -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">成本追踪 Cost Tracking</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">客户端实时计算 per-token 价格, streaming 累加, session 内可见</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">服务端事后统计, POST hoc Usage API, 账单延迟</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">观测平台, 外部 LLM 调用追踪, 需自行接入</p>
+    </div>
+  </div>
+
+  <!-- Row 2: Feature Gating -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Feature 门控 Feature Gating</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">客户端 GrowthBook 功能门, GrowthbookClient 实时开关 + beta 预览</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无功能门控; 完全由服务端控制模型可用性</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无功能门控; 观测平台不涉及客户端功能开关</p>
+    </div>
+  </div>
+
+  <!-- Row 3: Usage Analytics -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">用量分析 Usage Analytics</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">内置 sessionStats / costState, 每次 session 结束自动持久化统计</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Usage API 按 org 聚合; 有 Dashboard, 但无 session 粒度</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">专用分析平台, trace/span 级别, 但需外部部署/接入</p>
+    </div>
+  </div>
+
+  <!-- Row 4: Budget Control -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">预算控制 Budget Control</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">session 级预算, settings.json 可配置 costThreshold 拦截超额请求</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">org 级硬上限 (usage limit); 无 session 级细粒度控制</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">纯观测, 无主动拦截能力; 依赖外部告警规则</p>
+    </div>
+  </div>
+
+  <!-- Row 5: Attribution -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">归属归因 Attribution</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">per-session + per-subagent 精确归因, 含 model/capability 标签</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">org/account 聚合; 无客户端会话级拆分</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">trace 级归因 (需手动埋点); session 概念需自行约定</p>
+    </div>
+  </div>
+
+  <!-- Code Example -->
+  <div style="margin-top:6pt;">
+    <div class="code-block" style="font-size:6.5pt; line-height:1.3;">
+      <p style="color:var(--text-code-kw); margin:0 0 1pt 0;">/* Feature Gate Pattern in Claude Code vs alternatives */</p>
+      <p style="color:var(--text-code-fn); margin:0 0 1pt 0;"><strong style="color:var(--accent-indigo);">Claude Code:</strong></p>
+      <p style="color:var(--text-code-str); margin:0 0 2pt 0;">&nbsp;&nbsp;growthbook.eval("cost_display_v2") // local, instant</p>
+      <p style="color:var(--text-code-fn); margin:0 0 1pt 0;"><strong style="color:var(--accent-amber);">OpenAI/SDK:</strong></p>
+      <p style="color:var(--text-code-str); margin:0;">&nbsp;&nbsp;// no gate — endpoint just works or 429s</p>
+    </div>
+  </div>
+
+  <div style="margin-top:4pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:3pt 6pt;">
+    <p style="font-size:6.5pt; color:var(--text-secondary); line-height:1.35; margin:0;"><strong style="color:var(--accent-indigo);">Why Claude Code's Approach is Different:</strong> OpenAI Usage API 是"先花钱, 后知道"——服务端事后统计。LangSmith/LangFuse 是"看仪表盘"——需要接入、观测、但不会阻止你。Claude Code 是<strong style="color:var(--accent-green);">"门控 + 实时拦截"</strong>——GrowthBook 功能门在客户端即时求值, costState 流式累加 token 价格, 到预算阈值直接拦截而非事后告警。不是"你花了多少", 而是"你现在能不能花"。</p>
+  </div>
+
+</div>
+<div class="slide-footer">
+  <p>Sources: feature.ts, GrowthbookClient.ts, costState.ts, sessionStats.ts | OpenAI Usage API docs | LangSmith/LangFuse docs</p>
+  <p>Chapter 10 - Feature Gates & Cost</p>
+</div>
+</body></html>

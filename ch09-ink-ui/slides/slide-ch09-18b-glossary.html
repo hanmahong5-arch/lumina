@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Streaming -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Streaming / 流式渲染</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Real-time SSE delivery rendered char-by-char in terminal — 像直播vs录播，实时看模型"打字"</p>
+    </div>
+    <!-- AsyncGenerator -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">AsyncGenerator / 异步生成器</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">JS construct yielding events to drive UI render loop — 像传送带，每次yield一个事件按需渲染</p>
+    </div>
+    <!-- React / Ink -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">React + Ink / 终端 React 框架</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">React components rendered to terminal with Box/Text primitives — 像乐高积木在终端里拼装</p>
+    </div>
+    <!-- Terminal UI -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Terminal UI (TUI) / 终端用户界面</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Full UI in terminal with keybindings and themes — 像文字版图形界面，键盘操作的完整应用</p>
+    </div>
+    <!-- REPL -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">REPL / 读取-求值-输出循环</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Main interactive screen: type prompts, get responses — 像命令行终端，输入命令看到结果</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- PromptInput -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">PromptInput / 提示输入组件</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Handles text, slash commands, attachments, typeahead — 像智能输入框，能打字也能自动补全</p>
+    </div>
+    <!-- Messages Component -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Messages Component / 消息组件</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Renders conversation with role-based message styles — 像聊天窗口，不同角色不同样式</p>
+    </div>
+    <!-- Keybindings -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Keybindings / 快捷键绑定</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Configurable shortcuts: Esc interrupt, Ctrl+L clear — 像IDE快捷键，熟练使用效率翻倍</p>
+    </div>
+    <!-- Theme System -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Theme System / 主题系统</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Customizable color schemes via ThemeProvider context — 像手机深色模式，一键切换配色</p>
+    </div>
+    <!-- AppState -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">AppState / 应用状态</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Zustand-based React state for UI, separate from engine — 像前台点餐系统，后厨由QueryEngine处理</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

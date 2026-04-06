@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 09 - AppState</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:15pt;font-weight:700;margin:0 0 5pt 0;line-height:1.15}
+h4{font-size:9pt;font-weight:700;margin:0 0 1pt 0;line-height:1.2}
+p{font-size:8pt;line-height:1.3;margin:0 0 1pt 0}
+ul{font-size:8pt;line-height:1.3;margin:0;padding-left:12pt}
+li{margin-bottom:1pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:4pt 6pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:6pt 8pt;margin-bottom:4pt}
+.card-accent-indigo{background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:5pt 8pt;margin-bottom:3pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 | INK UI</p>
+  <p class="page-num">17 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>AppState: Zustand全局Store</h2>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p>// AppState.tsx - Zustand store definition</p>
+        <p>const useAppState = create((set) =&gt; ({</p>
+        <p>&nbsp;&nbsp;// Bridge state</p>
+        <p>&nbsp;&nbsp;replBridgeEnabled: false,</p>
+        <p>&nbsp;&nbsp;</p>
+        <p>&nbsp;&nbsp;// Permission state</p>
+        <p>&nbsp;&nbsp;permissionMode: 'default',</p>
+        <p>&nbsp;&nbsp;</p>
+        <p>&nbsp;&nbsp;// Agent tracking</p>
+        <p>&nbsp;&nbsp;runningAgents: [],</p>
+        <p>&nbsp;&nbsp;</p>
+        <p>&nbsp;&nbsp;// Session metadata</p>
+        <p>&nbsp;&nbsp;sessionId: null,</p>
+        <p>&nbsp;&nbsp;conversationId: null,</p>
+        <p>&nbsp;&nbsp;</p>
+        <p>&nbsp;&nbsp;// UI state</p>
+        <p>&nbsp;&nbsp;isCompacting: false,</p>
+        <p>&nbsp;&nbsp;planMode: false,</p>
+        <p>}));</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4>Key State Slices</h4>
+        <ul>
+          <li><p><span style="font-family:'Courier New',monospace;color:var(--accent-teal);">replBridgeEnabled</span> - IDE integration active</p></li>
+          <li><p><span style="font-family:'Courier New',monospace;color:var(--accent-teal);">permissionMode</span> - Current permission level</p></li>
+          <li><p><span style="font-family:'Courier New',monospace;color:var(--accent-teal);">runningAgents</span> - Active sub-agent list</p></li>
+          <li><p><span style="font-family:'Courier New',monospace;color:var(--accent-teal);">planMode</span> - Plan-only mode toggle</p></li>
+        </ul>
+      </div>
+      <div class="card-accent-indigo">
+        <h4>Cross-Component Access</h4>
+        <p>AppState is accessed across the component tree without prop drilling. StatusLine, PromptInput, Messages, and permission components all read from this store via selectors.</p>
+      </div>
+      <div class="card">
+        <h4>Selector Pattern</h4>
+        <div class="code-block">
+          <p>// Only re-render when permissionMode changes</p>
+          <p>const mode = useAppState(s =&gt; s.permissionMode);</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Source: src/state/AppState.tsx</p>
+  <p>Ch09 Ink UI</p>
+</div>
+</body>
+</html>

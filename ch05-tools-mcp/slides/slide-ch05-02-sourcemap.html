@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - Source Map</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.source-index{display:flex;flex-direction:column;gap:4pt}
+.source-item{display:flex;gap:8pt;align-items:baseline}
+.source-path{font-family:Courier New,monospace;font-size:9pt;color:var(--accent-teal);min-width:200pt}
+.source-desc{font-size:9pt;color:var(--text-secondary)}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">2 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>源码地图 / Source Map</h2>
+  <p style="color:var(--text-secondary);margin-bottom:10pt;">Key files forming the tool orchestration engine</p>
+  <div class="source-index">
+    <div class="source-item"><p class="source-path">src/tools.ts</p><p class="source-desc">Tool registration, assembly, filtering entry point</p></div>
+    <div class="source-item"><p class="source-path">src/services/tools/toolExecution.ts</p><p class="source-desc">runToolUse() 6-stage pipeline (1746 lines)</p></div>
+    <div class="source-item"><p class="source-path">src/services/mcp/client.ts</p><p class="source-desc">MCP connection pool, session management, resilience</p></div>
+    <div class="source-item"><p class="source-path">src/services/mcp/config.ts</p><p class="source-desc">5-layer MCP config merge, signature dedup (1579 lines)</p></div>
+    <div class="source-item"><p class="source-path">src/tools/BashTool/</p><p class="source-desc">Sandbox integration, command classification, progress</p></div>
+    <div class="source-item"><p class="source-path">src/tools/SkillTool/SkillTool.ts</p><p class="source-desc">Skill .md frontmatter loading, prompt-based invocation</p></div>
+    <div class="source-item"><p class="source-path">src/tools/AgentTool/</p><p class="source-desc">Sub-agent fork, built-in agents, agent directory</p></div>
+    <div class="source-item"><p class="source-path">src/tools/ToolSearchTool/</p><p class="source-desc">Deferred tool schema lazy-loading</p></div>
+    <div class="source-item"><p class="source-path">src/constants/tools.ts</p><p class="source-desc">Tool name constants, ordering, feature flags</p></div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

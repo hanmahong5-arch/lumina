@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Constants</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.const-table { display: flex; flex-direction: column; gap: 3pt; }
+.const-row { display: flex; gap: 8pt; align-items: baseline; padding: 3pt 8pt; background: var(--bg-card); border-radius: 3pt; }
+.const-name { font-family: Courier New, monospace; font-size: 8pt; color: var(--text-code-fn); min-width: 240pt; }
+.const-val { font-family: Courier New, monospace; font-size: 8pt; color: var(--text-code-const); min-width: 80pt; }
+.const-desc { font-size: 8pt; color: var(--text-muted); }
+.section-label { font-size: 9pt; color: var(--accent-indigo); font-weight: 700; margin: 4pt 0 2pt 0; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">18 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>关键常量 Constants Reference</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">权限系统中的核心数值配置</p>
+
+  <p class="section-label">Denial Limits</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">CONSECUTIVE_DENIAL_LIMIT</p>
+      <p class="const-val">3</p>
+      <p class="const-desc">连续拒绝触发熔断</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">TOTAL_DENIAL_LIMIT</p>
+      <p class="const-val">20</p>
+      <p class="const-desc">累计拒绝强制退出 auto mode</p>
+    </div>
+  </div>
+
+  <p class="section-label">Classifier Configuration</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">STAGE_1_MAX_TOKENS</p>
+      <p class="const-val">64</p>
+      <p class="const-desc">Stage 1 快速判定输出上限</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">STAGE_2_MAX_TOKENS</p>
+      <p class="const-val">4096</p>
+      <p class="const-desc">Stage 2 深度推理输出上限</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">CLASSIFIER_REFRESH_INTERVAL</p>
+      <p class="const-val">30 min</p>
+      <p class="const-desc">分类器策略刷新周期(fail-closed)</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">CLASSIFIER_STOP_SEQUENCES</p>
+      <p class="const-val">[&lt;/block&gt;]</p>
+      <p class="const-desc">Stage 1 截断信号</p>
+    </div>
+  </div>
+
+  <p class="section-label">Permission Modes (6)</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">default | plan | acceptEdits</p>
+      <p class="const-val">3 modes</p>
+      <p class="const-desc">用户确认型模式</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">bypassPermissions | dontAsk | auto</p>
+      <p class="const-val">3 modes</p>
+      <p class="const-desc">自动/半自动型模式</p>
+    </div>
+  </div>
+
+  <p class="section-label">Fast Path Constants</p>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">SAFE_YOLO_ALLOWLISTED_TOOLS</p>
+      <p class="const-val">~25</p>
+      <p class="const-desc">安全工具白名单数量</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

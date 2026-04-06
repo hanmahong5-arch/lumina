@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Tier 1 Deny</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-str: var(--text-code-str);
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 14pt 28pt 8pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-accent-coral { background: var(--bg-card); border-left: 3pt solid var(--accent-coral); border-radius: 0 5pt 5pt 0; padding: 7pt 10pt; margin-bottom: 5pt; }
+.principle-box { background: var(--bg-card); border: 1.5pt solid var(--accent-coral); border-radius: 5pt; padding: 6pt 10pt; margin-top: 6pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">05 / 20</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-coral);">Tier 1: Deny 强制拒绝层</h2>
+  <p style="color:var(--text-secondary); margin-bottom:8pt;">Fail-closed 原则 -- deny 规则优先于所有 allow 规则</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="card-accent-coral">
+        <h4>1a. denyRules 规则匹配</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">用户配置的 deny 规则最先执行，命中即返回 denied</p>
+      </div>
+      <div class="card-accent-coral">
+        <h4>1b. tool.checkPermissions</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">每个工具自定义的权限校验函数，可返回 deny + 原因</p>
+      </div>
+      <div class="card-accent-coral">
+        <h4>1c. safetyCheck 路径保护</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">.git/ .claude/ 路径在任何模式下不可绕过</p>
+      </div>
+      <div class="card-accent-coral">
+        <h4>1d-1g. 模式与沙箱</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">planMode 写拦截 / MCP 拒绝 / 工具禁用 / 边界检查</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// permissions.ts - Tier 1 logic</p>
+        <p><span style="color:var(--text-code-kw);">if</span> (matchesDenyRule(tool, input)) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { type: <span style="color:var(--text-code-str);">'denied'</span>,</p>
+        <p>    reason: <span style="color:var(--text-code-str);">'matched deny rule'</span> };</p>
+        <p>}</p>
+        <p></p>
+        <p><span style="color:var(--text-code-kw);">const</span> toolCheck = tool.checkPermissions?.();</p>
+        <p><span style="color:var(--text-code-kw);">if</span> (toolCheck?.denied) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> toolCheck;</p>
+        <p>}</p>
+        <p></p>
+        <p><span style="color:var(--text-code-kw);">if</span> (hasSafetyCheck(paths)) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { type: <span style="color:var(--text-code-str);">'ask'</span>,</p>
+        <p>    reason: <span style="color:var(--text-code-str);">'safety-check'</span> };</p>
+        <p>}</p>
+      </div>
+      <div class="principle-box">
+        <p style="font-size:9pt; color:var(--accent-coral); font-weight:700;">Fail-Closed 原则</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">任何 deny 判定一旦命中立即返回，不进入后续层级。确保安全性不依赖于后续逻辑的正确性。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

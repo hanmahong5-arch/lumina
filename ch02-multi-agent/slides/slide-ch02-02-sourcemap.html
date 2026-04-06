@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Source Index</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body {
+  width: 720pt; height: 405pt;
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; line-height: 1.2; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8pt 32pt; background: var(--bg-secondary);
+}
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 24pt 32pt 16pt 32pt; }
+.source-index { display: flex; flex-direction: column; gap: 6pt; }
+.source-item { display: flex; gap: 8pt; align-items: baseline; }
+.source-path { font-family: Courier New, monospace; font-size: 9pt; color: var(--accent-teal); min-width: 240pt; }
+.source-desc { font-size: 9pt; color: var(--text-secondary); }
+.slide-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4pt 32pt 8pt 32pt; font-size: 7pt; color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">2 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>源码索引 Source Index</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 10pt;">本章涉及的核心源文件一览</p>
+  <div class="source-index">
+    <div class="source-item">
+      <p class="source-path">src/tools/AgentTool/AgentTool.tsx</p>
+      <p class="source-desc">Agent tool UI, schema definition, sync/async dispatch entry</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/tools/AgentTool/runAgent.ts</p>
+      <p class="source-desc">Core lifecycle: MCP init, context creation, query loop, cleanup</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/tools/AgentTool/forkSubagent.ts</p>
+      <p class="source-desc">Fork mode: buildForkedMessages(), anti-recursion, cache sharing</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/tools/AgentTool/builtInAgents.ts</p>
+      <p class="source-desc">5 built-in agents registry, coordinator agent switching</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/tools/AgentTool/agentToolUtils.ts</p>
+      <p class="source-desc">resolveAgentTools(), filterToolsForAgent(), tool whitelist logic</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/coordinator/coordinatorMode.ts</p>
+      <p class="source-desc">Coordinator mode toggle, system prompt, worker tool context</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/tools/SendMessageTool/SendMessageTool.ts</p>
+      <p class="source-desc">Inter-agent messaging: routing, queuePendingMessage, resume</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/tools/AgentTool/loadAgentsDir.ts</p>
+      <p class="source-desc">Custom agent loading: .md frontmatter parsing, disk scanning</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/constants/tools.ts</p>
+      <p class="source-desc">Tool allow/disallow sets: ASYNC_AGENT_ALLOWED_TOOLS, etc.</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>2 / 22</p>
+</div>
+</body>
+</html>

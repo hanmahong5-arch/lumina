@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Built-in Agents</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --accent-purple: #9F7AEA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-const: #00D4AA;
+  --text-code-type: #FFA657;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-55 { flex: 0 0 53%; }
+.col-45 { flex: 0 0 43%; }
+.agent-card { background: var(--bg-card); border-radius: 4pt; padding: 5pt 8pt; margin-bottom: 4pt; display: flex; gap: 8pt; align-items: flex-start; }
+.agent-badge { font-size: 7pt; font-weight: 700; padding: 1pt 5pt; border-radius: 2pt; min-width: 60pt; text-align: center; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; margin-bottom: 4pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">9 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>内置Agent Built-in Agents</h2>
+  <div class="two-col">
+    <div class="col-55">
+      <div class="agent-card">
+        <div class="agent-badge" style="background: var(--accent-teal); color: #0F0F1A;"><p>GENERAL</p></div>
+        <div>
+          <h4>GeneralPurpose</h4>
+          <p style="font-size: 9pt; color: var(--text-secondary);">默认agent, 始终加载, 通用任务处理</p>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-badge" style="background: var(--accent-indigo); color: #FFF;"><p>EXPLORE</p></div>
+        <div>
+          <h4>Explore</h4>
+          <p style="font-size: 9pt; color: var(--text-secondary);">只读探索agent, omitClaudeMd=true, 代码搜索/分析</p>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-badge" style="background: var(--accent-amber); color: #0F0F1A;"><p>PLAN</p></div>
+        <div>
+          <h4>Plan</h4>
+          <p style="font-size: 9pt; color: var(--text-secondary);">规划agent, omitClaudeMd=true, 生成实现方案</p>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-badge" style="background: var(--accent-green); color: #0F0F1A;"><p>VERIFY</p></div>
+        <div>
+          <h4>Verification</h4>
+          <p style="font-size: 9pt; color: var(--text-secondary);">验证agent, feature gate控制, 测试+代码审查</p>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-badge" style="background: var(--accent-purple); color: #FFF;"><p>GUIDE</p></div>
+        <div>
+          <h4>ClaudeCodeGuide</h4>
+          <p style="font-size: 9pt; color: var(--text-secondary);">使用指南agent, 仅非SDK入口可用</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-45">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">AgentDefinition type</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">type</span> <span style="color:var(--text-code-type);">AgentDefinition</span> = {</p>
+        <p style="margin:0;">  agentType: <span style="color:var(--text-code-type);">string</span></p>
+        <p style="margin:0;">  whenToUse: <span style="color:var(--text-code-type);">string</span></p>
+        <p style="margin:0;">  tools: <span style="color:var(--text-code-type);">string[]</span></p>
+        <p style="margin:0;">  maxTurns: <span style="color:var(--text-code-type);">number</span></p>
+        <p style="margin:0;">  model: <span style="color:var(--text-code-type);">string</span></p>
+        <p style="margin:0;">  permissionMode: <span style="color:var(--text-code-type);">PermissionMode</span></p>
+        <p style="margin:0;">  source: <span style="color:var(--text-code-type);">SettingSource</span></p>
+        <p style="margin:0;">  omitClaudeMd?: <span style="color:var(--text-code-type);">boolean</span></p>
+        <p style="margin:0;">  mcpServers?: <span style="color:var(--text-code-type);">AgentMcpServerSpec[]</span></p>
+        <p style="margin:0;">  getSystemPrompt: () =&gt; <span style="color:var(--text-code-type);">string</span></p>
+        <p style="margin:0;">}</p>
+      </div>
+      <div class="card-sm">
+        <h4>加载策略</h4>
+        <ul>
+          <li>Coordinator模式: 使用 getCoordinatorAgents()</li>
+          <li>SDK模式: 可通过环境变量禁用全部内置agent</li>
+          <li>Explore/Plan: 受 feature gate 控制 (A/B test)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>9 / 22</p>
+</div>
+</body>
+</html>

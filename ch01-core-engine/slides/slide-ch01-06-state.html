@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - State Type</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-type:#FFA657;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 8pt 0;line-height:1.2}
+.two-col{display:flex;gap:14pt;flex:1}
+.col-55{flex:0 0 53%}
+.col-45{flex:0 0 43%}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:8pt 10pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--text-primary);margin-bottom:5pt;line-height:1.6}
+.kw{color:var(--text-code-kw)}
+.tp{color:var(--text-code-type)}
+.fn{color:var(--text-code-fn)}
+.ct{color:var(--text-code-const)}
+h3{font-size:11pt;font-weight:700;margin:0 0 4pt 0;color:var(--accent-indigo);line-height:1.3}
+.card-sm{background:var(--bg-card);border-radius:4pt;padding:5pt 8pt;margin-bottom:3pt}
+p{font-size:8pt;line-height:1.4;margin:0 0 1pt 0}
+.anno{color:var(--accent-amber);font-size:8pt}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">6 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>queryLoop 内部 State: 10个字段</h1>
+  <div class="two-col">
+    <div class="col-55">
+      <div class="code-block">
+<p><span class="kw">type</span> <span class="tp">State</span> = {<br>
+&nbsp;&nbsp;messages: <span class="tp">Message[]</span><br>
+&nbsp;&nbsp;toolUseContext: <span class="tp">ToolUseContext</span><br>
+&nbsp;&nbsp;autoCompactTracking: <span class="tp">AutoCompactTrackingState</span> | <span class="kw">undefined</span><br>
+&nbsp;&nbsp;maxOutputTokensRecoveryCount: <span class="tp">number</span><br>
+&nbsp;&nbsp;hasAttemptedReactiveCompact: <span class="tp">boolean</span><br>
+&nbsp;&nbsp;maxOutputTokensOverride: <span class="tp">number</span> | <span class="kw">undefined</span><br>
+&nbsp;&nbsp;pendingToolUseSummary: <span class="tp">Promise</span>&lt;...&gt; | <span class="kw">undefined</span><br>
+&nbsp;&nbsp;stopHookActive: <span class="tp">boolean</span> | <span class="kw">undefined</span><br>
+&nbsp;&nbsp;turnCount: <span class="tp">number</span><br>
+&nbsp;&nbsp;transition: <span class="tp">Continue</span> | <span class="kw">undefined</span><br>
+}</p>
+      </div>
+    </div>
+    <div class="col-45">
+      <h3>关键字段注解</h3>
+      <div class="card-sm">
+        <p class="fn">messages</p>
+        <p class="anno">当前消息视图, compact后被splice替换</p>
+      </div>
+      <div class="card-sm">
+        <p class="fn">maxOutputTokensRecoveryCount</p>
+        <p class="anno">最多3次恢复尝试, 防无限循环</p>
+      </div>
+      <div class="card-sm">
+        <p class="fn">hasAttemptedReactiveCompact</p>
+        <p class="anno">布尔开关, 防止reactive compact螺旋</p>
+      </div>
+      <div class="card-sm">
+        <p class="fn">turnCount</p>
+        <p class="anno">next_turn时递增, 用于maxTurns检查</p>
+      </div>
+      <div class="card-sm">
+        <p class="fn">transition</p>
+        <p class="anno">记录上一次continue原因, 可审计</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

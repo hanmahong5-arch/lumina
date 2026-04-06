@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Summary</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">21 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>5 Takeaways</h2>
+  <div style="display:flex;flex-direction:column;gap:4pt;margin-top:4pt;">
+    <div style="display:flex;gap:10pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:7pt 12pt;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-indigo);min-width:24pt;margin:0;">1</p>
+      <div>
+        <p style="font-weight:700;margin-bottom:2pt;">双协议共存 / Dual Protocol Coexistence</p>
+        <p style="font-size:9pt;color:var(--text-secondary);">v1 (env-based) and v2 (env-less) coexist via feature gates. Strategy pattern enables clean transport swapping.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:7pt 12pt;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-indigo);min-width:24pt;margin:0;">2</p>
+      <div>
+        <p style="font-weight:700;margin-bottom:2pt;">SSE胜出 / SSE Wins for CLI-to-Cloud</p>
+        <p style="font-size:9pt;color:var(--text-secondary);">Proxy-friendly, zero-dependency, built-in reconnection with Last-Event-ID. POST-back channel for client messages.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:7pt 12pt;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-indigo);min-width:24pt;margin:0;">3</p>
+      <div>
+        <p style="font-weight:700;margin-bottom:2pt;">纪元+序列号恢复 / Epoch + Seq-Num Recovery</p>
+        <p style="font-size:9pt;color:var(--text-secondary);">Monotonic sequence numbers within epoch scope achieve at-least-once delivery with cross-transport continuity.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:7pt 12pt;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-indigo);min-width:24pt;margin:0;">4</p>
+      <div>
+        <p style="font-weight:700;margin-bottom:2pt;">有界去重O(1) / Bounded O(1) Dedup</p>
+        <p style="font-size:9pt;color:var(--text-secondary);">BoundedUUIDSet ring buffer (2000 capacity) provides constant-time idempotency with fixed memory footprint.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:7pt 12pt;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-indigo);min-width:24pt;margin:0;">5</p>
+      <div>
+        <p style="font-weight:700;margin-bottom:2pt;">分层退避策略 / Tiered Backoff Strategy</p>
+        <p style="font-size:9pt;color:var(--text-secondary);">Three separate backoff configs (conn/poll/general) tuned to each failure mode's expected recovery time.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

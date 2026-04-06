@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 06 | RESILIENCE ENGINEERING</p>
+  <p class="page-num">17c / 20</p>
+</div>
+<div class="slide-content-compact" style="padding:14pt 28pt 8pt 28pt;">
+  <h3 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:12pt;">横向对比: Resilience Frameworks</h3>
+
+  <!-- Header row -->
+  <div style="display:flex; gap:4pt; margin-bottom:2pt;">
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-teal); margin:0;">维度 Dimension</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt; border:1pt solid var(--accent-indigo);">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-indigo); margin:0;">Claude Code</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-amber); margin:0;">LangGraph</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-coral); margin:0;">Raw OpenAI SDK</p>
+    </div>
+  </div>
+
+  <!-- Row 1: Retry Strategy -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">重试策略 Retry Strategy</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">AsyncGenerator yield 实时反馈 + 指数退避 + 25% jitter + Retry-After</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Node-level retry, 回调式通知</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">max_retries 参数, 内部退避, 无进度反馈</p>
+    </div>
+  </div>
+
+  <!-- Row 2: Circuit Breaker -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">熔断器 Circuit Breaker</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">529 前台/后台分区白名单; 连续 3 次 529 触发降级</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无内建熔断; 需自行实现</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无内建熔断; 超过 max_retries 直接报错</p>
+    </div>
+  </div>
+
+  <!-- Row 3: Model Fallback -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">模型降级 Model Fallback</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">FallbackTriggeredError + tombstone 标记, 一等公民支持</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无内建降级; 需应用层自行编排</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无内建降级</p>
+    </div>
+  </div>
+
+  <!-- Row 4: Session Recovery -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">会话恢复 Session Recovery</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">JSONL 消息级持久化 + parentUuid chain walk + 四层过滤</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Checkpoint 快照 (节点粒度), 回到上一存档点</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无内建持久化; Assistants API 服务端保存</p>
+    </div>
+  </div>
+
+  <!-- Row 5: Persistent Mode -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">持久模式 Persistent Mode</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">无限重试 429/529 + 5min 退避上限 + 30s 心跳 + 6h 安全阀</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无专用无人值守模式</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无专用无人值守模式</p>
+    </div>
+  </div>
+
+  <!-- Row 6: Error Classification -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">错误分类 Error Classification</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">classifyAPIError() 区分 20+ 种错误, 含 OAuth/Bedrock/Vertex</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">基于 HTTP 状态码的粗粒度分类</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">SDK 内部分类, 暴露 APIError 子类</p>
+    </div>
+  </div>
+
+  <div style="margin-top:4pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:3pt 6pt;">
+    <p style="font-size:6.5pt; color:var(--text-secondary); line-height:1.35; margin:0;"><strong style="color:var(--accent-indigo);">Why Claude Code's Resilience is Different:</strong> LangGraph 的韧性是"Checkpoint 快照"——回到上一个稳定状态。OpenAI SDK 是"指数退避"——重试有限次后报错。Claude Code 是<strong style="color:var(--accent-green);">"无人值守韧性"</strong>——25% jitter + Retry-After 解析 + 529 分区熔断 + FallbackTriggeredError tombstone + Persistent Mode（5min 退避 + 30s 心跳 + 6h 安全阀），目标不是"减少报错"，是让 agent 可以整夜无人值守运行。
+  </div>
+
+</div>
+<div class="slide-footer">
+  <p>Sources: withRetry.ts, sessionStorage.ts, conversationRecovery.ts, errors.ts | LangGraph checkpoint docs | OpenAI SDK retry docs</p>
+  <p>Chapter 06 - Resilience Engineering</p>
+</div>
+</body></html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Architecture Overview</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --accent-purple: #9F7AEA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body {
+  width: 720pt; height: 405pt;
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text-primary);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h3 { font-size: 13pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.four-col { display: flex; gap: 8pt; flex: 1; }
+.col { flex: 1; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; margin-bottom: 4pt; }
+.bottom-row { display: flex; gap: 8pt; margin-top: 6pt; }
+.bottom-card { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 6pt 10pt; border-top: 2pt solid var(--accent-purple); }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 4pt 32pt 8pt 32pt; font-size: 7pt; color: var(--text-muted); }
+.mode-tag { font-size: 7pt; font-weight: 700; padding: 1pt 5pt; border-radius: 2pt; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">3 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>多Agent架构全景 Architecture Overview</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 8pt;">4种派生模式 + Coordinator编排 + 三层隔离</p>
+  <div class="four-col">
+    <div class="col">
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-teal);">
+        <div class="mode-tag" style="background: var(--accent-teal); color: #0F0F1A;"><p>SYNC</p></div>
+        <h4>同步Agent</h4>
+        <ul>
+          <li>共享AbortController</li>
+          <li>阻塞父循环</li>
+          <li>逐条yield消息</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-indigo);">
+        <div class="mode-tag" style="background: var(--accent-indigo); color: #FFF;"><p>ASYNC</p></div>
+        <h4>异步Agent</h4>
+        <ul>
+          <li>独立AbortController</li>
+          <li>LocalAgentTask后台</li>
+          <li>XML通知回报</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-amber);">
+        <div class="mode-tag" style="background: var(--accent-amber); color: #0F0F1A;"><p>FORK</p></div>
+        <h4>分叉Agent</h4>
+        <ul>
+          <li>继承完整对话上下文</li>
+          <li>字节级相同前缀</li>
+          <li>prompt cache共享</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-coral);">
+        <div class="mode-tag" style="background: var(--accent-coral); color: #FFF;"><p>REMOTE</p></div>
+        <h4>远程/Worktree</h4>
+        <ul>
+          <li>git worktree隔离</li>
+          <li>独立工作目录</li>
+          <li>完全文件系统隔离</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-row">
+    <div class="bottom-card">
+      <h4 style="color: var(--accent-purple);">Coordinator编排</h4>
+      <p>纯编排者模式: 仅Agent/SendMessage/TaskStop三工具, 不直接执行代码</p>
+    </div>
+    <div class="bottom-card">
+      <h4 style="color: var(--accent-purple);">三层隔离 Triple Isolation</h4>
+      <p>Permission隔离 + Tool白名单隔离 + Context上下文隔离, 安全只能向上继承</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>3 / 22</p>
+</div>
+</body>
+</html>

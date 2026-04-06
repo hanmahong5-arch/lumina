@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Stage 1 Fast</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-str: #A5D6FF;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.35; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.metric-row { display: flex; gap: 8pt; margin-bottom: 4pt; }
+.metric-card { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 4pt 8pt; text-align: center; }
+.metric-value { font-size: 16pt; font-weight: 700; color: var(--accent-teal); margin: 0; }
+.metric-label { font-size: 7pt; color: var(--text-secondary); margin: 0; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">09 / 20</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-teal);">Stage 1: Fast 快速判定</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">以极低延迟处理 80%+ 明确场景，stop_sequences 截断输出</p>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <p class="metric-value">64</p>
+      <p class="metric-label">max_tokens</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="font-size:14pt; color:var(--accent-indigo);">&lt;/block&gt;</p>
+      <p class="metric-label">stop_sequences</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value">80%+</p>
+      <p class="metric-label">覆盖率</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-amber);">&lt;1s</p>
+      <p class="metric-label">延迟目标</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// Stage 1 classifier call</p>
+        <p><span style="color:var(--text-code-kw);">const</span> result = <span style="color:var(--text-code-kw);">await</span> classifierAPI({</p>
+        <p>  tool_name: tool.name,</p>
+        <p>  tool_input: truncatedInput,</p>
+        <p>  context: recentMessages,</p>
+        <p>  <span style="color:var(--text-code-fn);">max_tokens</span>: <span style="color:var(--accent-teal);">64</span>,</p>
+        <p>  <span style="color:var(--text-code-fn);">stop_sequences</span>: [<span style="color:var(--text-code-str);">'&lt;/block&gt;'</span>],</p>
+        <p>});</p>
+        <p></p>
+        <p style="color:var(--text-code-kw);">// Parse XML response</p>
+        <p><span style="color:var(--text-code-kw);">const</span> action = parseXML(result);</p>
+        <p><span style="color:var(--text-code-kw);">if</span> (action === <span style="color:var(--text-code-str);">'allow'</span>) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { allowed: <span style="color:var(--accent-teal);">true</span> };</p>
+        <p>}</p>
+        <p><span style="color:var(--text-code-kw);">if</span> (action === <span style="color:var(--text-code-str);">'block'</span>) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { allowed: <span style="color:var(--accent-coral);">false</span> };</p>
+        <p>}</p>
+        <p style="color:var(--text-muted);">// undecided → proceed to Stage 2</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-teal);">设计要点</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">stop_sequences 使模型在输出 &lt;/block&gt; 后立即停止，避免生成冗余 token</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">max_tokens=64 硬限制确保即使 stop 未触发也快速返回</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">输入截断：长命令仅发送前 N 字符，减少分类延迟</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-amber);">三种输出</h4>
+        <p style="font-size:9pt; color:var(--accent-green);">allow - 明确安全，自动放行</p>
+        <p style="font-size:9pt; color:var(--accent-coral);">block - 明确危险，自动拒绝</p>
+        <p style="font-size:9pt; color:var(--accent-indigo);">undecided - 边界 case，进入 Stage 2</p>
+      </div>
+      <div class="card" style="border-left: 3pt solid var(--accent-coral);">
+        <p style="font-size:8pt; color:var(--accent-coral); font-weight:700;">解析失败 = block</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">XML 格式错误、超时、网络异常均视为 block</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

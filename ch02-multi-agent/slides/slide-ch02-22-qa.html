@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Q&A</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 24pt; font-weight: 700; margin: 0 0 16pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 3pt; }
+.qa-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40pt 60pt;
+  background: var(--bg-primary);
+  flex: 1;
+}
+.qa-slide h2 { color: var(--accent-indigo); }
+.discussion-card {
+  background: var(--bg-card);
+  border-radius: 5pt;
+  padding: 14pt 20pt;
+  margin-top: 12pt;
+  text-align: left;
+  width: 100%;
+  max-width: 500pt;
+  border-left: 3pt solid var(--accent-amber);
+}
+.discussion-list {
+  background: var(--bg-card);
+  border-radius: 5pt;
+  padding: 12pt 20pt;
+  margin-top: 8pt;
+  text-align: left;
+  width: 100%;
+  max-width: 500pt;
+}
+.slide-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4pt 32pt 8pt 32pt; font-size: 7pt; color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+<div class="qa-slide">
+  <h2>Q &amp; A</h2>
+  <p style="font-size: 12pt; color: var(--text-secondary);">Chapter 02: 多Agent系统 Multi-Agent System</p>
+  <div class="discussion-card">
+    <h4 style="color: var(--accent-amber);">Core Discussion</h4>
+    <p style="font-size: 11pt;">Fork模式的cache节省是否值得其复杂度?</p>
+    <p style="font-size: 9pt; color: var(--text-secondary); margin-top: 4pt;">考量: buildForkedMessages()的字节对齐要求, 反递归保护, 与Coordinator模式互斥, model: 'inherit'的上下文长度对齐, rendered system prompt bytes threading...</p>
+  </div>
+  <div class="discussion-list">
+    <h4 style="color: var(--accent-teal);">Extended Questions</h4>
+    <ul>
+      <li>Coordinator模式与普通异步agent在大型重构任务中的性能差异?</li>
+      <li>Worktree隔离在多agent并行修改同一文件时如何处理冲突?</li>
+      <li>三层权限隔离是否存在过度限制导致合法操作被阻断的case?</li>
+      <li>fork anti-recursion的BOILERPLATE_TAG检测在context compact后是否仍然有效?</li>
+    </ul>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>22 / 22</p>
+</div>
+</body>
+</html>

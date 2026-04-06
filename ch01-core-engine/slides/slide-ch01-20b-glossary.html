@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Agent Loop / Query Loop -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Agent Loop / Query Loop / 智能体循环</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Send→LLM→tool_use→execute→repeat until end_turn — 像PDCA循环，不断迭代直到完成</p>
+    </div>
+    <!-- Turn -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Turn / 轮次</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">One API call plus any resulting tool execution — 像对话中一次"你问我答"</p>
+    </div>
+    <!-- AsyncGenerator -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">AsyncGenerator / 异步生成器</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">JS construct yielding stream events incrementally — 像传送带，每次yield一个事件按需取用</p>
+    </div>
+    <!-- Stream Event -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Stream Event / 流事件</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Individual event: text delta, tool_use, thinking, or control — 像电报中每条消息携带一小块信息</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Continue / Terminal -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Continue / Terminal / 继续与终止</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Loop states: Continue (7 reasons) or Terminal (10 reasons) — 像交通灯，绿灯继续红灯停</p>
+    </div>
+    <!-- Withhold-Recover -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Withhold-Recover / 扣留恢复</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Suppress errors during auto-recovery attempts — 像飞行员处理小故障，乘客无需知道</p>
+    </div>
+    <!-- Dual-Layer State -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Dual-Layer State / 双层状态</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">QueryEngine (async) + AppState (React UI) via message passing — 像后厨管做菜，前台管上菜</p>
+    </div>
+    <!-- stop_reason -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">stop_reason / 停止原因</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Why model stopped: end_turn, max_tokens, or tool_use — 像电话挂断：说完了/时间到/要查资料</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

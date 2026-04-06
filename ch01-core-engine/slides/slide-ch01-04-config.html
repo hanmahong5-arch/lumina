@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - QueryEngineConfig</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-type:#FFA657;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 8pt 0;line-height:1.2}
+.two-col{display:flex;gap:14pt;flex:1}
+.col{flex:1}
+h3{font-size:11pt;font-weight:700;margin:0 0 4pt 0;color:var(--accent-indigo);line-height:1.3}
+h4{font-size:9pt;font-weight:700;margin:6pt 0 2pt 0;color:var(--accent-amber);line-height:1.3}
+ul{font-size:8pt;line-height:1.5;margin:0;padding-left:12pt;color:var(--text-secondary)}
+li{margin-bottom:1pt}
+.fn{font-family:'Courier New',monospace;color:var(--text-code-fn);font-size:8pt}
+.tp{font-family:'Courier New',monospace;color:var(--text-code-type);font-size:8pt}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.card{background:var(--bg-card);border-radius:5pt;padding:8pt 10pt;margin-bottom:4pt}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">4 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>QueryEngineConfig: 22个配置项</h1>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <h3>Core</h3>
+        <ul>
+          <li><span class="fn">cwd</span>: string &mdash; 工作目录</li>
+          <li><span class="fn">tools</span>: Tools &mdash; 可用工具集</li>
+          <li><span class="fn">commands</span>: Command[] &mdash; 斜杠命令</li>
+          <li><span class="fn">mcpClients</span>: MCPServerConnection[]</li>
+          <li><span class="fn">agents</span>: AgentDefinition[]</li>
+          <li><span class="fn">canUseTool</span>: CanUseToolFn</li>
+          <li><span class="fn">getAppState / setAppState</span></li>
+          <li><span class="fn">initialMessages?</span>: Message[]</li>
+          <li><span class="fn">readFileCache</span>: FileStateCache</li>
+        </ul>
+        <h4>Prompt</h4>
+        <ul>
+          <li><span class="fn">customSystemPrompt?</span></li>
+          <li><span class="fn">appendSystemPrompt?</span></li>
+          <li><span class="fn">userSpecifiedModel?</span></li>
+          <li><span class="fn">fallbackModel?</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Limits</h3>
+        <ul>
+          <li><span class="fn">maxTurns?</span>: number</li>
+          <li><span class="fn">maxBudgetUsd?</span>: number</li>
+          <li><span class="fn">taskBudget?</span>: { total: number }</li>
+        </ul>
+        <h4>Options</h4>
+        <ul>
+          <li><span class="fn">thinkingConfig?</span>: ThinkingConfig</li>
+          <li><span class="fn">verbose?</span>: boolean</li>
+          <li><span class="fn">jsonSchema?</span>: Record&lt;string, unknown&gt;</li>
+          <li><span class="fn">replayUserMessages?</span>: boolean</li>
+          <li><span class="fn">includePartialMessages?</span>: boolean</li>
+        </ul>
+        <h4>Hooks</h4>
+        <ul>
+          <li><span class="fn">handleElicitation?</span></li>
+          <li><span class="fn">setSDKStatus?</span></li>
+          <li><span class="fn">abortController?</span></li>
+          <li><span class="fn">snipReplay?</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Sync Agent</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-type: #FFA657;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+ul { font-size: 9pt; line-height: 1.3; margin: 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 14pt 28pt 8pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-50 { flex: 0 0 48%; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-accent-teal { background: var(--bg-card); border-left: 3pt solid var(--accent-teal); border-radius: 0 5pt 5pt 0; padding: 5pt 10pt; margin-bottom: 3pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 4pt 8pt; margin-bottom: 3pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">4 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>同步Agent模式 Sync Agent</h2>
+  <div class="two-col">
+    <div class="col-50">
+      <div class="card-accent-teal">
+        <h4>核心特征</h4>
+        <ul>
+          <li>共享父级的 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">AbortController</span> - 父abort即子abort</li>
+          <li>阻塞父循环: 父级等待子agent完成后才继续</li>
+          <li>逐条yield消息: 使用 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">AsyncGenerator</span> 流式返回</li>
+          <li>子agent的消息直接插入父对话流</li>
+        </ul>
+      </div>
+      <div class="card-sm">
+        <h4>适用场景</h4>
+        <ul>
+          <li>需要立即获取结果的查询</li>
+          <li>简单的信息检索任务</li>
+          <li>顺序依赖的工作流</li>
+        </ul>
+      </div>
+      <div class="card-sm">
+        <h4 style="color: var(--accent-coral);">限制</h4>
+        <ul>
+          <li>单线程执行, 无法并行</li>
+          <li>长任务会阻塞用户交互</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-50">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">runAgent.ts - Sync execution flow</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">export async function*</span> <span style="color:var(--text-code-fn);">runAgent</span>({</p>
+        <p style="margin:0;">  agentDefinition, promptMessages,</p>
+        <p style="margin:0;">  toolUseContext, isAsync: <span style="color:var(--text-code-const);">false</span>,</p>
+        <p style="margin:0;">  ...opts</p>
+        <p style="margin:0;">}) {</p>
+        <p style="margin:0;">  <span style="color:var(--text-muted);">// Share parent AbortController</span></p>
+        <p style="margin:0;">  <span style="color:var(--text-code-kw);">const</span> abortController =</p>
+        <p style="margin:0;">    override?.abortController ??</p>
+        <p style="margin:0;">    toolUseContext.abortController;</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;">  <span style="color:var(--text-muted);">// Blocking query loop</span></p>
+        <p style="margin:0;">  <span style="color:var(--text-code-kw);">for await</span> (<span style="color:var(--text-code-kw);">const</span> msg <span style="color:var(--text-code-kw);">of</span> query(...)) {</p>
+        <p style="margin:0;">    <span style="color:var(--text-code-kw);">if</span> (isRecordableMessage(msg)) {</p>
+        <p style="margin:0;">      transcript.push(msg);</p>
+        <p style="margin:0;">      <span style="color:var(--text-code-kw);">yield</span> msg; <span style="color:var(--text-muted);">// Stream to parent</span></p>
+        <p style="margin:0;">    }</p>
+        <p style="margin:0;">  }</p>
+        <p style="margin:0;">}</p>
+      </div>
+      <div class="card-sm" style="border-left: 2pt solid var(--accent-amber);">
+        <p><span style="color: var(--accent-amber); font-weight: 700;">Key:</span> <span style="font-family: Courier New; font-size: 9pt;">yield msg</span> 让父级实时看到子agent输出, 形成同步流式传输链</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>4 / 22</p>
+</div>
+</body>
+</html>

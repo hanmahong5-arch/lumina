@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - vs LangChain</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">16 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>对比 / vs LangChain &amp; OpenAI FC</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">Tool orchestration approach comparison</p>
+    <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">Dimension</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#6C63FF; margin:0;">Claude Code</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#FFB84D; margin:0;">LangChain ToolNode</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#FF6B6B; margin:0;">OpenAI Function Calling</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Registration</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">feature() DCE + isEnabled()</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">StructuredTool class</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">JSON schema in API</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Deferred Loading</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">ToolSearch lazy schema</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">No</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">No</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Permission Gate</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">Speculative + interactive</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Manual callback</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">None built-in</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Concurrency</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">readOnlyHint auto</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Parallel via graph</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">parallel_tool_calls flag</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Extensibility</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">MCP + Skills (.md)</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Python class inheritance</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">API-only schema</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">Cache Awareness</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#48BB78; margin:0;">Prefix-sorted for cache</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">No</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">No</p>
+    </div>
+  </div>
+
+
+  <div class="card-accent-teal">
+    <h3 style="font-size:10pt;color:var(--accent-teal);">Design Philosophy Difference</h3>
+    <p style="font-size:9pt;">LangChain 的工具系统是为通用AI编程——"你能注册什么就有什么"。Claude Code 的工具系统是为安全AI编程——"你被允许用什么才有什么"。从 feature() DCE 到 speculative classification 到 readOnlyHint 自动并发，安全不是事后验证，而是一等公民。</p>
+  </div>
+
+  <div style="margin-top:3pt; background:var(--bg-code); border-radius:3pt; padding:3pt 6pt;">
+    <p style="font-size:7pt; color:var(--text-muted); margin:0;">
+      <span style="color:var(--accent-teal);">// Claude Code: 安全内置</span><br/>
+      <span style="color:var(--text-code-fn);">readOnlyHint(tool)</span> → 自动并发, <span style="color:var(--text-code-fn);">speculativeClassify(tool)</span> → 免确认执行<br/>
+      <span style="color:var(--text-code-fn);">permissionCheck(tool, args)</span> → 三级决策 → 用户/自动/拒绝
+    </p>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

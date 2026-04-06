@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CH-04 · Code Walkthrough</p>
+  <p class="page-num">Code</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:10pt;">
+  <div style="flex:6;">
+    <h3 style="color:var(--accent-teal); margin-bottom:3pt; font-size:11pt;">Token Counting Dual-Phase</h3>
+    <p style="font-size:7pt; color:var(--text-muted); margin-bottom:4pt;">analyzeContext.ts:77-916</p>
+    <div style="background:#0D1117; border-radius:4pt; padding:6pt 8pt;">
+      <p style="font-family:'Courier New',monospace; font-size:7.5pt; color:#FFFFFF; margin:0; line-height:1.5;">// Phase 1: Count with fallback chain
+async function countTokensWithFallback(
+&#160;&#160;messages, tools
+): Promise&lt;number | null&gt; {
+&#160;&#160;// Try 1: Official API (exact)
+&#160;&#160;result = await countMessagesTokensWithAPI(
+&#160;&#160;&#160;&#160;messages, tools)
+&#160;&#160;if (result !== null) return result
+
+&#160;&#160;// Try 2: Haiku approximation
+&#160;&#160;return await countTokensViaHaikuFallback(
+&#160;&#160;&#160;&#160;messages, tools)
+}
+
+// Phase 2: Per-message breakdown
+async function approximateMessageTokens(
+&#160;&#160;messages
+): Promise&lt;MessageBreakdown&gt; {
+&#160;&#160;// toolCall / toolResult / assistant / user
+&#160;&#160;return { totalTokens, byType, byTool }
+}</p>
+    </div>
+  </div>
+  <div style="flex:4;">
+    <h4 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:9pt;">Key Points / 要点</h4>
+    <ul style="font-size:7.5pt; color:var(--text-secondary); line-height:1.5;">
+      <li><p style="margin:0; font-size:7.5pt;">Phase 1: API count_tokens endpoint (exact) with Haiku fallback (approximate)</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Phase 2: Granular per-message, per-tool type breakdown for compression decisions</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Fallback ensures counting never blocks execution</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Breakdown informs which messages to compress first (largest tool results)</p></li>
+    </ul>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Token Management</p>
+  <p>src/utils/analyzeContext.ts</p>
+</div>
+</body></html>

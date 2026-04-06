@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Context Isolation</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 1pt 0; }
+ul { font-size: 9pt; line-height: 1.3; margin: 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 4pt 28pt; }
+.three-col { display: flex; gap: 12pt; flex: 1; }
+.col { flex: 1; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 3pt 8pt; margin-bottom: 2pt; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.card-highlight { background: var(--bg-card); border: 1.5pt solid var(--accent-indigo); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">13 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>上下文隔离 Context Isolation</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 3pt;">每个子agent拥有独立的上下文环境, 防止信息泄露和缓存污染</p>
+  <div class="three-col">
+    <div class="col">
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-teal);">
+        <h4 style="color: var(--accent-teal);">omitClaudeMd</h4>
+        <ul>
+          <li>Explore/Plan agent设置 omitClaudeMd=true</li>
+          <li>移除 claudeMd 上下文字段</li>
+          <li>节省 ~5-15 Gtok/week</li>
+          <li>kill-switch: tengu_slim_subagent_claudemd</li>
+          <li>显式 override.userContext 不受影响</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">const</span> { claudeMd: _omitted,</p>
+        <p style="margin:0;">  ...userCtxNoClaudeMd</p>
+        <p style="margin:0;">} = baseUserContext;</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">const</span> resolved = shouldOmit</p>
+        <p style="margin:0;">  ? userCtxNoClaudeMd</p>
+        <p style="margin:0;">  : baseUserContext;</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-indigo);">
+        <h4 style="color: var(--accent-indigo);">readFileState Clone</h4>
+        <ul>
+          <li>fork模式: cloneFileStateCache() 深拷贝</li>
+          <li>非fork: 创建新的空FileStateCache</li>
+          <li>缓存大小: READ_FILE_STATE_CACHE_SIZE</li>
+          <li>防止子agent的文件读取缓存污染父级</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">const</span> agentReadFileState =</p>
+        <p style="margin:0;">  forkContextMessages</p>
+        <p style="margin:0;">    ? <span style="color:var(--text-code-fn);">cloneFileStateCache</span>(</p>
+        <p style="margin:0;">        ctx.readFileState)</p>
+        <p style="margin:0;">    : <span style="color:var(--text-code-fn);">createFileStateCache</span>(</p>
+        <p style="margin:0;">        CACHE_SIZE);</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-amber);">
+        <h4 style="color: var(--accent-amber);">ThinkingConfig</h4>
+        <ul>
+          <li>非fork agent: thinking被禁用</li>
+          <li>fork agent (useExactTools=true): 继承父级thinkingConfig</li>
+          <li>确保API请求前缀字节相同</li>
+          <li>节省thinking token开销</li>
+        </ul>
+      </div>
+      <div class="card-sm" style="border-top: 2pt solid var(--accent-coral);">
+        <h4 style="color: var(--accent-coral);">其他隔离</h4>
+        <ul>
+          <li>独立 agentId (createAgentId())</li>
+          <li>独立 transcript 存储目录</li>
+          <li>独立 session hooks (clearSessionHooks)</li>
+          <li>独立 Perfetto tracing 节点</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card-highlight">
+    <p><span style="color: var(--accent-indigo); font-weight: 700;">Design Insight:</span> 上下文隔离的核心目标是防止子agent的行为影响父级状态, 同时允许fork模式在需要时精确继承以实现cache共享</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>13 / 22</p>
+</div>
+</body>
+</html>

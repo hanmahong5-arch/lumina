@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .ch-badge { font-size: 6pt; font-weight: 700; border-radius: 2pt; padding: 1pt 4pt; display: inline-block; }
+  .ch-badge.c1 { background: rgba(108,99,255,0.15); color: #6C63FF; }
+  .ch-badge.c2 { background: rgba(108,99,255,0.1); color: #7B74FF; }
+  .ch-badge.c3 { background: rgba(255,107,107,0.15); color: #FF6B6B; }
+  .ch-badge.c4 { background: rgba(255,184,77,0.15); color: #FFB84D; }
+  .ch-badge.c5 { background: rgba(0,212,170,0.15); color: #00D4AA; }
+  .ch-badge.c6 { background: rgba(72,187,120,0.15); color: #48BB78; }
+  .ch-badge.c8 { background: rgba(252,129,129,0.15); color: #FC8181; }
+  .ch-badge.c9 { background: rgba(0,212,170,0.1); color: #00D4AA; }
+  .ch-badge.cx { background: rgba(160,174,192,0.1); color: #A0AEC0; }
+</style>
+</head><body style="background:#0F0F1A;">
+
+<div class="header-bar">
+  <p class="chapter-tag">Course Overview · Top 10 Largest Source Files</p>
+  <p class="page-num">12 / 16</p>
+</div>
+
+<div class="slide-content-compact">
+
+  <h2 style="color:#6C63FF; margin-bottom:2pt; font-size:15pt;">单文件体量排行 · Top 10 Files by LOC</h2>
+  <p style="font-size:7.5pt; color:#A0AEC0; margin-bottom:3pt;">
+    前10大文件合计 ~49,000 LOC，覆盖全部10章核心入口 — 每文件标注所属章节 + 关键导出函数
+  </p>
+
+  <!-- Header row -->
+  <div style="display:flex; gap:2pt; margin-bottom:2pt;">
+    <div style="flex:5; background:#1E2D4A; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0;">#</p>
+    </div>
+    <div style="flex:42; background:#1E2D4A; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0;">File Path</p>
+    </div>
+    <div style="flex:8; background:#1E2D4A; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0;">LOC</p>
+    </div>
+    <div style="flex:8; background:#1E2D4A; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0;">Chapter</p>
+    </div>
+    <div style="flex:37; background:#1E2D4A; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0;">Key Exports / Functions</p>
+    </div>
+  </div>
+  <!-- Row 1 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">1</p>
+    </div>
+    <div style="flex:42; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/cli/print.ts</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">5,594</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge cx">cross</span>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">formatOutput(), printMessage(), colorize()</p>
+    </div>
+  </div>
+  <!-- Row 2 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">2</p>
+    </div>
+    <div style="flex:42; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/utils/messages.ts</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">5,512</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge c1">Ch1</span>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">createUserMessage(), smooshIntoToolResult()</p>
+    </div>
+  </div>
+  <!-- Row 3 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">3</p>
+    </div>
+    <div style="flex:42; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/utils/sessionStorage.ts</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">5,105</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge c6">Ch6</span>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">JSONL append-only, writeQueue, crash recovery</p>
+    </div>
+  </div>
+  <!-- Row 4 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">4</p>
+    </div>
+    <div style="flex:42; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/utils/hooks.ts</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">5,022</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge cx">cross</span>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">executeHooks(), hookRunner(), HookConfig</p>
+    </div>
+  </div>
+  <!-- Row 5 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">5</p>
+    </div>
+    <div style="flex:42; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/screens/REPL.tsx</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">5,005</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge c9">Ch9</span>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">REPL component, QueryGuard, streaming</p>
+    </div>
+  </div>
+  <!-- Row 6 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">6</p>
+    </div>
+    <div style="flex:42; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/main.tsx</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">4,683</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge c9">Ch9</span>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">App entrypoint, render(), InkProvider</p>
+    </div>
+  </div>
+  <!-- Row 7 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">7</p>
+    </div>
+    <div style="flex:42; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/utils/bash/bashParser.ts</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">4,436</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge c3">Ch3</span>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">parseBashCommand(), AST → permission check</p>
+    </div>
+  </div>
+  <!-- Row 8 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">8</p>
+    </div>
+    <div style="flex:42; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/utils/attachments.ts</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">3,997</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge cx">cross</span>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">processAttachments(), imageResize(), MIME</p>
+    </div>
+  </div>
+  <!-- Row 9 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">9</p>
+    </div>
+    <div style="flex:42; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/services/api/claude.ts</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">3,419</p>
+    </div>
+    <div style="flex:8; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge c6">Ch6</span>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">sendRequest(), stream handler, API client</p>
+    </div>
+  </div>
+  <!-- Row 10 -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; color:#A0AEC0; margin:0;">10</p>
+    </div>
+    <div style="flex:42; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0;">src/services/mcp/client.ts</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:5.5pt; font-weight:700; color:#FFFFFF; margin:0; text-align:right;">3,348</p>
+    </div>
+    <div style="flex:8; background:#16213E; border-radius:2pt; padding:1.5pt 3pt; text-align:center;">
+      <span class="ch-badge c5">Ch5</span>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:1.5pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#718096; margin:0;">MCPClient, connection pool, lazy init</p>
+    </div>
+  </div>
+  <p style="font-size:6pt; color:#718096; margin-top:2pt; font-style:italic;">Showing top 10 of 25 files (75,000+ total LOC)</p>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Top 10 files = 49,121 LOC · Full list: 25 files = 75,000+ LOC</p>
+  <p>Ch3 Permission 占据 #7/#13/#14/#15 四个位置 — 安全子系统是代码量最密集的领域</p>
+</div>
+
+</body></html>

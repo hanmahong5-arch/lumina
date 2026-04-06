@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Exponential Backoff</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt}
+
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 06 Resilience</p>
+  <p class="page-num">6 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>指数退避 / Exponential Backoff</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">BASE_DELAY=500ms, max=32s, 25% jitter, Retry-After priority</p>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+<p style="margin:0;font-size:8pt;"><span style="color:var(--text-code-kw)">function</span> <span style="color:var(--text-code-fn)">getBackoffDelay</span>(attempt, error) {</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-muted)">// Retry-After header takes priority</span></p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">const</span> retryAfter = error.headers</p>
+<p style="margin:0;font-size:8pt;">    ?.[<span style="color:var(--text-code-str)">'retry-after'</span>];</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">if</span> (retryAfter) <span style="color:var(--text-code-kw)">return</span> retryAfter * 1000;</p>
+<p style="margin:0;font-size:8pt;"> </p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">const</span> base = <span style="color:var(--text-code-const)">500</span>; <span style="color:var(--text-muted)">// BASE_DELAY</span></p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">const</span> exp = base * Math.<span style="color:var(--text-code-fn)">pow</span>(2, attempt);</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">const</span> max = <span style="color:var(--text-code-const)">32000</span>; <span style="color:var(--text-muted)">// cap</span></p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">const</span> capped = Math.<span style="color:var(--text-code-fn)">min</span>(exp, max);</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-muted)">// 25% jitter</span></p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">return</span> capped * (0.75 + Math.<span style="color:var(--text-code-fn)">random</span>() * 0.5);</p>
+<p style="margin:0;font-size:8pt;">}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3 style="color:var(--accent-amber);font-size:10pt;">Delay Progression</h3>
+          <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">Attempt</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">Base Delay</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">With Jitter</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">0</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">500ms</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">375-750ms</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">1</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">1s</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">750ms-1.5s</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">2</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">2s</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">1.5-3s</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">3</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">4s</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">3-6s</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">6+</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#FF6B6B; margin:0;">32s (cap)</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">24-48s</p>
+    </div>
+  </div>
+
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent-teal);font-size:10pt;">25% Jitter</h3>
+        <p style="font-size:9pt;">Randomizes delay by +/-25% to desynchronize retries across clients. Prevents thundering herd after a global outage.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Resilience</p></div>
+</body></html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Cover</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body {
+  width: 720pt; height: 405pt;
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+h1 { font-size: 28pt; font-weight: 700; margin: 0 0 10pt 0; line-height: 1.2; }
+p  { font-size: 12pt; line-height: 1.45; margin: 0 0 3pt 0; color: var(--text-secondary); }
+.chapter-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50pt 60pt;
+  flex: 1;
+}
+.chapter-number {
+  font-size: 56pt;
+  font-weight: 700;
+  color: var(--accent-indigo);
+  opacity: 0.2;
+  margin: 0;
+  line-height: 1;
+}
+.divider {
+  width: 60pt;
+  height: 3pt;
+  background: var(--accent-indigo);
+  margin: 12pt 0;
+}
+.tag {
+  font-size: 9pt;
+  color: var(--accent-teal);
+  letter-spacing: 1.5pt;
+  text-transform: uppercase;
+  margin: 0 0 6pt 0;
+}
+</style>
+</head>
+<body>
+<div class="chapter-cover">
+  <p class="chapter-number">03</p>
+  <p class="tag">CHAPTER THREE</p>
+  <h1>权限与安全模型</h1>
+  <div class="divider"></div>
+  <p>多层级访问控制的工程实现</p>
+  <p style="margin-top:16pt; font-size:9pt; color:var(--text-muted);">Permission Modes / YOLO Classifier / Rule DSL / Bash Speculative Classification</div>
+</div>
+</body>
+</html>

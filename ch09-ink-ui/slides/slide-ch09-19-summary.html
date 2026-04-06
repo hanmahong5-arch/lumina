@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 09 - Summary</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:15pt;font-weight:700;margin:0 0 6pt 0;line-height:1.15}
+h4{font-size:9pt;font-weight:700;margin:0 0 1pt 0;line-height:1.2}
+p{font-size:8pt;line-height:1.3;margin:0 0 1pt 0}
+.takeaway-list{display:flex;flex-direction:column;gap:4pt}
+.takeaway-item{display:flex;gap:8pt;align-items:flex-start;background:var(--bg-card);border-radius:5pt;padding:6pt 10pt}
+.takeaway-num{font-size:13pt;font-weight:700;color:var(--accent-indigo);min-width:20pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 | INK UI</p>
+  <p class="page-num">19 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>5 Takeaways</h2>
+  <div class="takeaway-list">
+    <div class="takeaway-item">
+      <p class="takeaway-num">1</p>
+      <div>
+        <h4>Ref-based Streaming</h4>
+        <p>High-frequency text_delta events use refs to bypass React re-rendering, achieving smooth streaming at 100+ tokens/s without jank.</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">2</p>
+      <div>
+        <h4>Custom Memo Comparator</h4>
+        <p>Messages component uses contentBlock ref identity for memo comparison, ensuring only the active streaming message re-renders.</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">3</p>
+      <div>
+        <h4>Lazy Import for DCE</h4>
+        <p>Dynamic import('ink') ensures non-interactive modes never load UI dependencies, reducing cold-start by ~200ms.</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">4</p>
+      <div>
+        <h4>Zustand over Context</h4>
+        <p>Global state uses Zustand with selectors to prevent full-tree re-renders on theme/permission/agent state changes.</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">5</p>
+      <div>
+        <h4>AsyncGenerator History</h4>
+        <p>History search uses lazy AsyncGenerator to stream results from disk, keeping memory bounded while supporting infinite scroll.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Chapter 09 Summary</p>
+  <p>Ch09 Ink UI</p>
+</div>
+</body>
+</html>

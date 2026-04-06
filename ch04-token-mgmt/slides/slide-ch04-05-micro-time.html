@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Micro Time-Based</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --text-code-fn: #79C0FF;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.pipeline { display: flex; gap: 4pt; align-items: stretch; margin: 6pt 0; }
+.pipeline-step { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; text-align: center; border-top: 2pt solid var(--accent-teal); }
+.pipeline-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 12pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">05 / 22</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-teal);">Micro Path 1: Time-Based 微压缩</h2>
+  <p style="color:var(--text-secondary); margin-bottom:4pt;">基于时间衰减清理旧工具结果，cold cache 场景优先</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <p style="font-size:8pt; font-weight:700; color:var(--accent-teal);">evaluateTimeBasedTrigger</p>
+      <p style="font-size:7pt; color:var(--text-secondary);">检查时间条件</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <p style="font-size:8pt; font-weight:700; color:var(--accent-teal);">扫描旧消息</p>
+      <p style="font-size:7pt; color:var(--text-secondary);">按时间戳排序</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <p style="font-size:8pt; font-weight:700; color:var(--accent-teal);">裁剪工具结果</p>
+      <p style="font-size:7pt; color:var(--text-secondary);">仅 COMPACTABLE</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <p style="font-size:8pt; font-weight:700; color:var(--accent-teal);">替换为摘要</p>
+      <p style="font-size:7pt; color:var(--text-secondary);">[content truncated]</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// microCompact.ts - time-based path</p>
+        <p><span style="color:var(--text-code-kw);">function</span> <span style="color:var(--text-code-fn);">evaluateTimeBasedTrigger</span>(</p>
+        <p>  messages, now</p>
+        <p>) {</p>
+        <p>  <span style="color:var(--text-code-kw);">const</span> oldMessages = messages</p>
+        <p>    .filter(m =&gt;</p>
+        <p>      now - m.timestamp &gt; THRESHOLD</p>
+        <p>      &amp;&amp; isCompactable(m.tool)</p>
+        <p>    );</p>
+        <p></p>
+        <p>  <span style="color:var(--text-code-kw);">for</span> (<span style="color:var(--text-code-kw);">const</span> msg <span style="color:var(--text-code-kw);">of</span> oldMessages) {</p>
+        <p>    msg.content = truncateResult(</p>
+        <p>      msg.content</p>
+        <p>    );</p>
+        <p>  }</p>
+        <p>}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-teal);">触发条件</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">cold cache 场景：token 已达一定阈值，且存在超时的工具结果</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">时间衰减：越早的结果越可能被裁剪</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-amber);">Cold Cache 含义</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">当 API 缓存未命中时（新的对话前缀），旧结果的保留价值降低。裁剪旧结果不会影响缓存命中率。</p>
+      </div>
+      <div class="card" style="border-left:3pt solid var(--accent-teal);">
+        <p style="font-size:8pt; color:var(--accent-teal); font-weight:700;">零 API 成本</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">纯本地操作，不调用 LLM，用户无感知。工具结果替换为 "[content truncated]" 标记。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

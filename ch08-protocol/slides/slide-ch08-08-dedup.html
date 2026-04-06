@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Dedup</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">8 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>BoundedUUIDSet / 消息去重</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">O(1) ring buffer deduplication with FIFO eviction</p>
+  <div class="two-col">
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-teal);">Data Structure</h4>
+        <ul style="font-size:9pt;">
+          <li><p style="font-size:9pt;">Set&lt;string&gt; for O(1) lookup</p></li>
+          <li><p style="font-size:9pt;">Array ring buffer for insertion order</p></li>
+          <li><p style="font-size:9pt;">Capacity: <span style="font-family:Courier New,monospace;color:var(--text-code-const);">2000</span> UUIDs</p></li>
+          <li><p style="font-size:9pt;">When full: evict oldest (FIFO)</p></li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-code);border-radius:4pt;padding:8pt 10pt;">
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-muted);margin:0;">// BoundedUUIDSet</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;"><span style="color:var(--text-code-kw);">class</span> BoundedUUIDSet {</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-fn);">set</span>: Set&lt;string&gt;;</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-fn);">ring</span>: string[<span style="color:var(--text-code-const);">2000</span>];</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-fn);">cursor</span>: number = <span style="color:var(--text-code-const);">0</span>;</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:2pt 0;color:var(--text-muted);">&nbsp;</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-fn);">has</span>(id): <span style="color:var(--text-code-const);">O(1)</span></p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-fn);">add</span>(id): <span style="color:var(--text-code-const);">O(1)</span></p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-indigo);">Why Ring Buffer?</h4>
+        <p style="font-size:8pt;">Unbounded Set would grow indefinitely in long sessions. Ring buffer caps memory at exactly 2000 * UUID_SIZE bytes while maintaining O(1) for both insert and lookup.</p>
+      </div>
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-amber);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-amber);">Dedup Flow</h4>
+        <p style="font-size:8pt;">1. Message arrives with UUID</p>
+        <p style="font-size:8pt;">2. Check set.has(uuid) - O(1)</p>
+        <p style="font-size:8pt;">3. If seen: discard (duplicate)</p>
+        <p style="font-size:8pt;">4. If new: add to set + ring[cursor++]</p>
+        <p style="font-size:8pt;">5. If cursor == 2000: evict ring[0], cursor = 0</p>
+      </div>
+      <div style="display:flex;gap:8pt;">
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt;text-align:center;">
+          <p style="font-size:14pt;font-weight:700;color:var(--accent-teal);margin:0;">O(1)</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">lookup + insert</p>
+        </div>
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt;text-align:center;">
+          <p style="font-size:14pt;font-weight:700;color:var(--accent-coral);margin:0;">2000</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">ring buffer capacity</p>
+        </div>
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt;text-align:center;">
+          <p style="font-size:14pt;font-weight:700;color:var(--accent-amber);margin:0;">FIFO</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">eviction policy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

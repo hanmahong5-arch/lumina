@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CH-07 · Code Walkthrough</p>
+  <p class="page-num">Code</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:10pt;">
+  <div style="flex:6;">
+    <h3 style="color:var(--accent-teal); margin-bottom:3pt; font-size:11pt;">Semantic Memory Selection</h3>
+    <p style="font-size:7pt; color:var(--text-muted); margin-bottom:4pt;">findRelevantMemories.ts:77-141</p>
+    <div style="background:var(--bg-code); border-radius:4pt; padding:6pt 8pt;">
+      <p style="font-family:'Courier New',monospace; font-size:7.5pt; color:#FFFFFF; margin:0; line-height:1.5;">async function selectRelevantMemories(
+&#160;&#160;query: string,
+&#160;&#160;memories: MemoryHeader[],
+&#160;&#160;recentTools: string[],
+): Promise&lt;string[]&gt; {
+&#160;&#160;const manifest = formatMemoryManifest(memories)
+
+&#160;&#160;const result = await sideQuery({
+&#160;&#160;&#160;&#160;model: getDefaultSonnetModel(),
+&#160;&#160;&#160;&#160;system: SELECT_MEMORIES_SYSTEM_PROMPT,
+&#160;&#160;&#160;&#160;messages: [{
+&#160;&#160;&#160;&#160;&#160;&#160;role: 'user',
+&#160;&#160;&#160;&#160;&#160;&#160;content: `Query: ${query}
+Available memories: ${manifest}
+Recent tools: ${recentTools}`,
+&#160;&#160;&#160;&#160;}],
+&#160;&#160;&#160;&#160;output_format: { type: 'json_schema' },
+&#160;&#160;})
+
+&#160;&#160;return parsed.selected_memories&#160;&#160;// max 5
+}</p>
+    </div>
+  </div>
+  <div style="flex:4;">
+    <h4 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:9pt;">Key Points / 要点</h4>
+    <ul style="font-size:7.5pt; color:var(--text-secondary); line-height:1.5;">
+      <li><p style="margin:0; font-size:7.5pt;">Uses Sonnet (not Opus) for cost-efficient selection</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">JSON schema output ensures parseable structured response</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Recent tools context helps disambiguate query intent</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Returns max 5 filenames, validated against actual file list</p></li>
+    </ul>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Memory System</p>
+  <p>src/memdir/findRelevantMemories.ts</p>
+</div>
+</body></html>

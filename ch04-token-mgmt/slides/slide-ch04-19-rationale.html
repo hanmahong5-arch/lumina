@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Design Rationale</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.rationale-list { display: flex; flex-direction: column; gap: 6pt; flex: 1; }
+.rationale-item { display: flex; gap: 12pt; background: var(--bg-card); border-radius: 5pt; padding: 10pt 14pt; }
+.rationale-icon { font-size: 20pt; min-width: 30pt; text-align: center; }
+.rationale-content { flex: 1; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">19 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>设计哲学 Design Rationale</h2>
+  <p style="color:var(--text-secondary); margin-bottom:8pt;">三个核心设计决策背后的思考</p>
+
+  <div class="rationale-list">
+    <div class="rationale-item" style="border-left:3pt solid var(--accent-teal);">
+      <div class="rationale-content">
+        <h4 style="color:var(--accent-teal);">渐进式降级 Graceful Degradation</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">4 级级联不是复杂度的堆砌，而是成本-收益的精确控制。L1-L3 零 API 成本覆盖绝大多数场景，L4(LLM 摘要)仅在必要时触发。类比网络 QoS：在带宽不足时先降低非关键流量的优先级，而非直接断开连接。</p>
+        <p style="font-size:8pt; color:var(--accent-teal);">原则：能裁剪就不截断，能截断就不折叠，能折叠就不摘要</p>
+      </div>
+    </div>
+    <div class="rationale-item" style="border-left:3pt solid var(--accent-indigo);">
+      <div class="rationale-content">
+        <h4 style="color:var(--accent-indigo);">投影视图读写分离 Projection View R/W Separation</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">collapse store 与 REPL 消息数组分离，实现"API 看到压缩视图，UI 看到完整历史"。这是 CQRS 模式在 token 管理中的应用：写入路径(用户输入)和读取路径(API 请求)使用不同的数据视图。</p>
+        <p style="font-size:8pt; color:var(--accent-indigo);">原则：压缩是 API 的视图优化，不是数据的永久丢失</p>
+      </div>
+    </div>
+    <div class="rationale-item" style="border-left:3pt solid var(--accent-amber);">
+      <div class="rationale-content">
+        <h4 style="color:var(--accent-amber);">9 段模板约束 Template Constraint</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">让 LLM 自由总结会导致不可预测的信息遗漏。9 段模板是 checklist 思维的工程化：强制 LLM 回答 9 个预定义问题，确保错误记录、用户反馈、下一步计划等关键信息不被遗漏。analysis 草稿区允许自由思考但不保留到最终输出。</p>
+        <p style="font-size:8pt; color:var(--accent-amber);">原则：结构化输出比自由发挥更可靠</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

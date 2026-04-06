@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Messaging</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-str:#A5D6FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.three-col{display:flex;gap:12pt;flex:1}
+.col{flex:1}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">9 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>消息处理三函数 / Message Processing Trio</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Three key functions handle message eligibility, title extraction, and control flow</p>
+  <div class="three-col">
+    <div class="col">
+      <div style="background:var(--bg-card);border-top:3pt solid var(--accent-teal);border-radius:0 0 5pt 5pt;padding:10pt 10pt;">
+        <h4 style="color:var(--accent-teal);">isEligibleBridgeMessage</h4>
+        <p style="font-size:8pt;color:var(--text-muted);margin-bottom:6pt;">Gate function</p>
+        <ul style="font-size:8pt;">
+          <li><p style="font-size:8pt;">Validates message structure</p></li>
+          <li><p style="font-size:8pt;">Checks session ID match</p></li>
+          <li><p style="font-size:8pt;">Verifies message type</p></li>
+          <li><p style="font-size:8pt;">Rejects expired messages</p></li>
+          <li><p style="font-size:8pt;">Dedup check via BoundedUUIDSet</p></li>
+        </ul>
+        <div style="background:var(--bg-code);border-radius:3pt;padding:4pt 6pt;margin-top:6pt;">
+          <p style="font-family:Courier New,monospace;font-size:7pt;color:var(--accent-teal);margin:0;">returns: boolean</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div style="background:var(--bg-card);border-top:3pt solid var(--accent-indigo);border-radius:0 0 5pt 5pt;padding:10pt 10pt;">
+        <h4 style="color:var(--accent-indigo);">extractTitleText</h4>
+        <p style="font-size:8pt;color:var(--text-muted);margin-bottom:6pt;">Title derivation</p>
+        <ul style="font-size:8pt;">
+          <li><p style="font-size:8pt;">Extract display title from msg</p></li>
+          <li><p style="font-size:8pt;">Truncate to 50 characters</p></li>
+          <li><p style="font-size:8pt;">Sanitize HTML entities</p></li>
+          <li><p style="font-size:8pt;">Fallback to session ID</p></li>
+          <li><p style="font-size:8pt;">Used in UI and logging</p></li>
+        </ul>
+        <div style="background:var(--bg-code);border-radius:3pt;padding:4pt 6pt;margin-top:6pt;">
+          <p style="font-family:Courier New,monospace;font-size:7pt;color:var(--accent-indigo);margin:0;">returns: string (max 50)</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div style="background:var(--bg-card);border-top:3pt solid var(--accent-coral);border-radius:0 0 5pt 5pt;padding:10pt 10pt;">
+        <h4 style="color:var(--accent-coral);">controlRequest</h4>
+        <p style="font-size:8pt;color:var(--text-muted);margin-bottom:6pt;">Control plane</p>
+        <ul style="font-size:8pt;">
+          <li><p style="font-size:8pt;">Handles non-data messages</p></li>
+          <li><p style="font-size:8pt;">Ping/pong heartbeat</p></li>
+          <li><p style="font-size:8pt;">Reconnection requests</p></li>
+          <li><p style="font-size:8pt;">Epoch bump signals</p></li>
+          <li><p style="font-size:8pt;">Shutdown commands</p></li>
+        </ul>
+        <div style="background:var(--bg-code);border-radius:3pt;padding:4pt 6pt;margin-top:6pt;">
+          <p style="font-family:Courier New,monospace;font-size:7pt;color:var(--accent-coral);margin:0;">returns: ControlResponse</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--bg-card);border:1.5pt solid var(--accent-indigo);border-radius:5pt;padding:6pt 12pt;margin-top:6pt;">
+    <p style="font-size:9pt;color:var(--text-secondary);margin:0;">Message flow: receive -&gt; isEligibleBridgeMessage() -&gt; controlRequest() | extractTitleText() -&gt; dispatch to handler</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

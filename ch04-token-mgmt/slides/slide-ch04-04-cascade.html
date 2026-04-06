@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - 4-Level Cascade</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --accent-purple: #9F7AEA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h3 { font-size: 13pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.cascade { display: flex; gap: 6pt; margin: 8pt 0; }
+.cascade-step { flex: 1; border-radius: 5pt; padding: 10pt 10pt; text-align: center; }
+.cascade-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 14pt; }
+.detail-row { display: flex; gap: 8pt; margin-top: 6pt; flex: 1; }
+.detail-card { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">04 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>4 级压缩级联 4-Level Cascade</h2>
+  <p style="color:var(--text-secondary); margin-bottom:4pt;">渐进式降级策略，从轻量到重量，按需逐级触发</p>
+
+  <div class="cascade">
+    <div class="cascade-step" style="background:var(--accent-teal); color:var(--bg-primary);">
+      <h3 style="color:var(--bg-primary); font-size:11pt;">L1: Micro</h3>
+      <p style="font-size:8pt; color:var(--bg-primary);">微压缩</p>
+      <p style="font-size:7pt; color:var(--bg-primary);">工具结果裁剪</p>
+    </div>
+    <div class="cascade-arrow"><p>&#9654;</p></div>
+    <div class="cascade-step" style="background:var(--accent-green); color:var(--bg-primary);">
+      <h3 style="color:var(--bg-primary); font-size:11pt;">L2: Snip</h3>
+      <p style="font-size:8pt; color:var(--bg-primary);">截断压缩</p>
+      <p style="font-size:7pt; color:var(--bg-primary);">循环缓冲剪裁</p>
+    </div>
+    <div class="cascade-arrow"><p>&#9654;</p></div>
+    <div class="cascade-step" style="background:var(--accent-amber); color:var(--bg-primary);">
+      <h3 style="color:var(--bg-primary); font-size:11pt;">L3: Collapse</h3>
+      <p style="font-size:8pt; color:var(--bg-primary);">折叠压缩</p>
+      <p style="font-size:7pt; color:var(--bg-primary);">投影视图</p>
+    </div>
+    <div class="cascade-arrow"><p>&#9654;</p></div>
+    <div class="cascade-step" style="background:var(--accent-coral); color:var(--bg-primary);">
+      <h3 style="color:var(--bg-primary); font-size:11pt;">L4: Auto</h3>
+      <p style="font-size:8pt; color:var(--bg-primary);">全量压缩</p>
+      <p style="font-size:7pt; color:var(--bg-primary);">LLM 摘要重建</p>
+    </div>
+  </div>
+
+  <div class="detail-row">
+    <div class="detail-card" style="border-top:2pt solid var(--accent-teal);">
+      <h4 style="color:var(--accent-teal); font-size:9pt;">Micro Compact</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">time-based / cached 两路径</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">仅压缩 COMPACTABLE_TOOLS</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">用户无感知</p>
+      <p style="font-size:8pt; color:var(--accent-teal);">成本: 0 API</p>
+    </div>
+    <div class="detail-card" style="border-top:2pt solid var(--accent-green);">
+      <h4 style="color:var(--accent-green); font-size:9pt;">Snip Compact</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">snipCompactIfNeeded()</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">循环缓冲剪裁最旧消息</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">tokensFreed passthrough</p>
+      <p style="font-size:8pt; color:var(--accent-green);">成本: 0 API</p>
+    </div>
+    <div class="detail-card" style="border-top:2pt solid var(--accent-amber);">
+      <h4 style="color:var(--accent-amber); font-size:9pt;">Collapse</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">投影视图 (projection)</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">独立 store 读写分离</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">不修改原消息数组</p>
+      <p style="font-size:8pt; color:var(--accent-amber);">成本: 0 API</p>
+    </div>
+    <div class="detail-card" style="border-top:2pt solid var(--accent-coral);">
+      <h4 style="color:var(--accent-coral); font-size:9pt;">Auto Compact</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">LLM 生成 9 段摘要</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">消息替换 + 状态重建</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">熔断保护(max 3 fails)</p>
+      <p style="font-size:8pt; color:var(--accent-coral);">成本: 1 API call</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

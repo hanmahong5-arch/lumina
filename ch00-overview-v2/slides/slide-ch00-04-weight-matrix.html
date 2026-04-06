@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .fn { font-family: "Courier New", monospace; font-size: 6.5pt; color: #00D4AA; }
+  .insight-row { display: flex; gap: 6pt; margin-top: 2pt; }
+  .insight-box { flex: 1; background: #16213E; border-radius: 3pt; padding: 3pt 6pt; border-left: 2pt solid; }
+  .insight-box.ind { border-left-color: #6C63FF; }
+  .insight-box.cor { border-left-color: #FF6B6B; }
+  .insight-box.amb { border-left-color: #FFB84D; }
+</style>
+</head><body style="background:#0F0F1A;">
+
+<div class="header-bar">
+  <p class="chapter-tag">Course Overview · Chapter Weight Matrix</p>
+  <p class="page-num">04 / 16</p>
+</div>
+
+<div class="slide-content-compact">
+
+  <h2 style="color:#6C63FF; margin-bottom:2pt; font-size:15pt;">章节权重矩阵 · Multi-Dimensional Weight Matrix</h2>
+  <p style="font-size:7.5pt; color:#A0AEC0; margin-bottom:4pt;">
+    综合权重 = LOC(25%) + 文件数(15%) + 架构中心度(25%) + 跨章被引用(20%) + 复杂度密度(15%)
+  </p>
+
+  <!-- Header row -->
+  <div style="display:flex; gap:2pt; margin-bottom:2pt;">
+    <div style="flex:14; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:left;">章节</p>
+    </div>
+    <div style="flex:7; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">LOC</p>
+    </div>
+    <div style="flex:6; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">Files</p>
+    </div>
+    <div style="flex:7; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">被引用</p>
+    </div>
+    <div style="flex:14; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">核心函数 (入口)</p>
+    </div>
+    <div style="flex:14; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">最大单文件</p>
+    </div>
+    <div style="flex:12; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">关键常量数</p>
+    </div>
+    <div style="flex:7; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">feature()</p>
+    </div>
+    <div style="flex:6; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">权重</p>
+    </div>
+    <div style="flex:5; background:#1E2D4A; border-radius:2pt; padding:2.5pt 3pt;">
+      <p style="font-size:6pt; font-weight:700; color:#00D4AA; margin:0; text-align:center;">序</p>
+    </div>
+  </div>
+  <!-- Row 1 - Ch1 Core Engine -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch1 Core Engine</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">3,536</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">8</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">15 imports</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">queryLoop() submitMessage()</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">query.ts 1,729L</p>
+    </div>
+    <div style="flex:12; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">17 transitions</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">—</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">95</p>
+    </div>
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">1</p>
+    </div>
+  </div>
+  <!-- Row 2 - Ch2 Multi-Agent -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch2 Multi-Agent</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">4,663</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">19</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">10</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">runAgent() forkSubagent()</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">AgentTool.tsx 1,397L</p>
+    </div>
+    <div style="flex:12; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">FORK_PLACEHOLDER</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">32</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">88</p>
+    </div>
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">2</p>
+    </div>
+  </div>
+  <!-- Row 3 - Ch3 Permission -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch3 Permission</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">7,816</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">28</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">43 imports</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">hasPermissions() YOLO()</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">bashPermissions 2,621L</p>
+    </div>
+    <div style="flex:12; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">SAFE_YOLO 25+ tools</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">107+45</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">92</p>
+    </div>
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">3</p>
+    </div>
+  </div>
+  <!-- Row 4 - Ch4 Token Mgmt -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch4 Token Mgmt</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">5,528</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">7</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">18</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">compact() microCompact()</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">compact.ts 1,705L</p>
+    </div>
+    <div style="flex:12; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">6 thresholds</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">12+20</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">78</p>
+    </div>
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">5</p>
+    </div>
+  </div>
+  <!-- Row 5 - Ch5 Tools+MCP -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch5 Tools+MCP</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">8,201</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">27</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">27 imports</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">runToolUse() assemblePool()</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">toolExecution 1,745L</p>
+    </div>
+    <div style="flex:12; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">40+ tool names</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">16</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">85</p>
+    </div>
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#00D4AA; font-weight:700; margin:0; text-align:center;">4</p>
+    </div>
+  </div>
+  <!-- Row 6 - Ch6 Resilience -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch6 Resilience</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">10,781</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">6</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">8</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">withRetry() sessionStore()</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">sessionStorage 5,105L</p>
+    </div>
+    <div style="flex:12; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">10 retry constants</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">11</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">72</p>
+    </div>
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">6</p>
+    </div>
+  </div>
+  <!-- Row 7 - Ch7 Memory -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch7 Memory</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">1,848</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">6</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#718096; margin:0; text-align:center;">4</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">sideQuery() extractMem()</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">extractMemories 615L</p>
+    </div>
+    <div style="flex:12; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">MAX_LINES=200</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">51</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">62</p>
+    </div>
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">8</p>
+    </div>
+  </div>
+  <!-- Row 8 - Ch8 Protocol -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch8 Protocol</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">12,613</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">31</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">7</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">bridgeMain() BoundedUUID</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">bridgeMain 2,999L</p>
+    </div>
+    <div style="flex:12; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">SPAWN=32, cap=120s</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">28</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">75</p>
+    </div>
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">7</p>
+    </div>
+  </div>
+  <!-- Row 9 - Ch9 Ink UI -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch9 Ink UI</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">14,444</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">292</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#718096; margin:0; text-align:center;">5</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">REPL.tsx PromptInput.tsx</p>
+    </div>
+    <div style="flex:14; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">REPL.tsx 5,005L</p>
+    </div>
+    <div style="flex:12; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">Animation frames</p>
+    </div>
+    <div style="flex:7; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">46</p>
+    </div>
+    <div style="flex:6; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFB84D; font-weight:700; margin:0; text-align:center;">65</p>
+    </div>
+    <div style="flex:5; background:#131B2E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">9</p>
+    </div>
+  </div>
+  <!-- Row 10 - Ch10 Feature+Cost -->
+  <div style="display:flex; gap:2pt; margin-bottom:1pt;">
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#FFFFFF; font-weight:700; margin:0; text-align:left;">Ch10 Feature+Cost</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">6,934</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">8</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#718096; margin:0; text-align:center;">3</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">feature() statsCache()</p>
+    </div>
+    <div style="flex:14; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:6pt; font-family:'Courier New',monospace; color:#00D4AA; margin:0; text-align:center;">config.ts 1,817L</p>
+    </div>
+    <div style="flex:12; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">960 call sites</p>
+    </div>
+    <div style="flex:7; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">960</p>
+    </div>
+    <div style="flex:6; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#718096; margin:0; text-align:center;">55</p>
+    </div>
+    <div style="flex:5; background:#16213E; border-radius:2pt; padding:2pt 3pt;">
+      <p style="font-size:7pt; color:#A0AEC0; margin:0; text-align:center;">10</p>
+    </div>
+  </div>
+
+  <!-- Insights row -->
+  <div class="insight-row">
+    <div class="insight-box ind">
+      <p style="color:#6C63FF; font-weight:700; font-size:7pt; margin:0;">最高架构中心度</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Ch1 Core Engine: LOC最小(3,536)但被15个模块直接import, query.ts的17种transition reason驱动整个系统</p>
+    </div>
+    <div class="insight-box cor">
+      <p style="color:#FF6B6B; font-weight:700; font-size:7pt; margin:0;">最大安全表面积</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Ch3 Permission: 43处被引用(全系统最高), bashPermissions.ts单文件2,621行, TRANSCRIPT_CLASSIFIER feature()出现107次</p>
+    </div>
+    <div class="insight-box amb">
+      <p style="color:#FFB84D; font-weight:700; font-size:7pt; margin:0;">最大LOC vs 最低权重</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Ch9 Ink UI: 14,444 LOC + 292文件(最多), 但架构孤立——仅被Ch1/Ch8引用, 不影响核心Agent逻辑</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · 权重评分基于5维度加权 · feature()列 = 该章域内feature gate调用次数</p>
+  <p>"被引用" = grep -l "from.*module" across src/ — 衡量其他模块对该章核心的依赖</p>
+</div>
+
+</body></html>

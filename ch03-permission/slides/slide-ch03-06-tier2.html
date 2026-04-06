@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Tier 2 Allow</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --text-code-str: var(--text-code-str);
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.step-list { display: flex; flex-direction: column; gap: 5pt; }
+.step-item { display: flex; gap: 10pt; align-items: flex-start; }
+.step-num { font-size: 14pt; font-weight: 700; color: var(--accent-green); min-width: 20pt; }
+.step-content { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-accent-teal { background: var(--bg-card); border-left: 3pt solid var(--accent-teal); border-radius: 0 5pt 5pt 0; padding: 6pt 10pt; margin-bottom: 5pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">06 / 20</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-green);">Tier 2: Allow 自动放行层</h2>
+  <p style="color:var(--text-secondary); margin-bottom:8pt;">通过 Tier 1 后，检查是否可自动放行（无需用户确认）</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="step-list">
+        <div class="step-item">
+          <p class="step-num">A</p>
+          <div class="step-content">
+            <h4 style="color:var(--accent-green);">bypassPermissions 全放行</h4>
+            <p style="font-size:9pt; color:var(--text-secondary);">模式为 bypass 时，所有通过 Tier 1 的工具自动 allow（safety-check 已在 Tier 1 拦截）</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">B</p>
+          <div class="step-content">
+            <h4 style="color:var(--accent-green);">toolAlwaysAllowedRule</h4>
+            <p style="font-size:9pt; color:var(--text-secondary);">用户配置的 allow 规则命中，工具+内容组合匹配 glob 模式</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">C</p>
+          <div class="step-content">
+            <h4 style="color:var(--accent-green);">acceptEdits 模拟放行</h4>
+            <p style="font-size:9pt; color:var(--text-secondary);">acceptEdits 模式下自动允许 Edit/Write/NotebookEdit 工具</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <p class="step-num">D</p>
+          <div class="step-content">
+            <h4 style="color:var(--accent-green);">passthrough 跳过</h4>
+            <p style="font-size:9pt; color:var(--text-secondary);">无需权限的工具（如 Read, Glob）直接通过，不进入 Tier 3</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// Tier 2 allow logic</p>
+        <p><span style="color:var(--text-code-kw);">if</span> (mode === <span style="color:var(--text-code-str);">'bypassPermissions'</span>) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { type: <span style="color:var(--text-code-str);">'allowed'</span> };</p>
+        <p>}</p>
+        <p></p>
+        <p><span style="color:var(--text-code-kw);">if</span> (matchesAllowRule(tool, input)) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { type: <span style="color:var(--text-code-str);">'allowed'</span>,</p>
+        <p>    rule: matchedRule };</p>
+        <p>}</p>
+        <p></p>
+        <p><span style="color:var(--text-code-kw);">if</span> (mode === <span style="color:var(--text-code-str);">'acceptEdits'</span></p>
+        <p>    &amp;&amp; isEditTool(tool)) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { type: <span style="color:var(--text-code-str);">'allowed'</span> };</p>
+        <p>}</p>
+      </div>
+      <div class="card-accent-teal">
+        <p style="font-size:9pt; color:var(--accent-teal); font-weight:700;">Passthrough 设计</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">只读工具（Read/Glob/Grep）无副作用，永远不会进入 Ask 层。减少用户干扰，提升交互流畅度。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

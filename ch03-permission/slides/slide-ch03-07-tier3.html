@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Tier 3 Ask/Classify</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.pipeline { display: flex; gap: 4pt; align-items: stretch; margin: 6pt 0; }
+.pipeline-step { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; text-align: center; border-top: 2pt solid var(--accent-indigo); }
+.pipeline-step-active { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; text-align: center; border-top: 2pt solid var(--accent-teal); }
+.pipeline-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 12pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 6pt 10pt; margin-bottom: 5pt; }
+.two-col { display: flex; gap: 12pt; flex: 1; }
+.col { flex: 1; }
+.code-inline { font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">07 / 20</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-indigo);">Tier 3: Ask/Classify 智能决策层</h2>
+  <p style="color:var(--text-secondary); margin-bottom:4pt;">auto mode 下的 4 步决策流程：快速路径 &rarr; ML 分类器 &rarr; headless hook &rarr; 用户确认</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step-active">
+      <h4 style="color:var(--accent-teal); font-size:9pt;">Fast Paths</h4>
+      <p style="font-size:7pt; color:var(--text-secondary);">3 级静态检查</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <h4 style="color:var(--accent-indigo); font-size:9pt;">ML Classifier</h4>
+      <p style="font-size:7pt; color:var(--text-secondary);">2-stage XML</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <h4 style="color:var(--accent-amber); font-size:9pt;">Headless Hook</h4>
+      <p style="font-size:7pt; color:var(--text-secondary);">外部回调</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <h4 style="color:var(--accent-coral); font-size:9pt;">User Prompt</h4>
+      <p style="font-size:7pt; color:var(--text-secondary);">最终兜底</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <h4 style="font-size:10pt;">Fast Paths (零延迟)</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">1. <span class="code-inline">acceptEdits</span> 模拟 - 文件编辑类直接放行</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">2. <span class="code-inline">SAFE_YOLO_ALLOWLISTED_TOOLS</span> - ~25 个安全工具白名单</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">3. 用户 allow 规则命中 - glob 模式匹配</p>
+      </div>
+      <div class="card">
+        <h4 style="font-size:10pt;">ML Classifier (核心)</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">Stage 1: 快速判定 (max_tokens=64)</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">Stage 2: 深度思考 (max_tokens=4096)</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">返回 allow/block/undecided</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="font-size:10pt;">Headless Hook (可选)</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">headless 模式下的外部决策回调，CI/CD 集成用。调用外部服务审批权限请求。</p>
+      </div>
+      <div class="card">
+        <h4 style="font-size:10pt;">User Prompt (最终兜底)</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">所有自动化路径未能决策时，回退到用户交互确认。提供 Allow / Deny / Always Allow 三选项。</p>
+      </div>
+      <div class="card" style="border: 1pt solid var(--accent-amber);">
+        <p style="font-size:8pt; color:var(--accent-amber); font-weight:700;">关键设计：ML 分类器失败时 fail-closed（拒绝），而非 fail-open</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

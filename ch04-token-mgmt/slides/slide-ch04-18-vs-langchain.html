@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Comparison</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 8pt; line-height: 1.4; margin: 4pt 0 0 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; color: var(--text-secondary); }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.compare-grid { display: flex; gap: 8pt; flex: 1; }
+.compare-col { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 8pt 10pt; }
+.compare-col-highlight { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 8pt 10pt; border: 1.5pt solid var(--accent-indigo); }
+
+
+
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">18 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>对比分析 Comparison</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">4 级级联 vs 单层方案的上下文管理策略对比</p>
+
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-amber);">LangChain</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">ConversationSummaryMemory</p>
+      <ul>
+        <li>1 级压缩：直接 LLM 摘要</li>
+        <li>无微压缩/折叠</li>
+        <li>无缓存感知</li>
+        <li>无 413 恢复</li>
+        <li>无子代理隔离</li>
+      </ul>
+      <p style="font-size:8pt; color:var(--accent-amber); margin-top:4pt;">每次压缩 = 1 API call</p>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-amber);">OpenAI</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">Pure Truncation</p>
+      <ul>
+        <li>纯截断：丢弃最旧消息</li>
+        <li>无 LLM 摘要</li>
+        <li>无渐进式降级</li>
+        <li>Assistants API 自动管理</li>
+        <li>用户不可控</li>
+      </ul>
+      <p style="font-size:8pt; color:var(--accent-amber); margin-top:4pt;">信息丢失不可恢复</p>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-indigo);">Claude Code</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">4-Level Cascade</p>
+      <ul>
+        <li>4 级渐进式降级</li>
+        <li>缓存感知 micro compact</li>
+        <li>投影视图折叠</li>
+        <li>9 段模板摘要</li>
+        <li>413 PTL 恢复</li>
+      </ul>
+      <p style="font-size:8pt; color:var(--accent-indigo); margin-top:4pt;">前 3 级零 API 成本</p>
+    </div>
+  </div>
+
+    <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">维度</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">LangChain</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">OpenAI</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#6C63FF; margin:0;">Claude Code</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">压缩级数</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">1</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">1 (truncation)</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">4 (cascade)</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">API 成本</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">每次 1 call</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">0</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">多数 0, 最坏 1 call</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">信息保留</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">中 (摘要)</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">低 (截断)</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">高 (渐进+模板)</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">缓存友好</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">否</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">部分</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">是 (cache_edits)</p>
+    </div>
+  </div>
+
+  <div style="margin-top:4pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:3pt 6pt;">
+    <p style="font-size:7pt; color:var(--text-secondary); line-height:1.35; margin:0;"><strong style="color:var(--accent-indigo);">Root Difference:</strong> LangChain/LlamaIndex 把上下文管理视为"Token 预算问题"——超了就删或摘要。Claude Code 把上下文管理视为<strong style="color:var(--accent-green);">"信息架构问题"</strong>——四级压缩 + 结构化摘要模板 + PTL 容错恢复 + 缓存 prefix 排序，目标不是省 token，是保证模型看到的每 token 都是高信噪比的决策信息。
+  </div>
+
+</div>
+</body>
+</html>

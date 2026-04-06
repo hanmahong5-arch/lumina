@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Continue Paths 4-5</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--text-code-kw:#FF7B72;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 10pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.two-col{display:flex;gap:14pt;flex:1}
+.col{flex:1}
+h3{font-size:11pt;font-weight:700;margin:0 0 4pt 0;line-height:1.3}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;height:100%;box-sizing:border-box}
+.fn{font-family:'Courier New',monospace;color:var(--text-code-fn);font-size:8pt}
+.ct{font-family:'Courier New',monospace;color:var(--text-code-const);font-size:8pt}
+.kw{color:var(--text-code-kw);font-size:8pt}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:5pt 8pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin:4pt 0}
+ul{font-size:8pt;line-height:1.5;margin:3pt 0 0 0;padding-left:10pt}
+li{margin-bottom:2pt}
+.tag{display:inline-block;font-size:7pt;padding:1pt 4pt;border-radius:2pt;color:#fff}
+.tag-indigo{background:var(--accent-indigo)}
+.tag-amber{background:var(--accent-amber)}
+.num{font-size:20pt;font-weight:700;color:var(--accent-indigo);margin:0 0 4pt 0}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">11 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>恢复路径 4-5: 输出 Token 管理</h1>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <p class="num">4</p>
+        <h3>max_output_tokens_escalate <span class="tag tag-indigo">升级</span></h3>
+        <p>检测到 <span class="fn">stop_reason === 'max_tokens'</span> 时触发</p>
+        <div class="code-block">
+<p>8K &rarr; 64K (ESCALATED_MAX_TOKENS)</p>
+        </div>
+        <ul>
+          <li>单次升级, 不可回退</li>
+          <li>仅当当前 maxOutputTokens &lt; ESCALATED_MAX_TOKENS 时触发</li>
+          <li>设置 <span class="fn">maxOutputTokensOverride</span> = <span class="ct">64000</span></li>
+          <li>不消耗 recovery count</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <p class="num">5</p>
+        <h3>max_output_tokens_recovery <span class="tag tag-amber">重试</span></h3>
+        <p>升级后仍截断, 注入续写提示</p>
+        <div class="code-block">
+<p>"Resume directly—no apology"</p>
+        </div>
+        <ul>
+          <li>最多 <span class="ct">3</span> 次 (MAX_OUTPUT_TOKENS_RECOVERY_LIMIT)</li>
+          <li>每次 <span class="fn">recoveryCount++</span></li>
+          <li>超过限制 &rarr; 正常返回 completed</li>
+          <li>注入 user message 引导模型续写</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

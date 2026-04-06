@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Stage 2 Thinking</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-str: #A5D6FF;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.35; margin: 0 0 2pt 0; }
+ul { font-size: 8pt; line-height: 1.35; margin: 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.metric-row { display: flex; gap: 8pt; margin-bottom: 4pt; }
+.metric-card { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 4pt 8pt; text-align: center; }
+.metric-value { font-size: 16pt; font-weight: 700; color: var(--accent-indigo); margin: 0; }
+.metric-label { font-size: 7pt; color: var(--text-secondary); margin: 0; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">10 / 20</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-indigo);">Stage 2: Thinking 深度推理</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">Chain-of-thought 分析边界 case，减少 Stage 1 的 false positives</p>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <p class="metric-value">4096</p>
+      <p class="metric-label">max_tokens</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-teal);">CoT</p>
+      <p class="metric-label">chain-of-thought</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-amber);">~20%</p>
+      <p class="metric-label">Stage 1 undecided 比例</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// Stage 2 - deep analysis</p>
+        <p><span style="color:var(--text-code-kw);">const</span> stage2 = <span style="color:var(--text-code-kw);">await</span> classifierAPI({</p>
+        <p>  tool_name: tool.name,</p>
+        <p>  tool_input: fullInput,</p>
+        <p>  context: extendedContext,</p>
+        <p>  <span style="color:var(--text-code-fn);">max_tokens</span>: <span style="color:var(--accent-teal);">4096</span>,</p>
+        <p>  <span style="color:var(--text-code-fn);">thinking</span>: <span style="color:var(--accent-teal);">true</span>,</p>
+        <p>});</p>
+        <p></p>
+        <p style="color:var(--text-muted);">// Stage 2 output includes reasoning</p>
+        <p>&lt;<span style="color:var(--text-code-kw);">thinking</span>&gt;</p>
+        <p>  The command <span style="color:var(--text-code-str);">npm publish</span></p>
+        <p>  pushes to a public registry.</p>
+        <p>  This has irreversible effects...</p>
+        <p>&lt;/<span style="color:var(--text-code-kw);">thinking</span>&gt;</p>
+        <p>&lt;<span style="color:var(--text-code-kw);">block</span>&gt;</p>
+        <p>  &lt;<span style="color:var(--text-code-kw);">action</span>&gt;block&lt;/<span style="color:var(--text-code-kw);">action</span>&gt;</p>
+        <p>&lt;/<span style="color:var(--text-code-kw);">block</span>&gt;</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-indigo);">为什么需要 Stage 2</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">Stage 1 的 64 token 限制无法处理需要上下文推理的场景：</p>
+        <ul>
+          <li style="color:var(--text-secondary);">命令看似安全但有隐含副作用</li>
+          <li style="color:var(--text-secondary);">路径包含用户敏感目录</li>
+          <li style="color:var(--text-secondary);">组合命令需要语义理解</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-green);">性能权衡</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">Stage 2 延迟更高 (2-5s)，但仅处理约 20% 的请求</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">整体平均延迟 = 0.8 * Stage1 + 0.2 * Stage2</p>
+      </div>
+      <div class="card" style="border: 1pt solid var(--accent-coral);">
+        <p style="font-size:8pt; color:var(--accent-coral); font-weight:700;">False Positive 策略</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">宁可误拒（block 安全操作）也不误放（allow 危险操作）。用户可手动 override。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Snip Compact</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --text-code-fn: #79C0FF;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.buffer-diagram { display: flex; gap: 2pt; margin: 8pt 0; align-items: flex-end; }
+.buffer-slot { flex: 1; border-radius: 2pt 2pt 0 0; text-align: center; padding: 3pt 2pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">08 / 22</p>
+</div>
+<div class="slide-content">
+  <h2 style="color:var(--accent-green);">L2: Snip Compact 截断压缩</h2>
+  <p style="color:var(--text-secondary); margin-bottom:4pt;">循环缓冲剪裁最旧消息，tokensFreed passthrough</p>
+
+  <div class="buffer-diagram">
+    <div class="buffer-slot" style="background:var(--accent-coral); height:30pt; opacity:0.3;"><p style="font-size:7pt; color:var(--bg-primary);">SNIPPED</p></div>
+    <div class="buffer-slot" style="background:var(--accent-coral); height:25pt; opacity:0.3;"><p style="font-size:7pt; color:var(--bg-primary);">SNIPPED</p></div>
+    <div class="buffer-slot" style="background:var(--accent-coral); height:20pt; opacity:0.3;"><p style="font-size:7pt; color:var(--bg-primary);">SNIPPED</p></div>
+    <div class="buffer-slot" style="background:var(--accent-amber); height:35pt;"><p style="font-size:7pt; color:var(--bg-primary);">msg4</p></div>
+    <div class="buffer-slot" style="background:var(--accent-amber); height:28pt;"><p style="font-size:7pt; color:var(--bg-primary);">msg5</p></div>
+    <div class="buffer-slot" style="background:var(--accent-green); height:40pt;"><p style="font-size:7pt; color:var(--bg-primary);">msg6</p></div>
+    <div class="buffer-slot" style="background:var(--accent-green); height:32pt;"><p style="font-size:7pt; color:var(--bg-primary);">msg7</p></div>
+    <div class="buffer-slot" style="background:var(--accent-teal); height:45pt;"><p style="font-size:7pt; color:var(--bg-primary);">msg8</p></div>
+    <div class="buffer-slot" style="background:var(--accent-teal); height:38pt;"><p style="font-size:7pt; color:var(--bg-primary);">LATEST</p></div>
+  </div>
+  <p style="font-size:7pt; color:var(--text-muted); text-align:center;">循环缓冲：从头部(最旧)开始剪裁，直到释放足够 token</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// snipCompactIfNeeded()</p>
+        <p><span style="color:var(--text-code-kw);">function</span> <span style="color:var(--text-code-fn);">snipCompactIfNeeded</span>(</p>
+        <p>  messages, tokenBudget</p>
+        <p>) {</p>
+        <p>  <span style="color:var(--text-code-kw);">let</span> tokensFreed = <span style="color:var(--accent-teal);">0</span>;</p>
+        <p>  <span style="color:var(--text-code-kw);">while</span> (totalTokens &gt; tokenBudget</p>
+        <p>    &amp;&amp; messages.length &gt; minKeep) {</p>
+        <p>    <span style="color:var(--text-code-kw);">const</span> removed = messages.shift();</p>
+        <p>    tokensFreed += removed.tokens;</p>
+        <p>  }</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> { tokensFreed };</p>
+        <p>}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-green);">与 Micro 的区别</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">Micro: 裁剪工具结果内容(保留消息结构)</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">Snip: 直接删除整条消息(更激进)</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-amber);">tokensFreed Passthrough</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">释放的 token 数量向上层传递，用于判断是否需要进入下一级压缩(Collapse/Auto)。</p>
+      </div>
+      <div class="card" style="border-left:3pt solid var(--accent-indigo);">
+        <p style="font-size:8pt; color:var(--accent-indigo); font-weight:700;">保留约束</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">始终保留最近 N 条消息(minKeep)，确保模型有足够上下文理解当前任务。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

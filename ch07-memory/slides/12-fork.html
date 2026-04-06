@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch7 - Fork Extraction</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 07 Memory</p>
+  <p class="page-num">12 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>Fork 提取 / Forked Extraction Agent</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Dedicated sub-agent runs memory extraction in isolation with shared resources</p>
+  <div class="two-col">
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-teal);">Cache Sharing</h4>
+        <p style="font-size:9pt;">The forked agent shares the parent's prompt cache. This yields <span style="font-weight:700;color:var(--accent-teal);">60%+</span> cache hit rate because the extraction prompt includes the full conversation history that was already cached.</p>
+      </div>
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-indigo);">Turn Limit</h4>
+        <p style="font-size:9pt;"><span style="font-family:Courier New,monospace;color:var(--text-code-const);">maxTurns = 5</span></p>
+        <p style="font-size:8pt;">Hard limit prevents runaway extraction. Typically completes in 2-3 turns: analyze, write, verify.</p>
+      </div>
+      <div style="background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;">
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-muted);margin:0;">// forkSubagent.ts</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;"><span style="color:var(--text-code-kw);">const</span> agent = forkSubagent({</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  maxTurns: <span style="color:var(--text-code-const);">5</span>,</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  shareCache: <span style="color:var(--text-code-const);">true</span>,</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  tools: memoryToolSet</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">});</p>
+      </div>
+    </div>
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-coral);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-coral);">Permission Sandbox</h4>
+        <ul style="font-size:9pt;">
+          <li><p style="font-size:9pt;">Read: Glob, Grep, Read (full access)</p></li>
+          <li><p style="font-size:9pt;">Write: Only to .claude/ directory</p></li>
+          <li><p style="font-size:9pt;">No Bash, no network, no MCP</p></li>
+          <li><p style="font-size:9pt;">No user interaction (headless)</p></li>
+        </ul>
+      </div>
+      <div style="display:flex;gap:8pt;margin-bottom:6pt;">
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;">
+          <p style="font-size:16pt;font-weight:700;color:var(--accent-teal);margin:0;">60%+</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">cache reuse rate</p>
+        </div>
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;">
+          <p style="font-size:16pt;font-weight:700;color:var(--accent-indigo);margin:0;">5</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">max turns</p>
+        </div>
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;">
+          <p style="font-size:16pt;font-weight:700;color:var(--accent-amber);margin:0;">2-3</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">typical turns</p>
+        </div>
+      </div>
+      <div style="background:var(--bg-card);border-radius:5pt;padding:8pt 10pt;">
+        <h4 style="color:var(--accent-amber);">Why Fork?</h4>
+        <p style="font-size:8pt;">Isolation prevents extraction failures from corrupting the main conversation. Shared cache makes it nearly free.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Memory System</p></div>
+</body></html>

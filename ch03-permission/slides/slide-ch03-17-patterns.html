@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - 5 Reusable Patterns</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --accent-purple: #9F7AEA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 10pt 28pt; }
+.pattern-grid { display: flex; flex-direction: column; gap: 4pt; flex: 1; }
+.pattern-item { display: flex; gap: 10pt; align-items: flex-start; background: var(--bg-card); border-radius: 5pt; padding: 7pt 12pt; }
+.pattern-num { font-size: 14pt; font-weight: 700; min-width: 22pt; }
+.pattern-content { flex: 1; }
+.code-inline { font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">17 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>5 个可复用模式 Reusable Patterns</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">从权限系统中提炼的通用安全设计模式</p>
+
+  <div class="pattern-grid">
+    <div class="pattern-item">
+      <p class="pattern-num" style="color:var(--accent-teal);">1</p>
+      <div class="pattern-content">
+        <h4 style="color:var(--accent-teal);">渐进信任 Graduated Trust</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">6 种模式构成信任梯度谱，用户可根据场景选择合适的信任级别。从 default(全确认) 到 auto(ML 辅助) 渐进放开。<span class="code-inline">PermissionMode.ts</span></p>
+      </div>
+    </div>
+    <div class="pattern-item">
+      <p class="pattern-num" style="color:var(--accent-indigo);">2</p>
+      <div class="pattern-content">
+        <h4 style="color:var(--accent-indigo);">内容感知授权 Content-Aware Authorization</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">权限判定不仅看工具名称，还看工具输入内容。<span class="code-inline">Bash(npm test)</span> allow 但 <span class="code-inline">Bash(rm -rf /)</span> deny。Rule DSL 支持 glob/regex。<span class="code-inline">permissionRuleParser.ts</span></p>
+      </div>
+    </div>
+    <div class="pattern-item">
+      <p class="pattern-num" style="color:var(--accent-coral);">3</p>
+      <div class="pattern-content">
+        <h4 style="color:var(--accent-coral);">Safety 豁免 Safety Immunity</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">关键路径(.git/.claude)不受任何权限模式影响，永远需要用户确认。防止 AI 自我提权或破坏安全配置。<span class="code-inline">filesystem.ts</span></p>
+      </div>
+    </div>
+    <div class="pattern-item">
+      <p class="pattern-num" style="color:var(--accent-amber);">4</p>
+      <div class="pattern-content">
+        <h4 style="color:var(--accent-amber);">Fail-Closed + 熔断器 Fail-Closed + Circuit Breaker</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">分类器异常时默认拒绝(fail-closed)；连续 3 次/累计 20 次拒绝触发熔断，headless 自动 abort。<span class="code-inline">autoModeDenials.ts</span></p>
+      </div>
+    </div>
+    <div class="pattern-item">
+      <p class="pattern-num" style="color:var(--accent-green);">5</p>
+      <div class="pattern-content">
+        <h4 style="color:var(--accent-green);">Stash-Restore 隔离</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">对 .git 操作前自动 stash 用户更改，操作后 restore。保证用户工作区不被 AI 的 git 操作污染。适用于任何有"现场保护"需求的场景。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

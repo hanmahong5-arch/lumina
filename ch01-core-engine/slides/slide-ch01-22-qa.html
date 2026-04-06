@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Q&A</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.qa-slide{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:50pt 60pt;background:var(--bg-primary);flex:1}
+h2{font-size:24pt;color:var(--accent-indigo);margin:0 0 16pt 0;font-weight:700;line-height:1.2}
+.main-q{font-size:13pt;color:var(--text-primary);margin:0 0 24pt 0;line-height:1.4}
+.sub-questions{display:flex;flex-direction:column;gap:10pt}
+.sub-q{border-radius:4pt;border-left:3pt solid var(--accent-amber);background:var(--bg-card);padding:6pt 16pt}
+.sub-q p{font-size:10pt;color:var(--text-secondary);margin:0}
+p{margin:0}
+</style>
+</head>
+<body>
+<div class="qa-slide">
+  <h2>讨论</h2>
+  <p class="main-q">如果你要重新设计这个循环，你会改变什么？</p>
+  <div class="sub-questions">
+    <div class="sub-q"><p>Event Sourcing 在这个场景下可行吗？</p></div>
+    <div class="sub-q"><p>7种恢复路径是否过度工程化？</p></div>
+  </div>
+</div>
+</body>
+</html>

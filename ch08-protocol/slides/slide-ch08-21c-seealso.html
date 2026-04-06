@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .ref-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid;
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .ref-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; }
+  .ref-desc  { font-size: 6.5pt; color: var(--text-secondary); margin: 0; line-height: 1.35; }
+  .link-card {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    border-left: 2.5pt solid var(--accent-teal);
+    padding: 2pt 6pt;
+    margin-bottom: 2.5pt;
+  }
+  .link-title { font-size: 7.5pt; font-weight: 700; margin: 0 0 1pt 0; color: var(--accent-teal); }
+  .link-url   { font-size: 6pt; color: var(--text-muted); margin: 0; font-family: "Courier New", monospace; word-break: break-all; }
+  .link-why   { font-size: 6.5pt; color: var(--text-secondary); margin: 0; }
+  .section-note {
+    background: var(--bg-secondary);
+    border-radius: 3pt;
+    padding: 3pt 6pt;
+    margin-top: 4pt;
+  }
+  .section-note p { font-size: 6.5pt; color: var(--text-muted); margin: 0; }
+</style>
+</head><body style="background:var(--bg-primary);">
+
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 08 · See Also</p>
+  <p class="page-num">References</p>
+</div>
+
+<div class="slide-content-compact" style="padding:12pt 28pt 6pt 28pt;" style="display:flex; gap:10pt;">
+
+  <!-- Left: Cross-Chapter Links -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-indigo); margin-bottom:2pt; font-size:10pt;">Cross-Chapter Links / 跨章关联</h3>
+
+    <div class="ref-card" style="border-left-color: var(--accent-indigo);">
+      <p class="ref-title" style="color:var(--accent-indigo);">Ch01 Core Engine → Protocol 基础</p>
+      <p class="ref-desc">Bridge/REPL 协议建立在 QueryEngine 之上 — remoteBridgeCore 封装主循环的远程调用</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-teal);">
+      <p class="ref-title" style="color:var(--accent-teal);">Ch02 Multi-Agent → Bridge 协作</p>
+      <p class="ref-desc">多 Agent 的进程间通信通过 Bridge 协议传递 — SPAWN_SESSIONS=32 控制并发</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-green);">
+      <p class="ref-title" style="color:var(--accent-green);">Ch05 Tools & MCP → MCP Transport</p>
+      <p class="ref-desc">MCP 工具的 stdio/SSE transport 实现在 Ch08 中解析 — 与 Bridge 共享连接管理逻辑</p>
+    </div>
+
+    <div class="ref-card" style="border-left-color: var(--accent-coral);">
+      <p class="ref-title" style="color:var(--accent-coral);">Ch06 Resilience → Transport 容错</p>
+      <p class="ref-desc">SSE 断连重连、stdio 进程崩溃恢复 — 与 API 层 withRetry 共享指数退避策略</p>
+    </div>
+
+    <div class="section-note">
+      <p>Protocol 层是通信基础设施 — 连接 MCP (工具扩展) 和 Bridge (远程控制) 两大场景。</p>
+    </div>
+  </div>
+
+  <!-- Right: Further Reading -->
+  <div style="flex:1;">
+    <h3 style="color:var(--accent-teal); margin-bottom:2pt; font-size:10pt;">Further Reading / 延伸阅读</h3>
+
+    <div class="link-card">
+      <p class="link-title">MCP Transports Specification</p>
+      <p class="link-url">https://modelcontextprotocol.io/specification/2025-03-26/basic/transports</p>
+      <p class="link-why">stdio / SSE / Streamable HTTP 三种 transport 的协议定义 — Ch08 实现的权威参考</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">Server-Sent Events (SSE) Standard</p>
+      <p class="link-url">https://html.spec.whatwg.org/multipage/server-sent-events.html</p>
+      <p class="link-why">SSE 协议规范 — EventSource API、retry 语义、Last-Event-ID 的底层标准</p>
+    </div>
+
+    <div class="link-card">
+      <p class="link-title">JSON-RPC 2.0 Specification</p>
+      <p class="link-url">https://www.jsonrpc.org/specification</p>
+      <p class="link-why">MCP 消息格式基于 JSON-RPC 2.0 — request/response/notification 的序列化协议</p>
+    </div>
+
+    <div class="section-note">
+      <p>MCP 建立在 JSON-RPC 2.0 之上 — 理解 JSON-RPC 是阅读 MCP transport 代码的前置知识。</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Protocol Layer</p>
+  <p>See Also</p>
+</div>
+
+</body></html>

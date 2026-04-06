@@ -1,0 +1,34 @@
+{
+  "type": "commonjs",
+  "bin": {
+    "lumina": "./src/cli/index.js"
+  },
+  "scripts": {
+    "cli": "node src/cli/index.js",
+    "build": "node src/cli/index.js build --all",
+    "build:watch": "node src/cli/index.js build --all --watch",
+    "validate": "node src/cli/index.js validate",
+    "render": "node src/cli/index.js render",
+    "build:ch00": "node src/cli/index.js build -c ch00-overview-v2",
+    "build:ch01": "node src/cli/index.js build -c ch01-core-engine",
+    "build:ch02": "node src/cli/index.js build -c ch02-multi-agent",
+    "build:ch03": "node src/cli/index.js build -c ch03-permission",
+    "build:ch04": "node src/cli/index.js build -c ch04-token-mgmt",
+    "build:ch05": "node src/cli/index.js build -c ch05-tools-mcp",
+    "build:ch06": "node src/cli/index.js build -c ch06-resilience",
+    "build:ch07": "node src/cli/index.js build -c ch07-memory",
+    "build:ch08": "node src/cli/index.js build -c ch08-protocol",
+    "build:ch09": "node src/cli/index.js build -c ch09-ink-ui",
+    "build:ch10": "node src/cli/index.js build -c ch10-feature-cost"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "chokidar": "^5.0.0",
+    "commander": "^14.0.3",
+    "ora": "^5.4.1",
+    "p-limit": "^7.3.0",
+    "playwright": "^1.59.0",
+    "pptxgenjs": "^4.0.1",
+    "sharp": "^0.34.5"
+  }
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - vs AutoGPT</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 14pt 28pt 6pt 28pt; }
+.compare-grid { display: flex; gap: 12pt; margin-bottom: 6pt; flex: 1; }
+.compare-col { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 10pt 12pt; }
+.compare-col-highlight { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 10pt 12pt; border: 1.5pt solid var(--accent-indigo); }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 2pt 32pt 4pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">19 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>对比: AutoGPT vs Claude Code</h2>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color: var(--accent-coral);">AutoGPT</h4>
+      <ul>
+        <li>单体递归架构: 一个agent循环自我调用</li>
+        <li>全工具继承: 子任务拥有与父级相同的完整工具集</li>
+        <li>无隔离: 共享文件系统和内存空间</li>
+        <li>无限递归风险: 缺乏深度限制</li>
+        <li>扁平权限: 无权限降级机制</li>
+        <li>全局状态: 单一workspace, 无并行隔离</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color: var(--accent-teal);">Claude Code v2.1.88</h4>
+      <ul>
+        <li>多模式派生: 4种spawn模式按需选择</li>
+        <li>工具白名单: filterToolsForAgent 三层过滤</li>
+        <li>三层隔离: Permission + Tool + Context</li>
+        <li>反递归保护: isInForkChild + MAX_AGENT_TURNS</li>
+        <li>权限只能向上继承: 安全单调性</li>
+        <li>Worktree: git级别文件系统隔离</li>
+      </ul>
+    </div>
+  </div>
+  <!-- Header row -->
+  <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:25; background:#1E2D4A; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">维度 Dimension</p>
+    </div>
+    <div style="flex:37; background:#1E2D4A; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">AutoGPT</p>
+    </div>
+    <div style="flex:38; background:#1E2D4A; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; font-weight:700; color:#00D4AA; margin:0;">Claude Code</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">架构模式</p>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">单体递归 (self-prompting loop)</p>
+    </div>
+    <div style="flex:38; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">多Agent层级 (parent-child hierarchy)</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">工具管理</p>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">全工具继承, 无过滤</p>
+    </div>
+    <div style="flex:38; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">三层过滤 + 白名单</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">递归控制</p>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">无 (可能无限循环)</p>
+    </div>
+    <div style="flex:38; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">MAX_TURNS + FORK_BOILERPLATE_TAG</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">上下文效率</p>
+    </div>
+    <div style="flex:37; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">每轮重发全部上下文</p>
+    </div>
+    <div style="flex:38; background:#16213E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Fork cache sharing + 隔离缓存</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:25; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">并行安全</p>
+    </div>
+    <div style="flex:37; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">无 (单线程递归)</p>
+    </div>
+    <div style="flex:38; background:#131B2E; border-radius:2pt; padding:4pt 8pt;">
+      <p style="font-size:9pt; color:#A0AEC0; margin:0;">Worktree + 独立AbortController</p>
+    </div>
+  </div>
+
+  <div style="margin-top:3pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:3pt 6pt;">
+    <p style="font-size:7pt; color:var(--text-secondary); line-height:1.35; margin:0;"><strong style="color:var(--accent-indigo);">Safety Gap:</strong> AutoGPT 的"全工具继承"模型每次递归都暴露全部工具集。Claude Code <strong style="color:var(--accent-green);">filterToolsForAgent 三层过滤</strong> + <strong style="color:var(--accent-green);">权限只能向上继承</strong>确保子Agent安全边界不退化。</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>19 / 22</p>
+</div>
+</body>
+</html>

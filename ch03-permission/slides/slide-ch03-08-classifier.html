@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - YOLO Classifier Overview</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h3 { font-size: 13pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 11pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 8pt 10pt; margin-bottom: 5pt; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.pipeline { display: flex; gap: 6pt; align-items: stretch; margin: 6pt 0; }
+.pipeline-step { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 8pt 10pt; text-align: center; border-top: 2.5pt solid var(--accent-indigo); }
+.pipeline-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 14pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">08 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>YOLO 分类器概览 Classifier Overview</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">2-Stage XML 架构：快速判定 + 深度思考，平衡延迟与准确率</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step" style="border-top-color:var(--accent-teal);">
+      <h3 style="color:var(--accent-teal); font-size:11pt;">Stage 1: Fast</h3>
+      <p style="font-size:8pt; color:var(--text-secondary);">max_tokens=64</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">快速 pass/block</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step" style="border-top-color:var(--accent-indigo);">
+      <h3 style="color:var(--accent-indigo); font-size:11pt;">Stage 2: Thinking</h3>
+      <p style="font-size:8pt; color:var(--text-secondary);">max_tokens=4096</p>
+      <p style="font-size:8pt; color:var(--text-secondary);">chain-of-thought</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-teal);">XML 输出格式</h4>
+        <div class="code-block">
+          <p>&lt;<span style="color:var(--text-code-kw);">block</span>&gt;</p>
+          <p>  &lt;<span style="color:var(--text-code-kw);">action</span>&gt;allow|block&lt;/<span style="color:var(--text-code-kw);">action</span>&gt;</p>
+          <p>  &lt;<span style="color:var(--text-code-kw);">reason</span>&gt;...&lt;/<span style="color:var(--text-code-kw);">reason</span>&gt;</p>
+          <p>&lt;/<span style="color:var(--text-code-kw);">block</span>&gt;</p>
+        </div>
+        <p style="font-size:8pt; color:var(--text-secondary);">stop_sequences: ['&lt;/block&gt;'] 确保 Stage 1 快速返回</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-amber);">触发条件</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">仅在 auto mode 下激活</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">fast paths 未命中时才进入</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">分类器 API 不可用时 fail-closed</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-indigo);">架构优势</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">Stage 1 覆盖 80%+ 的明确场景（安全命令/明显危险命令），延迟极低</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">Stage 2 仅处理边界 case，通过 chain-of-thought 减少误报</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">XML 格式确保结构化解析，避免自由文本歧义</p>
+      </div>
+      <div class="card" style="border: 1pt solid var(--accent-coral);">
+        <h4 style="color:var(--accent-coral);">安全保证</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">分类器异常 / 超时 / 格式错误 &rarr; 一律返回 block</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">30 分钟刷新周期避免长期缓存导致策略过期</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

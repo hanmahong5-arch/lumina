@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Recovery Overview</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.pipeline{display:flex;gap:6pt;align-items:stretch;margin-bottom:6pt}
+.pipeline-step{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;text-align:center;border-top:2pt solid var(--accent-indigo)}
+.pipeline-arrow{display:flex;align-items:center;color:var(--text-muted);font-size:14pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt}
+.card-highlight{background:var(--bg-card);border:1.5pt solid var(--accent-indigo);border-radius:5pt;padding:8pt 12pt;margin-bottom:5pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 06 Resilience</p>
+  <p class="page-num">12 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>会话恢复总览 / Session Recovery Architecture</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">JSONL append-only + parentUuid chain + interruption detection</p>
+  <div class="pipeline">
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-teal);">Write</h3><p style="font-size:7pt;">JSONL append</p></div>
+    <div class="pipeline-arrow"><p style="margin:0;">&#8594;</p></div>
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-amber);">Link</h3><p style="font-size:7pt;">parentUuid chain</p></div>
+    <div class="pipeline-arrow"><p style="margin:0;">&#8594;</p></div>
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-coral);">Detect</h3><p style="font-size:7pt;">Interruption type</p></div>
+    <div class="pipeline-arrow"><p style="margin:0;">&#8594;</p></div>
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-indigo);">Clean</h3><p style="font-size:7pt;">4-stage filter</p></div>
+    <div class="pipeline-arrow"><p style="margin:0;">&#8594;</p></div>
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-green);">Resume</h3><p style="font-size:7pt;">Continue conv.</p></div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card-highlight">
+        <h3 style="font-size:10pt;color:var(--accent-indigo);">Design Principles</h3>
+        <ul style="font-size:9pt;">
+          <li><strong>Append-only:</strong> Never modify written data</li>
+          <li><strong>Crash-safe:</strong> Partial writes are detectable</li>
+          <li><strong>No WAL needed:</strong> JSONL is its own log</li>
+          <li><strong>Human-readable:</strong> Debug with text editor</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3 style="color:var(--accent-teal);font-size:10pt;">Recovery Guarantee</h3>
+        <ul style="font-size:9pt;">
+          <li>Process crash: resume from last complete message</li>
+          <li>Ctrl+C mid-turn: detect and inject continue prompt</li>
+          <li>Network drop: retry engine handles, then persist</li>
+          <li>100MB+ session: auto-chunk, no memory issues</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Resilience</p></div>
+</body></html>

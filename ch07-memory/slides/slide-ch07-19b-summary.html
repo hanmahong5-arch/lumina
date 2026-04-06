@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 07 - Summary</title>
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 07 | MEMORY</p>
+  <p class="page-num">19 / 20</p>
+</div>
+<div class="slide-content">
+  <h1>核心洞见</h1>
+  <div class="takeaway-list">
+    <div class="takeaway-item">
+      <p class="takeaway-num">1</p>
+      <p>索引/内容分离是 LLM 记忆的最优结构：MEMORY.md 索引始终加载，内容文件按需检索最多 5 个</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">2</p>
+      <p>封闭四类分类法 + 不可推导约束保证记忆的高信噪比，排除可从代码推导的冗余信息</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">3</p>
+      <p>Sonnet sideQuery 在小规模下优于向量检索——LLM 能捕捉任务层面的相关性而非仅词汇相似度</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">4</p>
+      <p>Fork Agent + cache sharing 实现 60%+ 缓存命中率，让后台记忆提取的边际成本约为完整请求的 40%</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">5</p>
+      <p>纯文件系统设计实现 zero-infra 记忆：.md 文件可编辑、可 git 管理、可 grep 搜索，无数据库依赖</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

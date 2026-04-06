@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Cover</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h1 { font-size: 28pt; font-weight: 700; margin: 0 0 10pt 0; line-height: 1.2; }
+p  { font-size: 12pt; line-height: 1.45; margin: 0 0 3pt 0; color: var(--text-secondary); }
+.chapter-cover { display: flex; flex-direction: column; justify-content: center; padding: 50pt 60pt; flex: 1; }
+.chapter-number { font-size: 56pt; font-weight: 700; color: var(--accent-indigo); opacity: 0.2; margin: 0; line-height: 1; }
+.divider { width: 60pt; height: 3pt; background: var(--accent-teal); margin: 12pt 0; }
+.tag { font-size: 9pt; color: var(--accent-teal); letter-spacing: 1.5pt; text-transform: uppercase; margin: 0 0 6pt 0; }
+</style>
+</head>
+<body>
+<div class="chapter-cover">
+  <p class="chapter-number">04</p>
+  <p class="tag">CHAPTER FOUR</p>
+  <h1>Token 管理与上下文压缩</h1>
+  <div class="divider"></div>
+  <p>长对话的生存工程</p>
+  <p style="margin-top:16pt; font-size:9pt; color:var(--text-muted);">4-Level Cascade / Micro Compact / Auto Compact / Fork Cache / 413 Recovery</div>
+</div>
+</body>
+</html>

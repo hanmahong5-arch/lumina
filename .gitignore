@@ -1,0 +1,22 @@
+# Generated PPTX files (commit manually after review)
+*.pptx
+
+# Temp files
+_render_temp.html
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Build cache
+.claude/build-cache/
+
+# Stale/backup copies
+.stale/

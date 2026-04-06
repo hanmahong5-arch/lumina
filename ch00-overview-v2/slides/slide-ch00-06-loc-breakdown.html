@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  /* Treemap-style proportional blocks using CSS flex */
+  .treemap-row {
+    display: flex;
+    gap: 3pt;
+    margin-bottom: 3pt;
+    align-items: stretch;
+  }
+  .tm-block {
+    border-radius: 3pt;
+    padding: 3pt 5pt;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    min-height: 26pt;
+  }
+  .tm-ch { font-size: 6.5pt; font-weight: 700; color: rgba(255,255,255,0.9); }
+  .tm-loc { font-size: 8.5pt; font-weight: 700; color: #fff; margin: 0; }
+  .tm-pct { font-size: 6pt; color: rgba(255,255,255,0.65); }
+
+  /* proportional flex widths based on LOC */
+  /* Row1: Ch1(3536) + Ch2(4663) + Ch3(7816) = 16015 → widths 22.1, 29.1, 48.8% */
+  .w-ch1 { flex: 0 0 22.1%; }
+  .w-ch2 { flex: 0 0 29.1%; }
+  .w-ch3 { flex: 1; }
+  /* Row2: Ch4(5528) + Ch5(8201) + Ch7(1848) = 15577 → widths 35.5, 52.7, 11.9% */
+  .w-ch4 { flex: 0 0 35.5%; }
+  .w-ch5 { flex: 1; }
+  .w-ch7 { flex: 0 0 11.9%; }
+  /* Row3: Ch6(10781) + Ch8(12613) + Ch10(6934) = 30328 → widths 35.5, 41.6, 22.9% */
+  .w-ch6 { flex: 0 0 35.5%; }
+  .w-ch8 { flex: 1; }
+  .w-ch10 { flex: 0 0 22.9%; }
+  /* Row4: Ch9 full width */
+  .w-ch9 { flex: 1; }
+
+  .section-note {
+    font-size: 7pt;
+    color: var(--text-muted);
+    padding: 1pt 0;
+    margin-bottom: 1pt;
+  }
+
+  .stat-bar { display: flex; gap: 8pt; margin-top: 4pt; flex-wrap: wrap; }
+  .stat-chip {
+    background: var(--bg-card);
+    border-radius: 3pt;
+    padding: 2pt 7pt;
+    font-size: 7.5pt;
+    color: var(--text-secondary);
+  }
+  .stat-chip strong { color: var(--accent-teal); }
+</style>
+</head><body style="background:var(--bg-primary);">
+
+<div class="header-bar">
+  <p class="chapter-tag">Course Overview · LOC Proportional Treemap</p>
+  <p class="page-num">06 / 16</p>
+</div>
+
+<div class="slide-content-compact">
+
+  <h2 style="color:var(--accent-indigo); margin-bottom:2pt;">代码量比例树状图 · LOC Proportional Treemap</h2>
+  <p style="font-size:8pt; color:var(--text-secondary); margin-bottom:4pt;">
+    每块面积与核心 LOC 成正比，颜色区分架构层次
+  </p>
+
+  <!-- Row 1: Foundation chapters -->
+  <p class="section-note">Row 1 — Foundation &amp; Early Chapters (Ch1·Ch2·Ch3)</p>
+  <div class="treemap-row">
+    <div class="tm-block w-ch1" style="background: rgba(108,99,255,0.7);">
+      <p class="tm-ch">Ch1 Core Engine</p>
+      <p class="tm-loc">3,536</p>
+      <p class="tm-pct">0.69%</p>
+    </div>
+    <div class="tm-block w-ch2" style="background: rgba(108,99,255,0.55);">
+      <p class="tm-ch">Ch2 Multi-Agent</p>
+      <p class="tm-loc">4,663</p>
+      <p class="tm-pct">0.91%</p>
+    </div>
+    <div class="tm-block w-ch3" style="background: rgba(255,107,107,0.7);">
+      <p class="tm-ch">Ch3 Permission</p>
+      <p class="tm-loc">7,816</p>
+      <p class="tm-pct">1.52%</p>
+    </div>
+  </div>
+
+  <!-- Row 2: Tool & Token chapters -->
+  <p class="section-note">Row 2 — Tool Orchestration (Ch4·Ch5·Ch7)</p>
+  <div class="treemap-row">
+    <div class="tm-block w-ch4" style="background: rgba(255,184,77,0.65);">
+      <p class="tm-ch">Ch4 Token Mgmt</p>
+      <p class="tm-loc">5,528</p>
+      <p class="tm-pct">1.08%</p>
+    </div>
+    <div class="tm-block w-ch5" style="background: rgba(0,212,170,0.65);">
+      <p class="tm-ch">Ch5 Tools+MCP</p>
+      <p class="tm-loc">8,201</p>
+      <p class="tm-pct">1.60%</p>
+    </div>
+    <div class="tm-block w-ch7" style="background: rgba(159,122,234,0.7);">
+      <p class="tm-ch">Ch7 Memory</p>
+      <p class="tm-loc">1,848</p>
+      <p class="tm-pct">0.36%</p>
+    </div>
+  </div>
+
+  <!-- Row 3: Resilience + Protocol + Cost -->
+  <p class="section-note">Row 3 — Resilience, Protocol, Feature Gate (Ch6·Ch8·Ch10)</p>
+  <div class="treemap-row">
+    <div class="tm-block w-ch6" style="background: rgba(72,187,120,0.65);">
+      <p class="tm-ch">Ch6 Resilience</p>
+      <p class="tm-loc">10,781</p>
+      <p class="tm-pct">2.10%</p>
+    </div>
+    <div class="tm-block w-ch8" style="background: rgba(252,129,129,0.65);">
+      <p class="tm-ch">Ch8 Protocol/Bridge</p>
+      <p class="tm-loc">12,613</p>
+      <p class="tm-pct">2.46%</p>
+    </div>
+    <div class="tm-block w-ch10" style="background: rgba(246,173,85,0.65);">
+      <p class="tm-ch">Ch10 Feature+Cost</p>
+      <p class="tm-loc">6,934</p>
+      <p class="tm-pct">1.35%</p>
+    </div>
+  </div>
+
+  <!-- Row 4: Ch9 full width (largest) -->
+  <p class="section-note">Row 4 — UI Layer, largest chapter (Ch9)</p>
+  <div class="treemap-row">
+    <div class="tm-block w-ch9" style="background: rgba(0,212,170,0.4); border: 1pt solid var(--accent-teal);">
+      <p class="tm-ch">Ch9 Ink UI / Terminal React</p>
+      <p class="tm-loc">14,444 LOC</p>
+      <p class="tm-pct">2.82% of codebase · 292 component files · 83 hook files</p>
+    </div>
+  </div>
+
+  <div class="stat-bar">
+    <span class="stat-chip">Total Core LOC: <strong>76,364</strong></span>
+    <span class="stat-chip">Remaining (infra/generated): <strong>436,330 LOC</strong></span>
+    <span class="stat-chip">Largest chapter: <strong>Ch9 (14,444)</strong></span>
+    <span class="stat-chip">Smallest chapter: <strong>Ch7 (1,848)</strong></span>
+    <span class="stat-chip">Avg LOC/chapter: <strong>7,636</strong></span>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Industrial Agent Engineering</p>
+  <p>面积比例 ≈ LOC比例（同行内成正比）</p>
+</div>
+
+</body></html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Safety-Check Immunity</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --text-code-str: var(--text-code-str);
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 10pt 28pt 4pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 4pt 10pt; margin-bottom: 3pt; }
+.shield { text-align: center; padding: 6pt; background: var(--bg-card); border: 2pt solid var(--accent-coral); border-radius: 8pt; margin-bottom: 4pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">15 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>Safety-Check 豁免保护 Immunity</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">特定路径在任何权限模式下都不可绕过，必须用户确认</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="shield">
+        <h4 style="color:var(--accent-coral); font-size:14pt;">SAFETY-CHECK PATHS</h4>
+        <p style="color:var(--text-secondary); font-size:9pt;">免疫于 bypass / auto / acceptEdits</p>
+      </div>
+
+      <!-- Safety paths table as flex divs -->
+      <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+        <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; font-weight:700; color:#00D4AA; margin:0;">保护路径</p>
+        </div>
+        <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; font-weight:700; color:#00D4AA; margin:0;">原因</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+        <div style="flex:1; background:#131B2E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; font-family:'Courier New',monospace; color:#FF6B6B; margin:0;">.git/</p>
+        </div>
+        <div style="flex:1; background:#131B2E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; color:#A0AEC0; margin:0;">版本控制核心，篡改可能丢失历史</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+        <div style="flex:1; background:#16213E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; font-family:'Courier New',monospace; color:#FF6B6B; margin:0;">.claude/</p>
+        </div>
+        <div style="flex:1; background:#16213E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; color:#A0AEC0; margin:0;">工具配置，被修改可能绕过安全策略</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+        <div style="flex:1; background:#131B2E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; font-family:'Courier New',monospace; color:#FF6B6B; margin:0;">settings.json</p>
+        </div>
+        <div style="flex:1; background:#131B2E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; color:#A0AEC0; margin:0;">权限规则配置，自我修改等于提权</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:3pt; margin-bottom:3pt;">
+        <div style="flex:1; background:#16213E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; font-family:'Courier New',monospace; color:#FF6B6B; margin:0;">CLAUDE.md</p>
+        </div>
+        <div style="flex:1; background:#16213E; border-radius:2pt; padding:2pt 5pt;">
+          <p style="font-size:7pt; color:#A0AEC0; margin:0;">系统提示注入风险</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// filesystem.ts - safety check</p>
+        <p><span style="color:var(--text-code-kw);">function</span> hasSafetyCheck(paths) {</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> paths.some(p =&gt;</p>
+        <p>    p.includes(<span style="color:var(--text-code-str);">'.git/'</span>) ||</p>
+        <p>    p.includes(<span style="color:var(--text-code-str);">'.claude/'</span>) ||</p>
+        <p>    p.endsWith(<span style="color:var(--text-code-str);">'settings.json'</span>) ||</p>
+        <p>    p.endsWith(<span style="color:var(--text-code-str);">'CLAUDE.md'</span>)</p>
+        <p>  );</p>
+        <p>}</p>
+        <p></p>
+        <p style="color:var(--text-muted);">// This check runs in Tier 1</p>
+        <p style="color:var(--text-muted);">// BEFORE any mode-based allow</p>
+        <p style="color:var(--text-muted);">// Result: always "ask" user</p>
+      </div>
+      <div class="card" style="border: 1.5pt solid var(--accent-coral);">
+        <h4 style="color:var(--accent-coral);">设计原理</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">这些路径的操作等同于安全策略的自我修改。如果 AI 能自动修改 .claude/settings.json 中的 allow 规则，就等于自我提权。</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-amber);">Stash-Restore 模式</h4>
+        <p style="font-size:8pt; color:var(--text-secondary);">对 .git 操作时，自动 stash 用户未提交更改，操作完成后 restore。防止 git 操作误伤工作区。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

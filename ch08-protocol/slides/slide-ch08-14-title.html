@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Title</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-str:#A5D6FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">14 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>deriveTitle() + Haiku 生成 / Title Generation</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Two-tier title derivation: fast truncation fallback with optional LLM generation</p>
+  <div class="two-col">
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-teal);">deriveTitle() - Fast Path</h4>
+        <ul style="font-size:9pt;">
+          <li><p style="font-size:9pt;">Extract first user message text</p></li>
+          <li><p style="font-size:9pt;">Strip markdown formatting</p></li>
+          <li><p style="font-size:9pt;">Truncate to 50 characters</p></li>
+          <li><p style="font-size:9pt;">Append "..." if truncated</p></li>
+          <li><p style="font-size:9pt;">Synchronous, zero-cost</p></li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;">
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-muted);margin:0;">// deriveTitle()</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;"><span style="color:var(--text-code-kw);">const</span> raw = firstMessage.slice(0, <span style="color:var(--text-code-const);">50</span>);</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;"><span style="color:var(--text-code-kw);">return</span> raw.length === <span style="color:var(--text-code-const);">50</span></p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  ? raw + <span style="color:var(--text-code-str);">'...'</span> : raw;</p>
+      </div>
+    </div>
+    <div class="col">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-indigo);border-radius:0 5pt 5pt 0;padding:10pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-indigo);">Haiku Generation - Rich Path</h4>
+        <ul style="font-size:9pt;">
+          <li><p style="font-size:9pt;">Async LLM call with Haiku model</p></li>
+          <li><p style="font-size:9pt;">Full conversation context as input</p></li>
+          <li><p style="font-size:9pt;">Generates human-readable summary title</p></li>
+          <li><p style="font-size:9pt;">Timeout: <span style="font-family:Courier New,monospace;color:var(--text-code-const);">15 seconds</span></p></li>
+          <li><p style="font-size:9pt;">Falls back to deriveTitle() on timeout</p></li>
+        </ul>
+      </div>
+      <div style="display:flex;gap:8pt;margin-bottom:6pt;">
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;">
+          <p style="font-size:14pt;font-weight:700;color:var(--accent-teal);margin:0;">50</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">max title chars</p>
+        </div>
+        <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;">
+          <p style="font-size:14pt;font-weight:700;color:var(--accent-coral);margin:0;">15s</p>
+          <p style="font-size:7pt;color:var(--text-secondary);margin:0;">Haiku timeout</p>
+        </div>
+      </div>
+      <div style="background:var(--bg-card);border-radius:5pt;padding:6pt 10pt;">
+        <p style="font-size:8pt;color:var(--text-muted);margin:0;">The title appears in bridge UI, session list, and analytics. LLM-generated titles improve discoverability in session history.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

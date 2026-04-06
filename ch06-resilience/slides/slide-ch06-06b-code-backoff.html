@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CH-06 · Code Walkthrough</p>
+  <p class="page-num">Code</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:10pt;">
+  <div style="flex:6;">
+    <h3 style="color:var(--accent-teal); margin-bottom:3pt; font-size:11pt;">Exponential Backoff</h3>
+    <p style="font-size:7pt; color:var(--text-muted); margin-bottom:4pt;">withRetry.ts:530-548</p>
+    <div style="background:#0D1117; border-radius:4pt; padding:6pt 8pt;">
+      <p style="font-family:'Courier New',monospace; font-size:7.5pt; color:#FFFFFF; margin:0; line-height:1.5;">function getRetryDelay(
+&#160;&#160;attempt: number,
+&#160;&#160;retryAfterHeader?: string,
+&#160;&#160;maxDelayMs = 32000,
+): number {
+&#160;&#160;// Priority 1: Server's Retry-After
+&#160;&#160;if (retryAfterHeader) {
+&#160;&#160;&#160;&#160;return parseInt(retryAfterHeader) * 1000
+&#160;&#160;}
+
+&#160;&#160;// Priority 2: Exponential backoff
+&#160;&#160;const base = Math.min(
+&#160;&#160;&#160;&#160;500 * Math.pow(2, attempt - 1),
+&#160;&#160;&#160;&#160;maxDelayMs
+&#160;&#160;)
+
+&#160;&#160;// Priority 3: Add jitter (0-25%)
+&#160;&#160;return base + Math.random() * 0.25 * base
+}</p>
+    </div>
+  </div>
+  <div style="flex:4;">
+    <h4 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:9pt;">Key Points / 要点</h4>
+    <ul style="font-size:7.5pt; color:var(--text-secondary); line-height:1.5;">
+      <li><p style="margin:0; font-size:7.5pt;">Server Retry-After header takes absolute priority (respects upstream)</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Base: 500ms, doubles each attempt, caps at 32s</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Jitter prevents thundering herd (0-25% random addition)</p></li>
+      <li><p style="margin:0; font-size:7.5pt;">Progression: 500ms &#8594; 1s &#8594; 2s &#8594; 4s &#8594; 8s &#8594; 16s &#8594; 32s</p></li>
+    </ul>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Resilience &amp; Error Handling</p>
+  <p>src/services/api/withRetry.ts</p>
+</div>
+</body></html>

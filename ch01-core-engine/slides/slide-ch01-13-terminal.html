@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Terminal Reasons</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 8pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.term-list{display:flex;flex-direction:column;gap:3pt;flex:1}
+.term-item{display:flex;align-items:center;gap:8pt;padding:5pt 10pt;background:var(--bg-card);border-radius:4pt;border-left:3pt solid var(--accent-green)}
+.term-item-red{display:flex;align-items:center;gap:8pt;padding:5pt 10pt;background:var(--bg-card);border-radius:4pt;border-left:3pt solid var(--accent-coral)}
+.term-item-amber{display:flex;align-items:center;gap:8pt;padding:5pt 10pt;background:var(--bg-card);border-radius:4pt;border-left:3pt solid var(--accent-amber)}
+.fn{font-family:'Courier New',monospace;color:var(--text-code-fn);font-size:8pt;min-width:140pt}
+.desc{font-size:8pt;color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">13 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>9种终止条件</h1>
+  <div class="term-list">
+    <div class="term-item-red">
+      <p class="fn">blocking_limit</p>
+      <p class="desc">maxTurns 不足以完成 blocking 循环, 强制停止</p>
+    </div>
+    <div class="term-item-red">
+      <p class="fn">prompt_too_long</p>
+      <p class="desc">413 PTL 恢复失败 (reactive compact 已尝试), 不可继续</p>
+    </div>
+    <div class="term-item-red">
+      <p class="fn">image_error</p>
+      <p class="desc">图片尺寸/格式错误 (ImageSizeError / ImageResizeError)</p>
+    </div>
+    <div class="term-item-red">
+      <p class="fn">model_error</p>
+      <p class="desc">不可重试的 API 错误 (非 413, 非 max_tokens)</p>
+    </div>
+    <div class="term-item-amber">
+      <p class="fn">aborted_streaming</p>
+      <p class="desc">用户中断 (Ctrl+C) 发生在 API 流式阶段</p>
+    </div>
+    <div class="term-item-amber">
+      <p class="fn">aborted_tools</p>
+      <p class="desc">用户中断发生在工具执行阶段</p>
+    </div>
+    <div class="term-item-amber">
+      <p class="fn">hook_stopped</p>
+      <p class="desc">Stop hook 返回 'stopped' / 'prevented'</p>
+    </div>
+    <div class="term-item">
+      <p class="fn">completed</p>
+      <p class="desc">模型 stop_reason === 'end_turn' 且无未处理工具调用</p>
+    </div>
+    <div class="term-item-amber">
+      <p class="fn">max_turns</p>
+      <p class="desc">turnCount 达到 maxTurns 限制</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Context Pressure</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --text-code-fn: #79C0FF;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 12pt 28pt 6pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 4pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.formula-box { background: var(--bg-code); border: 1.5pt solid var(--accent-indigo); border-radius: 5pt; padding: 8pt 16pt; text-align: center; margin-bottom: 4pt; }
+.formula { font-family: Courier New, monospace; font-size: 11pt; color: var(--accent-teal); }
+.metric-row { display: flex; gap: 8pt; margin-bottom: 4pt; }
+.metric-card { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 4pt 8pt; text-align: center; }
+.metric-value { font-size: 14pt; font-weight: 700; color: var(--accent-coral); margin: 0; }
+.metric-label { font-size: 7pt; color: var(--text-secondary); margin: 0; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">03 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>上下文压力 Context Pressure</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">有效窗口远小于模型标称窗口，需要精确管理每一个 token</p>
+
+  <div class="formula-box">
+    <p class="formula">effectiveWindow = modelWindow - 20K (output) - 13K (buffer)</p>
+  </div>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-teal);">200K</p>
+      <p class="metric-label">Model Context Window</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-amber);">20K</p>
+      <p class="metric-label">Reserved for Output</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-amber);">13K</p>
+      <p class="metric-label">AUTOCOMPACT_BUFFER</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value" style="color:var(--accent-teal);">~167K</p>
+      <p class="metric-label">Effective Window</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// Token counting with estimation</p>
+        <p><span style="color:var(--text-code-kw);">function</span> <span style="color:var(--text-code-fn);">tokenCountWithEstimation</span>(</p>
+        <p>  messages, systemPrompt</p>
+        <p>) {</p>
+        <p>  <span style="color:var(--text-code-kw);">const</span> exact = countExactTokens(</p>
+        <p>    messages.slice(-10)</p>
+        <p>  );</p>
+        <p>  <span style="color:var(--text-code-kw);">const</span> estimated = estimateOlder(</p>
+        <p>    messages.slice(0, -10)</p>
+        <p>  );</p>
+        <p>  <span style="color:var(--text-code-kw);">return</span> exact + estimated;</p>
+        <p>}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h4 style="color:var(--accent-amber);">为什么要预留 33K?</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">20K: 模型输出预留（max_tokens 上限）</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">13K: AUTOCOMPACT_BUFFER 安全缓冲，防止在压缩执行期间上下文溢出</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-indigo);">精确 vs 估算</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">最近 10 条消息精确计数（影响决策质量）</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">历史消息估算（chars / 4 启发式）</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">平衡计数准确性与性能开销</p>
+      </div>
+      <div class="card" style="border-left:3pt solid var(--accent-coral);">
+        <p style="font-size:8pt; color:var(--accent-coral); font-weight:700;">长对话的核心矛盾</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">工具调用越多，token 消耗越快。10 次 Bash 调用可轻易消耗 50K+ token。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

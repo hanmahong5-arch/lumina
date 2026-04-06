@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch7 - Truncation</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 07 Memory</p>
+  <p class="page-num">6 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>truncateEntrypointContent() / 入口截断策略</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">Dual-pass truncation ensures MEMORY.md never exceeds system prompt budget</p>
+  <div style="display:flex;gap:12pt;margin-bottom:8pt;">
+    <div style="flex:1;background:var(--bg-card);border-top:2pt solid var(--accent-indigo);border-radius:0 0 5pt 5pt;padding:10pt 12pt;">
+      <h4 style="color:var(--accent-indigo);">Pass 1: Line Truncation</h4>
+      <p style="font-size:9pt;">Split content by newlines, keep first <span style="font-family:Courier New,monospace;color:var(--text-code-const);">MAX_LINES=200</span> lines</p>
+      <p style="font-size:8pt;color:var(--text-muted);">Fast O(n) scan, preserves line boundaries</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--text-muted);font-size:14pt;"><p>-&gt;</p></div>
+    <div style="flex:1;background:var(--bg-card);border-top:2pt solid var(--accent-teal);border-radius:0 0 5pt 5pt;padding:10pt 12pt;">
+      <h4 style="color:var(--accent-teal);">Pass 2: Byte Truncation</h4>
+      <p style="font-size:9pt;">If result exceeds <span style="font-family:Courier New,monospace;color:var(--text-code-const);">MAX_BYTES=25000</span>, hard cut at byte boundary</p>
+      <p style="font-size:8pt;color:var(--text-muted);">Safety net for lines with very long content</p>
+    </div>
+  </div>
+  <div style="background:var(--bg-code);border-radius:4pt;padding:8pt 10pt;margin-bottom:8pt;">
+    <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-muted);margin:0;">// memdir.ts - truncateEntrypointContent()</p>
+    <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;"><span style="color:var(--text-code-kw);">function</span> <span style="color:var(--text-code-fn);">truncateEntrypointContent</span>(content: string): string {</p>
+    <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-kw);">const</span> lines = content.split(<span style="color:var(--text-code-str);">'\n'</span>);</p>
+    <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-kw);">let</span> result = lines.slice(0, MAX_LINES).join(<span style="color:var(--text-code-str);">'\n'</span>);</p>
+    <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-kw);">if</span> (Buffer.byteLength(result) > MAX_BYTES)</p>
+    <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">    result = result.slice(0, MAX_BYTES);</p>
+    <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">  <span style="color:var(--text-code-kw);">return</span> result;</p>
+    <p style="font-family:Courier New,monospace;font-size:8pt;margin:0;">}</p>
+  </div>
+  <div style="display:flex;gap:10pt;">
+    <div style="flex:1;background:var(--bg-card);border-radius:5pt;padding:8pt 10pt;text-align:center;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-coral);margin:0;">200</p>
+      <p style="font-size:8pt;color:var(--text-secondary);margin:0;">MAX_LINES</p>
+    </div>
+    <div style="flex:1;background:var(--bg-card);border-radius:5pt;padding:8pt 10pt;text-align:center;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-amber);margin:0;">25 KB</p>
+      <p style="font-size:8pt;color:var(--text-secondary);margin:0;">MAX_BYTES hard limit</p>
+    </div>
+    <div style="flex:1;background:var(--bg-card);border-radius:5pt;padding:8pt 10pt;text-align:center;">
+      <p style="font-size:16pt;font-weight:700;color:var(--accent-teal);margin:0;">~6K</p>
+      <p style="font-size:8pt;color:var(--text-secondary);margin:0;">tokens budget impact</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Memory System</p></div>
+</body></html>

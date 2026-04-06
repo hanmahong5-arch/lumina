@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - System Prompt Assembly</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--accent-purple:#9F7AEA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 10pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.priority-list{display:flex;flex-direction:column;gap:4pt;flex:1}
+.priority-item{display:flex;align-items:center;gap:10pt;padding:7pt 12pt;background:var(--bg-card);border-radius:4pt}
+.priority-num{font-size:16pt;font-weight:700;min-width:20pt;text-align:center}
+.priority-name{font-family:'Courier New',monospace;font-size:9pt;color:var(--text-code-fn);min-width:190pt}
+.priority-desc{font-size:8pt;color:var(--text-secondary)}
+.p1{color:var(--accent-coral)}
+.p2{color:var(--accent-amber)}
+.p3{color:var(--accent-amber)}
+.p4{color:var(--accent-teal)}
+.p5{color:var(--accent-indigo)}
+.p6{color:var(--accent-purple)}
+.tag{display:inline-block;font-size:6pt;padding:1pt 3pt;border-radius:2pt;color:#fff}
+.tag-red{background:var(--accent-coral)}
+.tag-green{background:var(--accent-green)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">15 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>系统提示词组装: 6层优先级</h1>
+  <div class="priority-list">
+    <div class="priority-item">
+      <p class="priority-num p1">1</p>
+      <p class="priority-name">overrideSystemPrompt <span class="tag tag-red">替换全部</span></p>
+      <p class="priority-desc">最高优先级, 完全替换默认提示词。SDK headless 模式使用。</p>
+    </div>
+    <div class="priority-item">
+      <p class="priority-num p2">2</p>
+      <p class="priority-name">coordinatorSystemPrompt</p>
+      <p class="priority-desc">COORDINATOR_MODE 下的编排提示词, 控制多Agent协调逻辑。</p>
+    </div>
+    <div class="priority-item">
+      <p class="priority-num p3">3</p>
+      <p class="priority-name">agentSystemPrompt</p>
+      <p class="priority-desc">Agent definition 中定义的专属提示词, 用于子代理场景。</p>
+    </div>
+    <div class="priority-item">
+      <p class="priority-num p4">4</p>
+      <p class="priority-name">customSystemPrompt</p>
+      <p class="priority-desc">用户自定义提示词 (CLAUDE.md 等), 注入 userContext。</p>
+    </div>
+    <div class="priority-item">
+      <p class="priority-num p5">5</p>
+      <p class="priority-name">defaultSystemPrompt <span class="tag tag-green">标准</span></p>
+      <p class="priority-desc">内置默认提示词, 包含工具说明、安全规则、行为准则。</p>
+    </div>
+    <div class="priority-item">
+      <p class="priority-num p6">6</p>
+      <p class="priority-name">appendSystemPrompt</p>
+      <p class="priority-desc">追加到 systemContext 末尾, 不影响缓存前缀。</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

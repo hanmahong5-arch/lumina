@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Source Map</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.source-index{display:flex;flex-direction:column;gap:4pt}
+.source-item{display:flex;gap:8pt;align-items:baseline}
+.source-path{font-family:Courier New,monospace;font-size:9pt;color:var(--accent-teal);min-width:200pt}
+.source-desc{font-size:9pt;color:var(--text-secondary)}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 06 Resilience</p>
+  <p class="page-num">2 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>源码地图 / Source Map</h2>
+  <p style="color:var(--text-secondary);margin-bottom:10pt;">Key files forming the resilience infrastructure</p>
+  <div class="source-index">
+    <div class="source-item"><p class="source-path">src/services/api/withRetry.ts</p><p class="source-desc">AsyncGenerator retry engine, backoff, heartbeat (822 lines)</p></div>
+    <div class="source-item"><p class="source-path">src/services/api/claude.ts</p><p class="source-desc">API client, model fallback, 529 handling, Fast Mode</p></div>
+    <div class="source-item"><p class="source-path">src/utils/conversationRecovery.ts</p><p class="source-desc">Turn interruption detection, message chain walking</p></div>
+    <div class="source-item"><p class="source-path">src/utils/sessionStorage.ts</p><p class="source-desc">JSONL append-only persistence, auto-chunking</p></div>
+    <div class="source-item"><p class="source-path">src/utils/sessionRestore.ts</p><p class="source-desc">Session resume, chain rebuild, orphan cleanup</p></div>
+    <div class="source-item"><p class="source-path">src/utils/messages.ts</p><p class="source-desc">Message filtering, whitespace cleanup, sentinel</p></div>
+    <div class="source-item"><p class="source-path">src/services/api/logging.ts</p><p class="source-desc">API call logging, error classification</p></div>
+    <div class="source-item"><p class="source-path">src/utils/filePersistence/</p><p class="source-desc">File-level persistence utilities, batch flush</p></div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Resilience</p></div>
+</body></html>

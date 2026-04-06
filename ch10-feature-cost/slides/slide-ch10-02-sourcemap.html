@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 10 - Source Map</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 6pt 0;line-height:1.2}
+.source-index{display:flex;flex-direction:column;gap:4pt}
+.source-item{display:flex;gap:8pt;align-items:baseline;background:var(--bg-card);border-radius:4pt;padding:5pt 12pt}
+.source-path{font-family:'Courier New',monospace;font-size:9pt;color:var(--accent-teal);min-width:200pt}
+.source-desc{font-size:9pt;color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 10 | FEATURE GATE + COST</p>
+  <p class="page-num">2 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h1>源码地图</h1>
+  <div class="source-index">
+    <div class="source-item">
+      <p class="source-path">src/constants/betas.ts</p>
+      <p class="source-desc">Beta header definitions, model-specific beta lists</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/utils/betas.ts</p>
+      <p class="source-desc">getMergedBetas(), provider-specific beta merging</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/setup.ts</p>
+      <p class="source-desc">setup() initialization, 10-step boot sequence</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/utils/settings/</p>
+      <p class="source-desc">5-layer settings priority, SettingsJson schema</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/utils/stats.ts</p>
+      <p class="source-desc">collectClaudeCodeStats(), usage analytics</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/utils/statsCache.ts</p>
+      <p class="source-desc">Cost state persistence, per-model tracking</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">src/services/analytics/metadata.ts</p>
+      <p class="source-desc">buildAnalyticsMetadata(), telemetry events</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

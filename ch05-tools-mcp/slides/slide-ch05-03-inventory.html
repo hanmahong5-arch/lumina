@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - Tool Inventory</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--accent-purple:#9F7AEA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:1pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.four-col{display:flex;gap:10pt;flex:1}
+.col{flex:1}
+.card-sm{background:var(--bg-card);border-radius:4pt;padding:6pt 8pt;margin-bottom:4pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">3 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>40+ 内置工具清单 / Tool Inventory</h2>
+  <div class="four-col" style="margin-top:6pt;">
+    <div class="col">
+      <div class="card-sm"><h4 style="color:var(--accent-teal);font-size:9pt;">File I/O</h4>
+        <ul style="font-size:8pt;"><li>Read</li><li>Edit</li><li>Write</li><li>NotebookEdit</li><li>MultiEdit</li></ul>
+      </div>
+      <div class="card-sm"><h4 style="color:var(--accent-indigo);font-size:9pt;">Search</h4>
+        <ul style="font-size:8pt;"><li>Grep</li><li>Glob</li><li>ToolSearch</li></ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm"><h4 style="color:var(--accent-coral);font-size:9pt;">Execution</h4>
+        <ul style="font-size:8pt;"><li>Bash</li><li>PowerShell</li><li>Tungsten</li></ul>
+      </div>
+      <div class="card-sm"><h4 style="color:var(--accent-amber);font-size:9pt;">Agent / Task</h4>
+        <ul style="font-size:8pt;"><li>Agent (subagent)</li><li>TaskUpdate</li><li>SendMessage</li><li>TodoWrite</li></ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm"><h4 style="color:var(--accent-green);font-size:9pt;">Network</h4>
+        <ul style="font-size:8pt;"><li>WebFetch</li><li>WebSearch</li></ul>
+      </div>
+      <div class="card-sm"><h4 style="color:var(--accent-purple);font-size:9pt;">Planning</h4>
+        <ul style="font-size:8pt;"><li>EnterPlanMode</li><li>ExitPlanMode</li><li>Brief</li></ul>
+      </div>
+      <div class="card-sm"><h4 style="color:var(--accent-teal);font-size:9pt;">Config</h4>
+        <ul style="font-size:8pt;"><li>Config</li><li>ScheduleCron</li></ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-sm"><h4 style="color:var(--accent-indigo);font-size:9pt;">Extensibility</h4>
+        <ul style="font-size:8pt;"><li>Skill</li><li>MCP (dynamic)</li><li>Workflow</li></ul>
+      </div>
+      <div class="card-sm"><h4 style="color:var(--accent-coral);font-size:9pt;">Worktree</h4>
+        <ul style="font-size:8pt;"><li>EnterWorktree</li><li>ExitWorktree</li></ul>
+      </div>
+      <div class="card-sm"><h4 style="color:var(--accent-amber);font-size:9pt;">User</h4>
+        <ul style="font-size:8pt;"><li>AskUserQuestion</li></ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

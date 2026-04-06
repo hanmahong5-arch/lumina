@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Comparison</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 8pt; line-height: 1.4; margin: 4pt 0 0 0; padding-left: 12pt; }
+li { margin-bottom: 1pt; color: var(--text-secondary); }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.compare-grid { display: flex; gap: 8pt; flex: 1; }
+.compare-col { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 8pt 10pt; }
+.compare-col-highlight { flex: 1; background: var(--bg-card); border-radius: 4pt; padding: 8pt 10pt; border: 1.5pt solid var(--accent-indigo); }
+
+
+
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">16 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>对比分析 Comparison</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">与 LangChain ToolPermission 及 OpenAI function calling 的权限模型对比</p>
+
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-amber);">LangChain</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">ToolPermission</p>
+      <ul>
+        <li>简单 allow/deny 配置</li>
+        <li>无 ML 分类器</li>
+        <li>无模式梯度</li>
+        <li>无内容感知匹配</li>
+        <li>静态规则为主</li>
+        <li>无熔断机制</li>
+      </ul>
+      <p style="font-size:8pt; color:var(--accent-amber); margin-top:4pt;">适合: 简单工具链</p>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-amber);">OpenAI</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">Function Calling</p>
+      <ul>
+        <li>服务端控制为主</li>
+        <li>无客户端权限层</li>
+        <li>Assistants API 审查</li>
+        <li>无 rule DSL</li>
+        <li>依赖调用方实现安全</li>
+        <li>无投机分类</li>
+      </ul>
+      <p style="font-size:8pt; color:var(--accent-amber); margin-top:4pt;">适合: API 集成</p>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-indigo);">Claude Code</h4>
+      <p style="font-size:8pt; color:var(--text-secondary);">3-Tier Pipeline</p>
+      <ul>
+        <li>3 层管线 + 6 模式</li>
+        <li>2-stage ML 分类器</li>
+        <li>信任梯度谱</li>
+        <li>内容感知 Rule DSL</li>
+        <li>Safety-check 豁免</li>
+        <li>投机分类 + 熔断</li>
+      </ul>
+      <p style="font-size:8pt; color:var(--accent-indigo); margin-top:4pt;">适合: 本地 IDE 安全</p>
+    </div>
+  </div>
+
+    <div style="display:flex; gap:3pt; margin-bottom:2pt;">
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">维度</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">LangChain</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#00D4AA; margin:0;">OpenAI</p>
+    </div>
+    <div style="flex:1; background:#1E2D4A; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; font-weight:700; color:#6C63FF; margin:0;">Claude Code</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">权限粒度</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">工具级</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">函数级</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">工具+内容级</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">ML 辅助</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">无</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">服务端</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">客户端 2-stage</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">故障安全</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">依实现</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">依实现</p>
+    </div>
+    <div style="flex:1; background:#131B2E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">fail-closed + breaker</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:3pt; margin-bottom:1pt;">
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">配置灵活性</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">中</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#A0AEC0; margin:0;">低</p>
+    </div>
+    <div style="flex:1; background:#16213E; border-radius:2pt; padding:3pt 5pt;">
+      <p style="font-size:8pt; color:#00D4AA; margin:0;">高 (DSL+模式+层级)</p>
+    </div>
+  </div>
+
+  <div style="margin-top:5pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:5pt 8pt;">
+    <h4 style="font-size:9pt; color:var(--accent-indigo); margin:0 0 2pt 0;">Why Claude Code's Permission Model is Different</h4>
+    <p style="font-size:8pt; color:var(--text-secondary); line-height:1.4; margin:0;">LangChain 和 OpenAI 的权限模型是"配置式"的——你需要显式声明权限。Claude Code 的权限模型是"推断式"的——<strong style="color:var(--accent-green);">speculative classification</strong> 自动判断安全操作，<strong style="color:var(--accent-green);">rule DSL</strong> 支持内容感知匹配，<strong style="color:var(--accent-green);">fail-closed breaker</strong> 确保故障时不会泄漏。安全不是配置清单，而是推理管线。</p>
+  </div>
+
+</div>
+</body>
+</html>

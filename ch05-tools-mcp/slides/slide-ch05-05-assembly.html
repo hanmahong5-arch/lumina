@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - Assembly</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.pipeline{display:flex;gap:6pt;align-items:stretch;margin-bottom:6pt}
+.pipeline-step{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;text-align:center;border-top:2pt solid var(--accent-indigo)}
+.pipeline-arrow{display:flex;align-items:center;color:var(--text-muted);font-size:14pt}
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">5 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>工具装配 / assembleToolPool()</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">Partitioned sorting + dedup + prompt cache protection</p>
+  <div class="pipeline" style="margin-top:4pt;">
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-teal);">Built-in</h3><p style="font-size:8pt;">Core tools first</p></div>
+    <div class="pipeline-arrow"><p style="margin:0;">&#8594;</p></div>
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-amber);">Skill Tools</h3><p style="font-size:8pt;">Loaded from .md</p></div>
+    <div class="pipeline-arrow"><p style="margin:0;">&#8594;</p></div>
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-indigo);">MCP Tools</h3><p style="font-size:8pt;">Suffix position</p></div>
+    <div class="pipeline-arrow"><p style="margin:0;">&#8594;</p></div>
+    <div class="pipeline-step"><h3 style="font-size:9pt;color:var(--accent-coral);">uniqBy</h3><p style="font-size:8pt;">Name dedup</p></div>
+  </div>
+  <div class="card-accent-teal">
+    <h3 style="font-size:10pt;color:var(--accent-teal);">Partitioned Sorting Strategy</h3>
+    <ul style="font-size:9pt;">
+      <li><strong>Built-in prefix:</strong> Stable tool definitions go first for prompt cache hit rate</li>
+      <li><strong>MCP suffix:</strong> Dynamic tools placed after built-in, cache boundary preserved</li>
+      <li><strong>uniqBy(name):</strong> Built-in wins over MCP if name collides</li>
+    </ul>
+  </div>
+  <div class="code-block">
+<p style="margin:0;font-size:8pt;"><span style="color:var(--text-code-kw)">const</span> pool = <span style="color:var(--text-code-fn)">uniqBy</span>(</p>
+<p style="margin:0;font-size:8pt;">  [...builtInTools, ...skillTools, ...mcpTools],</p>
+<p style="margin:0;font-size:8pt;">  (t) =&gt; t.name  <span style="color:var(--text-muted)">// first occurrence wins</span></p>
+<p style="margin:0;font-size:8pt;">);</p>
+<p style="margin:0;font-size:8pt;color:var(--text-muted);">// Prompt cache: tools array is part of the system prompt cache key</p>
+<p style="margin:0;font-size:8pt;color:var(--text-muted);">// Stable prefix = high cache reuse across turns</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

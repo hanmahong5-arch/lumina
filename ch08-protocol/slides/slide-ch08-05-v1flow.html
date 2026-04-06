@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - v1 Flow</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">5 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>v1 协议流程 / v1 Protocol Flow</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">Environment-based session with worker JWT and hybrid transport</p>
+  <div style="display:flex;gap:6pt;align-items:stretch;margin-bottom:10pt;">
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-amber);">
+      <h4 style="color:var(--accent-amber);font-size:9pt;">1. Session Init</h4>
+      <p style="font-size:7pt;">Create session from env vars, generate session ID</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--text-muted);font-size:12pt;"><p>-&gt;</p></div>
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-amber);">
+      <h4 style="color:var(--accent-amber);font-size:9pt;">2. Worker JWT</h4>
+      <p style="font-size:7pt;">Request worker token from auth service</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--text-muted);font-size:12pt;"><p>-&gt;</p></div>
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-amber);">
+      <h4 style="color:var(--accent-amber);font-size:9pt;">3. Hybrid Transport</h4>
+      <p style="font-size:7pt;">WebSocket + polling fallback</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--text-muted);font-size:12pt;"><p>-&gt;</p></div>
+    <div style="flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 8pt;text-align:center;border-top:2pt solid var(--accent-amber);">
+      <h4 style="color:var(--accent-amber);font-size:9pt;">4. Poll Loop</h4>
+      <p style="font-size:7pt;">Periodic message fetch on interval</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:12pt;">
+    <div style="flex:1;">
+      <div style="background:var(--bg-code);border-radius:4pt;padding:8pt 10pt;margin-bottom:6pt;">
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--text-muted);margin:0;">// v1 initialization sequence</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-amber);margin:0;">const session = createFromEnv();</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-amber);margin:0;">const jwt = await getWorkerJWT(session);</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-amber);margin:0;">const transport = new HybridTransport({</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-amber);margin:0;">  jwt, pollInterval: STATUS_POLL</p>
+        <p style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-amber);margin:0;">});</p>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <div style="background:var(--bg-card);border-left:3pt solid var(--accent-coral);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:6pt;">
+        <h4 style="color:var(--accent-coral);">Limitations</h4>
+        <ul style="font-size:8pt;margin:0 0 3pt 12pt;padding:0;list-style:disc;">
+          <li>Env vars must be set before launch</li>
+          <li>No cross-transport message recovery</li>
+          <li>Poll interval wastes bandwidth on idle</li>
+          <li>JWT refresh is manual</li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-card);border-radius:5pt;padding:6pt 10pt;">
+        <p style="font-size:8pt;color:var(--text-muted);margin:0;">v1 remains active behind feature gate for backward compatibility with existing deployments.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

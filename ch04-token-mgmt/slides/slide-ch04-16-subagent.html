@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Sub-Agent Safety</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-kw: #FF7B72;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+h4 { font-size: 10pt; font-weight: 700; margin: 0 0 1pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 10pt 28pt 4pt 28pt; }
+.two-col { display: flex; gap: 14pt; flex: 1; }
+.col { flex: 1; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 3pt 8pt; font-family: Courier New, monospace; font-size: 7pt; color: var(--accent-teal); margin-bottom: 3pt; }
+.card { background: var(--bg-card); border-radius: 5pt; padding: 5pt 10pt; margin-bottom: 3pt; }
+.diagram-box { background: var(--bg-code); border-radius: 5pt; padding: 6pt; margin-bottom: 3pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">16 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>子代理安全 Sub-Agent Compact Safety</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">isMainThreadCompact 隔离检查：子代理压缩不得清除主线程状态</p>
+
+  <div class="diagram-box">
+    <p style="font-size:9pt; color:var(--text-muted); text-align:center; margin-bottom:6pt;">Main Thread vs Sub-Agent Compact 隔离</p>
+    <div style="display:flex; gap:12pt;">
+      <div style="flex:1; border:1pt solid var(--accent-indigo); border-radius:4pt; padding:6pt 8pt;">
+        <p style="font-size:9pt; color:var(--accent-indigo); font-weight:700; text-align:center;">Main Thread</p>
+        <p style="font-size:7pt; color:var(--text-secondary); text-align:center;">messages[] + 12 module states</p>
+        <p style="font-size:7pt; color:var(--accent-green); text-align:center;">isMainThreadCompact = true</p>
+        <p style="font-size:7pt; color:var(--accent-green); text-align:center;">cleanup: ALL modules</p>
+      </div>
+      <div style="flex:1; border:1pt solid var(--accent-amber); border-radius:4pt; padding:6pt 8pt;">
+        <p style="font-size:9pt; color:var(--accent-amber); font-weight:700; text-align:center;">Sub-Agent</p>
+        <p style="font-size:7pt; color:var(--text-secondary); text-align:center;">forked messages[] (独立副本)</p>
+        <p style="font-size:7pt; color:var(--accent-coral); text-align:center;">isMainThreadCompact = false</p>
+        <p style="font-size:7pt; color:var(--accent-coral); text-align:center;">cleanup: agent-local ONLY</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+        <p style="color:var(--text-code-kw);">// postCompactCleanup.ts</p>
+        <p><span style="color:var(--text-code-kw);">function</span> postCompactCleanup(</p>
+        <p>  isMainThreadCompact: boolean</p>
+        <p>) {</p>
+        <p>  <span style="color:var(--text-code-kw);">if</span> (isMainThreadCompact) {</p>
+        <p>    <span style="color:var(--text-muted);">// Reset ALL shared states</span></p>
+        <p>    resetClassifier();</p>
+        <p>    resetDenialTracking();</p>
+        <p>    resetTokenCache();</p>
+        <p>    resetCollapseStore();</p>
+        <p>    <span style="color:var(--text-muted);">// ... 12+ modules</span></p>
+        <p>  } <span style="color:var(--text-code-kw);">else</span> {</p>
+        <p>    <span style="color:var(--text-muted);">// Agent-local only</span></p>
+        <p>    resetLocalTokenCache();</p>
+        <p>  }</p>
+        <p>}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="border:1.5pt solid var(--accent-coral);">
+        <h4 style="color:var(--accent-coral);">风险场景</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">如果子代理 compact 不小心清除了主线程的 classifierState，主线程下一次权限判定会失败。</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">如果清除了 denialTracking，主线程的熔断保护失效。</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-green);">隔离原则</h4>
+        <p style="font-size:9pt; color:var(--text-secondary);">子代理使用 fork 的消息副本</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">子代理 compact 仅清理自己的本地缓存</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">主线程状态由主线程 compact 独占管理</p>
+      </div>
+      <div class="card">
+        <p style="font-size:8pt; color:var(--accent-amber); font-weight:700;">类比：进程隔离</p>
+        <p style="font-size:8pt; color:var(--text-secondary);">如同操作系统的进程隔离，子进程不应影响父进程的内存空间。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

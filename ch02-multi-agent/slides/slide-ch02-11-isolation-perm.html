@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Permission Isolation</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --bg-code: #0D1117;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --text-code-fn: #79C0FF;
+  --text-code-kw: #FF7B72;
+  --text-code-const: #00D4AA;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+h4 { font-size: 11pt; font-weight: 700; margin: 0 0 2pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+ul { font-size: 10pt; line-height: 1.45; margin: 0; padding-left: 14pt; }
+li { margin-bottom: 2pt; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.two-col { display: flex; gap: 16pt; flex: 1; }
+.col-50 { flex: 0 0 48%; }
+.code-block { background: var(--bg-code); border-radius: 4pt; padding: 6pt 8pt; font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); margin-bottom: 5pt; }
+.card-accent-coral { background: var(--bg-card); border-left: 3pt solid var(--accent-coral); border-radius: 0 5pt 5pt 0; padding: 8pt 12pt; margin-bottom: 5pt; }
+.card-sm { background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; margin-bottom: 4pt; }
+.card-highlight { background: var(--bg-card); border: 1.5pt solid var(--accent-indigo); border-radius: 5pt; padding: 8pt 12pt; margin-bottom: 5pt; }
+.slide-footer { display: flex; justify-content: space-between; align-items: center; padding: 4pt 32pt 8pt 32pt; font-size: 7pt; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Chapter 02 - Multi-Agent System</p>
+  <p class="page-num">11 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>权限隔离 Permission Isolation</h2>
+  <div class="two-col">
+    <div class="col-50">
+      <div class="card-accent-coral">
+        <h4>agentGetAppState() 覆写</h4>
+        <ul>
+          <li>子agent拥有独立的 <span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">toolPermissionContext</span></li>
+          <li>权限模式从 AgentDefinition.permissionMode 读取</li>
+          <li>不继承父级已授予的session allow rules</li>
+          <li>通过 rootSetAppState 共享根状态写入</li>
+        </ul>
+      </div>
+      <div class="card-sm">
+        <h4>权限模式类型</h4>
+        <ul>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">bubble</span> - 权限提示冒泡到父终端 (fork默认)</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">plan</span> - 只读计划模式, 允许ExitPlanMode</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">default</span> - 标准权限检查</li>
+          <li><span style="font-family: Courier New; font-size: 9pt; color: var(--accent-teal);">bypassPermissions</span> - 跳过权限 (受限)</li>
+        </ul>
+      </div>
+      <div class="card-highlight">
+        <h4 style="color: var(--accent-coral);">安全原则: 只能向上继承</h4>
+        <p>子agent不能拥有比父级更宽松的权限。即使agent定义中指定了bypassPermissions, 如果父级不允许, 也会被降级</p>
+      </div>
+    </div>
+    <div class="col-50">
+      <p style="color: var(--text-secondary); margin-bottom: 4pt;">Permission context construction</p>
+      <div class="code-block">
+        <p style="margin:0;"><span style="color:var(--text-muted);">// runAgent.ts - permission isolation</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">const</span> agentGetAppState = () =&gt; ({</p>
+        <p style="margin:0;">  ...appState,</p>
+        <p style="margin:0;">  toolPermissionContext: {</p>
+        <p style="margin:0;">    <span style="color:var(--text-muted);">// Independent permission mode</span></p>
+        <p style="margin:0;">    mode: agentDefinition.permissionMode,</p>
+        <p style="margin:0;">    <span style="color:var(--text-muted);">// Fresh session rules</span></p>
+        <p style="margin:0;">    sessionRules: buildAgentRules(),</p>
+        <p style="margin:0;">  },</p>
+        <p style="margin:0;">});</p>
+        <p style="margin:0;">&nbsp;</p>
+        <p style="margin:0;"><span style="color:var(--text-muted);">// Cannot show prompts in async</span></p>
+        <p style="margin:0;"><span style="color:var(--text-code-kw);">const</span> canShowPrompts =</p>
+        <p style="margin:0;">  canShowPermissionPrompts ?? !isAsync;</p>
+      </div>
+      <div class="card-sm" style="border-left: 2pt solid var(--accent-amber);">
+        <p><span style="color: var(--accent-amber); font-weight: 700;">Key:</span> 异步agent无法显示权限提示 (无终端交互), 因此必须依赖预设规则或自动决策</p>
+      </div>
+    </div>
+  </div>
+  <!-- Agent isolation diagram removed - already shown as two-column layout above -->
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 � Multi-Agent</p>
+  <p>11 / 22</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - 9-Section Summary Template</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --accent-purple: #9F7AEA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 16pt; font-weight: 700; margin: 0 0 3pt 0; }
+p  { font-size: 9pt; line-height: 1.3; margin: 0 0 2pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 10pt 28pt; }
+.section-grid { display: flex; flex-wrap: wrap; gap: 4pt; flex: 1; }
+.section-item { width: calc(33.33% - 4pt); background: var(--bg-card); border-radius: 4pt; padding: 6pt 8pt; box-sizing: border-box; }
+.section-num { font-size: 8pt; font-weight: 700; margin: 0 0 1pt 0; }
+.section-name { font-size: 9pt; font-weight: 700; margin: 0 0 2pt 0; }
+.section-desc { font-size: 7pt; color: var(--text-secondary); margin: 0; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">11 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>9 段摘要模板 Summary Template</h2>
+  <p style="color:var(--text-secondary); margin-bottom:6pt;">结构化模板约束 LLM 输出，避免自由发挥导致信息遗漏</p>
+
+  <div class="section-grid">
+    <div class="section-item" style="border-top:2pt solid var(--accent-coral);">
+      <p class="section-num" style="color:var(--accent-coral);">#1</p>
+      <p class="section-name">Primary Request</p>
+      <p class="section-desc">用户的核心需求是什么</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-amber);">
+      <p class="section-num" style="color:var(--accent-amber);">#2</p>
+      <p class="section-name">Key Concepts</p>
+      <p class="section-desc">涉及的关键技术概念</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-green);">
+      <p class="section-num" style="color:var(--accent-green);">#3</p>
+      <p class="section-name">Files Modified</p>
+      <p class="section-desc">已修改/创建的文件清单</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-teal);">
+      <p class="section-num" style="color:var(--accent-teal);">#4</p>
+      <p class="section-name">Errors Encountered</p>
+      <p class="section-desc">遇到的错误及解决方案</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-indigo);">
+      <p class="section-num" style="color:var(--accent-indigo);">#5</p>
+      <p class="section-name">Problem Solving</p>
+      <p class="section-desc">问题解决思路和决策</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-purple);">
+      <p class="section-num" style="color:var(--accent-purple);">#6</p>
+      <p class="section-name">User Messages</p>
+      <p class="section-desc">用户的补充要求和反馈</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-coral);">
+      <p class="section-num" style="color:var(--accent-coral);">#7</p>
+      <p class="section-name">Tasks</p>
+      <p class="section-desc">已完成和待完成的任务</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-amber);">
+      <p class="section-num" style="color:var(--accent-amber);">#8</p>
+      <p class="section-name">Current Work</p>
+      <p class="section-desc">当前正在进行的工作</p>
+    </div>
+    <div class="section-item" style="border-top:2pt solid var(--accent-green);">
+      <p class="section-num" style="color:var(--accent-green);">#9</p>
+      <p class="section-name">Next Step</p>
+      <p class="section-desc">下一步应该做什么</p>
+    </div>
+  </div>
+
+  <div style="background:var(--bg-card); border:1pt solid var(--accent-indigo); border-radius:4pt; padding:6pt 10pt; margin-top:4pt;">
+    <p style="font-size:8pt; color:var(--accent-indigo); font-weight:700;">为什么不让 LLM 自由总结?</p>
+    <p style="font-size:8pt; color:var(--text-secondary);">自由总结容易遗漏错误记录(#4)和用户反馈(#6)。9 段模板是 checklist，确保关键信息不丢失。prompt.ts 中定义。</p>
+  </div>
+</div>
+</body>
+</html>

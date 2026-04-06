@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 09 - Bootstrap</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+h4{font-size:11pt;font-weight:700;margin:0 0 2pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.pipeline{display:flex;gap:6pt;align-items:stretch;margin-bottom:6pt}
+.pipeline-step{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;text-align:center;border-top:2pt solid var(--accent-indigo)}
+.pipeline-step-active{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;text-align:center;border-top:2pt solid var(--accent-teal)}
+.pipeline-arrow{display:flex;align-items:center;color:var(--text-muted);font-size:14pt}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 09 | INK UI</p>
+  <p class="page-num">3 / 20</p>
+</div>
+<div class="slide-content-compact">
+  <h2>启动流: launchRepl()</h2>
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <h4>Side Effects</h4>
+      <p style="font-size:8pt;color:var(--text-secondary);">process.env, signal handlers, UDS cleanup</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step">
+      <h4>Dynamic Import</h4>
+      <p style="font-size:8pt;color:var(--text-secondary);">lazy require('ink') for DCE</p>
+    </div>
+    <div class="pipeline-arrow"><p>&#9654;</p></div>
+    <div class="pipeline-step-active">
+      <h4>renderAndRun</h4>
+      <p style="font-size:8pt;color:var(--text-secondary);">ink.render(&lt;App/&gt;) + waitUntilExit</p>
+    </div>
+  </div>
+  <div class="code-block">
+    <p>// main.tsx - launchRepl() simplified flow</p>
+    <p>async function launchRepl(config) {</p>
+    <p>&nbsp;&nbsp;await performSideEffects();       // env, signals, UDS</p>
+    <p>&nbsp;&nbsp;const { render } = await import('ink'); // lazy for DCE</p>
+    <p>&nbsp;&nbsp;const app = render(&lt;App config={config} /&gt;);</p>
+    <p>&nbsp;&nbsp;await app.waitUntilExit();</p>
+    <p>}</p>
+  </div>
+  <div class="card-accent-teal">
+    <h4>Lazy Require for Dead Code Elimination</h4>
+    <ul>
+      <li><p>Ink and React are imported dynamically, not at top-level</p></li>
+      <li><p>Non-interactive modes (--print, SDK) never load UI dependencies</p></li>
+      <li><p>Reduces cold-start by ~200ms for non-REPL paths</p></li>
+    </ul>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Source: src/main.tsx, src/entrypoints/cli.tsx</p>
+  <p>Ch09 Ink UI</p>
+</div>
+</body>
+</html>

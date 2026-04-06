@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Constants Reference</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-const:#00D4AA;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 12pt 0;line-height:1.2}
+.const-table{display:flex;flex-direction:column;gap:4pt}
+.const-row{display:flex;gap:8pt;align-items:baseline;padding:6pt 12pt;background:var(--bg-card);border-radius:4pt}
+.const-row:nth-child(even){background:var(--bg-code)}
+.const-name{font-family:'Courier New',monospace;font-size:8pt;color:var(--text-code-fn);min-width:280pt}
+.const-val{font-family:'Courier New',monospace;font-size:9pt;color:var(--text-code-const);min-width:60pt;font-weight:700}
+.const-desc{font-size:8pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">20 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>关键常量速查表</h1>
+  <div class="const-table">
+    <div class="const-row">
+      <p class="const-name">MAX_OUTPUT_TOKENS_RECOVERY_LIMIT</p>
+      <p class="const-val">3</p>
+      <p class="const-desc">max_tokens 恢复最大重试次数</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">ESCALATED_MAX_TOKENS</p>
+      <p class="const-val">64,000</p>
+      <p class="const-desc">输出 token 升级目标值</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MAX_CONSECUTIVE_AUTOCOMPACT_FAILURES</p>
+      <p class="const-val">3</p>
+      <p class="const-desc">autocompact 连续失败熔断阈值</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">AUTOCOMPACT_BUFFER_TOKENS</p>
+      <p class="const-val">13,000</p>
+      <p class="const-desc">autocompact 触发阈值缓冲区</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">POST_COMPACT_MAX_FILES_TO_RESTORE</p>
+      <p class="const-val">5</p>
+      <p class="const-desc">compact 后最多恢复的文件数</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">POST_COMPACT_TOKEN_BUDGET</p>
+      <p class="const-val">50,000</p>
+      <p class="const-desc">compact 后文件恢复 token 预算</p>
+    </div>
+    <div class="const-row">
+      <p class="const-name">MAX_PTL_RETRIES</p>
+      <p class="const-val">3</p>
+      <p class="const-desc">Prompt Too Long 最大重试次数</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

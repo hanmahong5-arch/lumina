@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 08 - Summary</title>
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 08 | PROTOCOL</p>
+  <p class="page-num">21 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>核心洞见</h1>
+  <div class="takeaway-list">
+    <div class="takeaway-item">
+      <p class="takeaway-num">1</p>
+      <p>v1 到 v2 的架构简化移除了 Environment poll/dispatch 层，代码量从 ~2400 行降至 ~500 行</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">2</p>
+      <p>Epoch 机制优于 Token Revocation——单调递增计数器实现 worker 轮转，无需维护撤销列表</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">3</p>
+      <p>SSE 的 Last-Event-ID + 三层 UUID 去重实现端到端消息不丢不重，比自定义 WebSocket 恢复协议更标准</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">4</p>
+      <p>退避矩阵为每个故障域定制参数：连接 2s/120s、通用 500ms/30s、初始化 500ms/4s，统一 10 分钟总预算</p>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">5</p>
+      <p>双层门控（编译时 feature() + 运行时 GrowthBook）消除敏感字符串泄露并支持 per-org 精确控制</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

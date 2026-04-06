@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">Ch08 Protocol · Learning Objectives</p>
+  <p class="page-num">Objectives</p>
+</div>
+<div class="slide-content-compact">
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt;">After this chapter you will be able to:</h2>
+  <h2 style="color:var(--accent-indigo); margin-bottom:6pt; font-size:14pt;">学完本章后你将能够：</h2>
+  <ol style="font-size:8.5pt; color:var(--text-primary); line-height:1.5;">
+    <li style="margin-bottom:4pt;"><p style="margin:0; font-size:8.5pt;">Compare v1 (WebSocket, long-poll) vs v2 (SSE + CCRClient, env-less) on round-trips, state, complexity / 对比 v1 与 v2 协议架构</p></li>
+    <li style="margin-bottom:4pt;"><p style="margin:0; font-size:8.5pt;">Trace v2 lifecycle: /sessions → /bridge (epoch) → SSE read + CCRClient write → JWT refresh → teardown / 追踪 v2 会话生命周期</p></li>
+    <li style="margin-bottom:4pt;"><p style="margin:0; font-size:8.5pt;">Explain 3-layer dedup: echo ring buffer + initial set + re-delivery ring buffer (2000 capacity) / 解释三层去重机制</p></li>
+    <li style="margin-bottom:4pt;"><p style="margin:0; font-size:8.5pt;">Derive backoff matrix for 4 failure domains; heartbeat 20s = 3x margin vs 60s TTL / 推导 4 域退避矩阵</p></li>
+    <li style="margin-bottom:4pt;"><p style="margin:0; font-size:8.5pt;">Describe epoch-based worker rotation: /bridge bumps epoch, stale gets 409, resume from lastSequenceNum / 描述 epoch 轮换</p></li>
+  </ol>
+  <div style="background:#16213E; border-radius:4pt; padding:6pt 10pt; margin-top:8pt; border-left:2pt solid #FFB84D;">
+    <p style="font-size:8pt; color:#FFB84D; font-weight:700; margin:0;">Prerequisites / 前置知识</p>
+    <p style="font-size:7.5pt; color:#A0AEC0; margin:0;">Ch06 Resilience (withRetry patterns, OAuth 401 handling). Basic understanding of SSE (Server-Sent Events), WebSocket, and JWT authentication flows. / Ch06 韧性工程（withRetry 模式、OAuth 401 处理）。基本理解 SSE（服务端推送事件）、WebSocket 和 JWT 认证流程。</p>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Protocol &amp; Bridge System</p>
+  <p>Duration: ~60min | 22 Slides</p>
+</div>
+</body></html>

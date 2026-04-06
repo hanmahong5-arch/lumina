@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch5 - Filter</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--text-code-fn:#79C0FF;--text-code-kw:#FF7B72;--text-code-str:#A5D6FF;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.two-col{display:flex;gap:16pt;flex:1}
+.col{flex:1}
+.code-block{background:var(--bg-code);border-radius:4pt;padding:6pt 8pt;font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt}
+.card-accent-coral{background:var(--bg-card);border-left:3pt solid var(--accent-coral);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 05 Tools &amp; MCP</p>
+  <p class="page-num">6 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>前置过滤 / filterToolsByDenyRules()</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Prevent model from seeing tools it cannot use</p>
+  <div class="two-col">
+    <div class="col">
+      <div class="code-block">
+<p style="margin:0;font-size:8pt;"><span style="color:var(--text-code-kw)">function</span> <span style="color:var(--text-code-fn)">filterToolsByDenyRules</span>(</p>
+<p style="margin:0;font-size:8pt;">  tools, denyRules</p>
+<p style="margin:0;font-size:8pt;">) {</p>
+<p style="margin:0;font-size:8pt;">  <span style="color:var(--text-code-kw)">return</span> tools.<span style="color:var(--text-code-fn)">filter</span>(t =&gt; {</p>
+<p style="margin:0;font-size:8pt;">    <span style="color:var(--text-code-kw)">const</span> name = <span style="color:var(--text-code-fn)">stripMcpPrefix</span>(t.name);</p>
+<p style="margin:0;font-size:8pt;">    <span style="color:var(--text-code-kw)">return</span> !denyRules.<span style="color:var(--text-code-fn)">some</span>(</p>
+<p style="margin:0;font-size:8pt;">      r =&gt; r.<span style="color:var(--text-code-fn)">matches</span>(name)</p>
+<p style="margin:0;font-size:8pt;">    );</p>
+<p style="margin:0;font-size:8pt;">  });</p>
+<p style="margin:0;font-size:8pt;">}</p>
+      </div>
+      <div class="card-accent-coral">
+        <h3 style="font-size:10pt;color:var(--accent-coral);">Why Pre-filter?</h3>
+        <p style="font-size:9pt;">If the model sees a tool in the schema, it may attempt to call it. Pre-filtering removes denied tools from the API request entirely.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3 style="color:var(--accent-teal);font-size:10pt;">MCP Server-Prefix Stripping</h3>
+        <ul style="font-size:9pt;">
+          <li>MCP tools arrive as <span style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);">mcp__server__toolName</span></li>
+          <li>Deny rules match against the bare <span style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);">toolName</span></li>
+          <li>Ensures consistent deny regardless of MCP server origin</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent-amber);font-size:10pt;">Deny Rule Sources</h3>
+        <ul style="font-size:9pt;">
+          <li><strong>Enterprise policy:</strong> Organization-wide restrictions</li>
+          <li><strong>User config:</strong> Per-user tool disable list</li>
+          <li><strong>Project .claude:</strong> Project-scoped deny</li>
+          <li><strong>Permission mode:</strong> Plan mode hides write tools</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Tools &amp; MCP</p></div>
+</body></html>

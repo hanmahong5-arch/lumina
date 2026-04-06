@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch6 - Interruption Detection</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+h3{font-size:13pt;font-weight:700;margin:0 0 3pt 0;line-height:1.3}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+ul{font-size:10pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2pt}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:24pt 32pt 16pt 32pt}
+.three-col{display:flex;gap:12pt;flex:1}
+.col{flex:1}
+.card-accent-teal{background:var(--bg-card);border-left:3pt solid var(--accent-teal);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.card-accent-amber{background:var(--bg-card);border-left:3pt solid var(--accent-amber);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.card-accent-coral{background:var(--bg-card);border-left:3pt solid var(--accent-coral);border-radius:0 5pt 5pt 0;padding:8pt 12pt;margin-bottom:5pt}
+.card{background:var(--bg-card);border-radius:5pt;padding:10pt 12pt;margin-bottom:6pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 06 Resilience</p>
+  <p class="page-num">15 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>中断检测 / detectTurnInterruption()</h2>
+  <p style="color:var(--text-secondary);margin-bottom:6pt;">Three interruption states based on last message in chain</p>
+  <div class="three-col">
+    <div class="col">
+      <div class="card-accent-teal" style="min-height:120pt;">
+        <h3 style="font-size:10pt;color:var(--accent-teal);">Last = Assistant (Complete)</h3>
+        <p style="font-size:9pt;font-weight:700;margin-bottom:4pt;">State: Normal completion</p>
+        <ul style="font-size:8pt;">
+          <li>Assistant finished its turn</li>
+          <li>stop_reason = "end_turn"</li>
+          <li>No recovery needed</li>
+          <li>Ready for next user input</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-accent-amber" style="min-height:120pt;">
+        <h3 style="font-size:10pt;color:var(--accent-amber);">Last = Tool Result</h3>
+        <p style="font-size:9pt;font-weight:700;margin-bottom:4pt;">State: Mid-turn crash</p>
+        <ul style="font-size:8pt;">
+          <li>Tool executed but response never sent</li>
+          <li>Inject "Continue" prompt</li>
+          <li>Model picks up from tool result</li>
+          <li>Most common crash recovery</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-accent-coral" style="min-height:120pt;">
+        <h3 style="font-size:10pt;color:var(--accent-coral);">Last = User</h3>
+        <p style="font-size:9pt;font-weight:700;margin-bottom:4pt;">State: Interrupted before response</p>
+        <ul style="font-size:8pt;">
+          <li>User sent message, no assistant reply</li>
+          <li>Use interrupted_prompt template</li>
+          <li>Model sees user message + hint</li>
+          <li>Resumes the user's original request</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:4pt;">
+    <h3 style="color:var(--accent-indigo);font-size:10pt;">Detection Logic</h3>
+    <p style="font-size:9pt;">Walk the chain to the leaf. Check <span style="font-family:Courier New,monospace;font-size:8pt;color:var(--accent-teal);">leaf.role</span>: "assistant" with end_turn = complete; "tool_result" = mid-turn crash; "user" = pre-response crash. Simple, exhaustive, no ambiguity.</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Resilience</p></div>
+</body></html>

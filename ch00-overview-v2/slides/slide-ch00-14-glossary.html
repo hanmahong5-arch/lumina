@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 00 · Key Terms</p>
+  <p class="page-num">14 / 16</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Token -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Token / 令牌</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Basic text unit LLMs process; ~3/4 English word — 像货币的"分"，模型用它计量文本成本</p>
+    </div>
+    <!-- Context Window -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Context Window / 上下文窗口</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Max tokens an LLM handles per request (input+output) — 像工作台面积，越大能摊开的文件越多</p>
+    </div>
+    <!-- Agent -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Agent / 智能体</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Autonomous LLM entity with tool access for multi-step tasks — 像能自主查资料、写代码的实习生</p>
+    </div>
+    <!-- Agent Loop -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Agent Loop / 智能体循环</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Send→LLM→tool_use→execute→repeat until end_turn — 像PDCA循环，不断迭代直到完成</p>
+    </div>
+    <!-- Tool -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #6C63FF;">
+      <p style="font-size:7.5pt; font-weight:700; color:#6C63FF; margin:0;">Tool / 工具</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Function the agent calls to interact with external world — 像厨师的刀和锅，模型是厨师</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- tool_use -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">tool_use Block / 工具调用块</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Structured JSON from model requesting tool execution — 像医生开处方，药房执行配药</p>
+    </div>
+    <!-- Streaming -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">Streaming / 流式输出</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Real-time SSE delivery of partial model responses — 像直播vs录播，实时看到模型"打字"</p>
+    </div>
+    <!-- stop_reason -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #00D4AA;">
+      <p style="font-size:7.5pt; font-weight:700; color:#00D4AA; margin:0;">stop_reason / 停止原因</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Why model output stopped: end_turn, max_tokens, tool_use — 像电话挂断原因：说完了/时间到/要查资料</p>
+    </div>
+    <!-- MCP -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">MCP / 模型上下文协议</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Open standard connecting LLMs with external tools/data — 像USB协议，AI和工具的"通用接口"</p>
+    </div>
+    <!-- Human-in-the-Loop -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Human-in-the-Loop / 人在回路</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">System pauses for human approval before risky actions — 像手术前签字确认，关键操作需人类点头</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

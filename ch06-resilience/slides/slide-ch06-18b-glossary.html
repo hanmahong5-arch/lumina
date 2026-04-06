@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 06 · Key Terms</p>
+  <p class="page-num">Glossary</p>
+</div>
+<div class="slide-content-compact" style="display:flex; gap:8pt; padding:14pt 28pt 8pt 28pt;">
+  <div style="flex:1;">
+    <!-- Circuit Breaker -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Circuit Breaker / 熔断器</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Stop retrying after N failures to prevent cascade — 像保险丝，电流过载自动断电保护</p>
+    </div>
+    <!-- Exponential Backoff -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Exponential Backoff / 指数退避</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Wait time doubles per failure (500ms,1s,2s,4s...) — 像"等一会再试"，每次等更久给服务器喘息</p>
+    </div>
+    <!-- Retry Strategy -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FF6B6B;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FF6B6B; margin:0;">Retry Strategy / 重试策略</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Policy for retries: max attempts, delay, error types — 像考试补考规则，几次机会间隔多久</p>
+    </div>
+    <!-- Fallback Model -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #48BB78;">
+      <p style="font-size:7.5pt; font-weight:700; color:#48BB78; margin:0;">Fallback Model / 后备模型</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Alternative model when primary fails or overloads — 像备用发电机，主电源断了自动顶上</p>
+    </div>
+  </div>
+  <div style="flex:1;">
+    <!-- Persistent Mode -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #48BB78;">
+      <p style="font-size:7.5pt; font-weight:700; color:#48BB78; margin:0;">Persistent Mode / 持久模式</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Keep retrying on overload (529) until capacity frees — 像排队等号，不管多久都等到轮到你</p>
+    </div>
+    <!-- Backpressure -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Backpressure / 背压</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Slow consumer signals fast producer to slow down — 像高速匝道信号灯，车多了减慢进入</p>
+    </div>
+    <!-- Feature Gate -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #FFB84D;">
+      <p style="font-size:7.5pt; font-weight:700; color:#FFB84D; margin:0;">Feature Gate / 功能开关</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Runtime enable/disable features without deployment — 像开关灯，不拆电线就能控制功能</p>
+    </div>
+    <!-- Withhold-Recover -->
+    <div style="background:#16213E; border-radius:3pt; padding:2pt 5pt; margin-bottom:2pt; border-left:2pt solid #48BB78;">
+      <p style="font-size:7.5pt; font-weight:700; color:#48BB78; margin:0;">Withhold-Recover / 扣留恢复</p>
+      <p style="font-size:6pt; color:#A0AEC0; margin:0;">Suppress errors during auto-recovery attempts — 像飞行员处理小故障，乘客无需知道</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · Glossary</p>
+  <p>Sources: Anthropic API, LangChain, MCP, OWASP</p>
+</div>
+</body></html>

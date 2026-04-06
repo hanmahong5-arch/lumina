@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+<style>
+  .bar-row { display: flex; align-items: center; gap: 4pt; margin-bottom: 2.5pt; }
+  .bar-label { font-size: 7pt; color: var(--text-secondary); min-width: 100pt; text-align: right; }
+  .bar-track { flex: 1; background: #1A1A2E; border-radius: 2pt; height: 10pt; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2pt; display: flex; align-items: center; padding-left: 3pt; }
+  .bar-val { font-size: 6.5pt; font-weight: 700; color: #fff; white-space: nowrap; }
+  .bar-meta { font-size: 6.5pt; color: var(--text-muted); min-width: 90pt; }
+  .total-row { display: flex; gap: 6pt; margin-bottom: 5pt; }
+  .total-box { flex: 1; background: var(--bg-card); border-radius: 3pt; padding: 3pt 6pt; text-align: center; }
+  .total-num { font-size: 11pt; font-weight: 700; color: var(--accent-teal); margin: 0; }
+  .total-lbl { font-size: 6.5pt; color: var(--text-muted); margin: 0; }
+  .dir-row { display: flex; gap: 4pt; flex-wrap: wrap; margin-top: 4pt; }
+  .dir-chip { background: var(--bg-card); border-radius: 2pt; padding: 1.5pt 5pt; font-size: 6.5pt; color: var(--text-secondary); }
+  .dir-chip strong { color: var(--accent-teal); }
+</style>
+</head><body style="background:var(--bg-primary);">
+
+<div class="header-bar">
+  <p class="chapter-tag">Course Overview · Source Code Coverage Analysis</p>
+  <p class="page-num">01 / 16</p>
+</div>
+
+<div class="slide-content-compact">
+
+  <h2 style="color:var(--accent-indigo); margin-bottom:2pt; font-size:15pt;">源码覆盖度分析 · Codebase Coverage by Chapter</h2>
+  <p style="font-size:7.5pt; color:var(--text-secondary); margin-bottom:4pt;">
+    Total: 512,694 LOC · 3,776 files · TypeScript/TSX · 每章核心LOC + 文件数 + 关键函数入口
+  </p>
+
+  <div class="total-row">
+    <div class="total-box"><p class="total-num">512,694</p><p class="total-lbl">Total LOC (src/)</p></div>
+    <div class="total-box"><p class="total-num">3,776</p><p class="total-lbl">Total .ts/.tsx Files</p></div>
+    <div class="total-box"><p class="total-num">76,364</p><p class="total-lbl">Core LOC (10 Chapters)</p></div>
+    <div class="total-box"><p class="total-num">14.9%</p><p class="total-lbl">Coverage Ratio</p></div>
+    <div class="total-box"><p class="total-num">89</p><p class="total-lbl">Unique Feature Flags</p></div>
+    <div class="total-box"><p class="total-num">40+</p><p class="total-lbl">Built-in Tools</p></div>
+  </div>
+
+  <!-- max bar = Ch9 at 14,444 → 100% width -->
+  <div class="bar-row">
+    <p class="bar-label">Ch1 Core Engine</p>
+    <div class="bar-track"><div class="bar-fill" style="width:24.5%; background:#6C63FF;"><p class="bar-val">3,536</p></div></div>
+    <p class="bar-meta">8 files · 0.69% · queryLoop(), submitMessage()</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch2 Multi-Agent</p>
+    <div class="bar-track"><div class="bar-fill" style="width:32.3%; background:#7B74FF;"><p class="bar-val">4,663</p></div></div>
+    <p class="bar-meta">19 files · 0.91% · runAgent(), buildForkedMessages()</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch3 Permission</p>
+    <div class="bar-track"><div class="bar-fill" style="width:54.1%; background:#FF6B6B;"><p class="bar-val">7,816</p></div></div>
+    <p class="bar-meta">28 files · 1.52% · hasPermissionsToUseTool(), YOLO ML</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch4 Token Mgmt</p>
+    <div class="bar-track"><div class="bar-fill" style="width:38.3%; background:#FFB84D;"><p class="bar-val">5,528</p></div></div>
+    <p class="bar-meta">7 files · 1.08% · compactConversation(), microCompact()</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch5 Tools+MCP</p>
+    <div class="bar-track"><div class="bar-fill" style="width:56.8%; background:#00D4AA;"><p class="bar-val">8,201</p></div></div>
+    <p class="bar-meta">27 files · 1.60% · runToolUse(), assembleToolPool()</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch6 Resilience</p>
+    <div class="bar-track"><div class="bar-fill" style="width:74.6%; background:#48BB78;"><p class="bar-val">10,781</p></div></div>
+    <p class="bar-meta">6 files · 2.10% · withRetry(), sessionStorage JSONL</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch7 Memory</p>
+    <div class="bar-track"><div class="bar-fill" style="width:12.8%; background:#9F7AEA;"><p class="bar-val">1,848</p></div></div>
+    <p class="bar-meta">6 files · 0.36% · sideQuery(), extractMemories()</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch8 Protocol</p>
+    <div class="bar-track"><div class="bar-fill" style="width:87.3%; background:#FC8181;"><p class="bar-val">12,613</p></div></div>
+    <p class="bar-meta">31 files · 2.46% · bridgeMain(), BoundedUUIDSet</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch9 Ink UI</p>
+    <div class="bar-track"><div class="bar-fill" style="width:100%; background:var(--accent-teal);"><p class="bar-val">14,444</p></div></div>
+    <p class="bar-meta">292 files · 2.82% · REPL.tsx(5005L), PromptInput</p>
+  </div>
+  <div class="bar-row">
+    <p class="bar-label">Ch10 Feature+Cost</p>
+    <div class="bar-track"><div class="bar-fill" style="width:48.0%; background:#F6AD55;"><p class="bar-val">6,934</p></div></div>
+    <p class="bar-meta">8 files · 1.35% · feature() ×960, 89 unique flags</p>
+  </div>
+
+  <!-- Directory-level breakdown -->
+  <div class="dir-row">
+    <span class="dir-chip"><strong>src/utils/</strong> 59,037</span>
+    <span class="dir-chip"><strong>src/services/</strong> 53,680</span>
+    <span class="dir-chip"><strong>src/tools/</strong> 50,835</span>
+    <span class="dir-chip"><strong>src/components/</strong> 32,662</span>
+    <span class="dir-chip"><strong>src/hooks/</strong> 19,204</span>
+    <span class="dir-chip"><strong>src/bridge/</strong> 12,613</span>
+    <span class="dir-chip"><strong>src/screens/</strong> 5,977</span>
+    <span class="dir-chip"><strong>src/skills/</strong> 4,066</span>
+    <span class="dir-chip"><strong>src/entrypoints/</strong> 4,057</span>
+    <span class="dir-chip"><strong>src/constants/</strong> 2,648</span>
+  </div>
+
+</div>
+
+<div class="slide-footer">
+  <p>Claude Code v2.1.88 · 512,694 LOC across 3,776 files</p>
+  <p>Top file: cli/print.ts (5,594L) · Largest tool: BashTool/bashPermissions.ts (2,621L)</p>
+</div>
+
+</body></html>

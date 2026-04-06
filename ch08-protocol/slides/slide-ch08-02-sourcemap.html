@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Ch8 - Source Map</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0;line-height:1.2}
+p{font-size:10pt;line-height:1.45;margin:0 0 3pt 0}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content-compact{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+.source-index{display:flex;flex-direction:column;gap:4pt}
+.source-item{display:flex;gap:8pt;align-items:baseline}
+.source-path{font-family:Courier New,monospace;font-size:9pt;color:var(--accent-teal);min-width:220pt}
+.source-desc{font-size:9pt;color:var(--text-secondary)}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:4pt 32pt 8pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style></head><body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch 08 Protocol</p>
+  <p class="page-num">2 / 22</p>
+</div>
+<div class="slide-content-compact">
+  <h2>源码地图 / Source Map</h2>
+  <p style="color:var(--text-secondary);margin-bottom:8pt;">30+ files forming the bridge / protocol infrastructure</p>
+  <div class="source-index">
+    <div class="source-item"><p class="source-path">src/bridge/bridgeMain.ts</p><p class="source-desc">Main bridge orchestrator, v1/v2 routing</p></div>
+    <div class="source-item"><p class="source-path">src/bridge/bridgeEnabled.ts</p><p class="source-desc">Feature gate checks for bridge availability</p></div>
+    <div class="source-item"><p class="source-path">src/bridge/initReplBridge.ts</p><p class="source-desc">OAuth, version detection, title derivation, v1/v2 init</p></div>
+    <div class="source-item"><p class="source-path">src/bridge/remoteBridgeCore.ts</p><p class="source-desc">Core transport abstraction, message routing</p></div>
+    <div class="source-item"><p class="source-path">src/hooks/useReplBridge.tsx</p><p class="source-desc">React hook: failure tracking, dismiss, reconnect</p></div>
+    <div class="source-item"><p class="source-path">src/commands/bridge/bridge.tsx</p><p class="source-desc">Bridge command UI component</p></div>
+    <div class="source-item"><p class="source-path">src/commands/bridge/index.ts</p><p class="source-desc">Bridge command registration and routing</p></div>
+    <div class="source-item"><p class="source-path">src/services/api/claude.ts</p><p class="source-desc">API client with retry, JWT management</p></div>
+    <div class="source-item"><p class="source-path">src/services/api/withRetry.ts</p><p class="source-desc">Retry with exponential backoff strategies</p></div>
+    <div class="source-item"><p class="source-path">src/services/api/logging.ts</p><p class="source-desc">API call logging and diagnostics</p></div>
+  </div>
+</div>
+<div class="slide-footer"><p>Deep Dive Series</p><p>Protocol Layer</p></div>
+</body></html>

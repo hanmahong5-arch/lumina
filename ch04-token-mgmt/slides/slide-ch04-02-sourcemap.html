@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch04 - Source Map</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.source-index { display: flex; flex-direction: column; gap: 6pt; }
+.source-item { display: flex; gap: 8pt; align-items: baseline; background: var(--bg-card); border-radius: 4pt; padding: 7pt 10pt; }
+.source-path { font-family: Courier New, monospace; font-size: 8pt; color: var(--accent-teal); min-width: 200pt; }
+.source-desc { font-size: 9pt; color: var(--text-secondary); }
+.source-tag { font-size: 7pt; color: var(--bg-primary); background: var(--accent-indigo); border-radius: 2pt; padding: 1pt 4pt 1pt 4pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.04 Token Management</p>
+  <p class="page-num">02 / 22</p>
+</div>
+<div class="slide-content">
+  <h2>源码地图 Source Map</h2>
+  <p style="color:var(--text-secondary); margin-bottom:10pt;">核心压缩模块分布于 <span style="font-family:Courier New,monospace; color:var(--accent-teal);">src/services/compact/</span> 目录</p>
+  <div class="source-index">
+    <div class="source-item">
+      <p class="source-path">autoCompact.ts</p>
+      <p class="source-desc">自动压缩触发器，阈值检测，熔断(3次)  <span class="source-tag">CORE</span></p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">compact.ts</p>
+      <p class="source-desc">压缩主逻辑，LLM 摘要生成，消息重建  <span class="source-tag">CORE</span></p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">microCompact.ts</p>
+      <p class="source-desc">微压缩：time-based / cached 两路径，工具白名单</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">prompt.ts</p>
+      <p class="source-desc">9 段摘要模板，analysis-summary 分离</p>
+    </div>
+    <div class="source-item">
+      <p class="source-path">postCompactCleanup.ts</p>
+      <p class="source-desc">压缩后 12+ 模块状态重置，子线程安全  <span class="source-tag">CLEANUP</span></p>
+    </div>
+  </div>
+  <p style="margin-top:8pt; font-size:8pt; color:var(--text-muted);">辅助文件: src/utils/thinking.ts (token 估算), src/utils/messages.ts (消息操作), src/services/api/withRetry.ts (413 恢复)</p>
+</div>
+</body>
+</html>

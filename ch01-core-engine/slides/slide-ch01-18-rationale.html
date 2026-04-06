@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Design Rationale</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:18pt 28pt 12pt 28pt}
+h1{font-size:22pt;font-weight:700;margin:0 0 10pt 0;line-height:1.2}
+p{font-size:9pt;line-height:1.4;margin:0 0 2pt 0}
+.insight-list{display:flex;flex-direction:column;gap:8pt;flex:1}
+.insight-card{background:var(--bg-card);border-radius:5pt;padding:10pt 14pt;border-left:3pt solid var(--accent-indigo)}
+h3{font-size:11pt;font-weight:700;margin:0 0 4pt 0;color:var(--accent-teal);line-height:1.3}
+.quote{color:var(--accent-amber);font-style:italic;font-size:9pt}
+.fn{font-family:'Courier New',monospace;color:var(--text-code-fn);font-size:8pt}
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 01 | CORE ENGINE</p>
+  <p class="page-num">18 / 22</p>
+</div>
+<div class="slide-content">
+  <h1>设计理念: 为什么这样做?</h1>
+  <div class="insight-list">
+    <div class="insight-card">
+      <h3>为什么 mutable state?</h3>
+      <p class="quote">"O(1) 追加 + compact 时 splice 释放, 牺牲快照换内存可控"</p>
+      <p>长对话场景下消息数可达数千条。immutable 复制的 GC 压力与内存峰值不可接受。mutable 数组 + compact boundary 标记实现了精确的内存回收点。</p>
+    </div>
+    <div class="insight-card">
+      <h3>为什么不用 Event Sourcing?</h3>
+      <p class="quote">"长对话场景下 replay 成本 O(n), 压缩后历史不可逆"</p>
+      <p>autocompact 是有损压缩 &mdash; 摘要替换原始消息后, 事件日志无法回放到压缩前状态。Event Sourcing 的 replay 语义与有损压缩矛盾。</p>
+    </div>
+    <div class="insight-card">
+      <h3>为什么7种 continue?</h3>
+      <p class="quote">"每种异常有独立恢复路径, 前置条件和后置状态显式可审计"</p>
+      <p><span class="fn">transition.reason</span> 字段让每次循环迭代的恢复动机可追溯。相比单一 retry + 状态机, 显式 continue 路径的调试成本更低。</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

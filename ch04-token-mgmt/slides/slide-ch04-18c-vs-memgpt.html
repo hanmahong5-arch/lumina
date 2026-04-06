@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../../design-system/base-style-v2.css">
+</head><body style="background:var(--bg-primary);">
+<div class="header-bar">
+  <p class="chapter-tag">CHAPTER 04 | TOKEN MANAGEMENT</p>
+  <p class="page-num">18c / 22</p>
+</div>
+<div class="slide-content-compact" style="padding:14pt 28pt 8pt 28pt;">
+  <h3 style="color:var(--accent-indigo); margin-bottom:4pt; font-size:12pt;">横向对比: Token/Context Management Frameworks</h3>
+
+  <!-- Header row -->
+  <div style="display:flex; gap:4pt; margin-bottom:2pt;">
+    <div style="flex:1.2; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-teal); margin:0;">维度 Dimension</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt; border:1pt solid var(--accent-indigo);">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-indigo); margin:0;">Claude Code</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-amber); margin:0;">MemGPT (Letta)</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-header); border-radius:3pt; padding:3pt 5pt;">
+      <p style="font-size:7pt; font-weight:700; color:var(--accent-coral); margin:0;">LangChain Memory</p>
+    </div>
+  </div>
+
+  <!-- Row 1: Compression Levels -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">压缩层级 Compression Levels</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">四级级联: micro / snip / LLM summary / PTL recovery</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">虚拟内存: RAM + Disk page swap</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">单级: ConversationSummaryBufferMemory LLM 摘要</p>
+    </div>
+  </div>
+
+  <!-- Row 2: Context Strategy -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">上下文策略 Context Strategy</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">渐进式压缩 + 9 节结构化摘要模板, Analysis-Summary 两阶段</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Page-in / page-out, 模型自主决定换页时机</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Buffer 超阈值后 LLM 生成自由格式摘要</p>
+    </div>
+  </div>
+
+  <!-- Row 3: Cache Optimization -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">缓存优化 Cache Optimization</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">Cached microcompact + Fork 继承 prompt cache, 60%+ hit rate</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无 prompt cache 集成</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无 prompt cache 集成</p>
+    </div>
+  </div>
+
+  <!-- Row 4: Recovery Mechanism -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">恢复机制 Recovery Mechanism</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">413 PTL: head truncation + 20% fallback + 3 次重试</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无专用恢复; 依赖 page-out 释放空间</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无恢复 (硬截断或报错)</p>
+    </div>
+  </div>
+
+  <!-- Row 5: Circuit Breaker -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">熔断器 Circuit Breaker</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">连续 3 次失败熔断, 防止无限重试 (日省 250K 调用)</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无内建熔断</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">无内建熔断</p>
+    </div>
+  </div>
+
+  <!-- Row 6: Sub-Agent Safety -->
+  <div style="display:flex; gap:4pt; margin-bottom:1pt;">
+    <div style="flex:1.2; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">子 Agent 安全 Sub-Agent Safety</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row-alt); border-radius:2pt; padding:2pt 5pt; border-left:1pt solid var(--accent-indigo);">
+      <p style="font-size:6.5pt; color:var(--text-primary); margin:0;">递归守卫 + isMainThreadCompact 状态隔离</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">单 Agent 架构, 无需隔离</p>
+    </div>
+    <div style="flex:1.5; background:var(--bg-table-row); border-radius:2pt; padding:2pt 5pt;">
+      <p style="font-size:6.5pt; color:var(--text-secondary); margin:0;">Memory 实例绑定 Chain, 无跨 Agent 问题</p>
+    </div>
+  </div>
+
+  <div style="margin-top:4pt; background:#16213E; border-left:3pt solid var(--accent-indigo); border-radius:0 4pt 4pt 0; padding:3pt 6pt;">
+    <p style="font-size:6.5pt; color:var(--text-secondary); line-height:1.35; margin:0;"><strong style="color:var(--accent-indigo);">Why Claude Code's Token Mgmt is Different:</strong> MemGPT 是"虚拟内存"思路——把上下文当 RAM，page-in/page-out。LangChain 是"摘要缓存"思路——超限就 LLM 压缩。Claude Code 是<strong style="color:var(--accent-green);">"信息工程"思路</strong>——四级压缩（micro / snip / summary / PTL）+ 9 节结构化模板 + 60%+ cache hit rate + 熔断器，保证每次压缩都不丢失关键决策上下文。</p>
+  </div>
+
+</div>
+<div class="slide-footer">
+  <p>Sources: autoCompact.ts, compact.ts, microCompact.ts, prompt.ts | MemGPT/Letta docs | LangChain Memory docs</p>
+  <p>Chapter 04 - Token Management</p>
+</div>
+</body></html>

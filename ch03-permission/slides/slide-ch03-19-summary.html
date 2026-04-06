@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Ch03 - Summary</title>
+<style>
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-indigo: #6C63FF;
+  --accent-teal: #00D4AA;
+  --accent-coral: #FF6B6B;
+  --accent-amber: #FFB84D;
+  --accent-green: #48BB78;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #718096;
+  --border-subtle: #2D3748;
+}
+html { background: var(--bg-primary); }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; color: var(--text-primary); display: flex; flex-direction: column; overflow: hidden; }
+h2 { font-size: 18pt; font-weight: 700; margin: 0 0 5pt 0; }
+p  { font-size: 10pt; line-height: 1.45; margin: 0 0 3pt 0; }
+.header-bar { display: flex; align-items: center; justify-content: space-between; padding: 8pt 32pt; background: var(--bg-secondary); }
+.chapter-tag { font-size: 8pt; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1.2pt; margin: 0; }
+.page-num { font-size: 8pt; color: var(--text-muted); margin: 0; }
+.slide-content { flex: 1; display: flex; flex-direction: column; padding: 18pt 28pt 12pt 28pt; }
+.takeaway-list { display: flex; flex-direction: column; gap: 6pt; flex: 1; }
+.takeaway-item { display: flex; gap: 10pt; align-items: flex-start; background: var(--bg-card); border-radius: 5pt; padding: 9pt 14pt; }
+.takeaway-num { font-size: 16pt; font-weight: 700; color: var(--accent-indigo); min-width: 24pt; }
+</style>
+</head>
+<body>
+<div class="header-bar">
+  <p class="chapter-tag">Ch.03 Permission &amp; Security</p>
+  <p class="page-num">19 / 20</p>
+</div>
+<div class="slide-content">
+  <h2>5 个关键收获 Key Takeaways</h2>
+  <p style="color:var(--text-secondary); margin-bottom:8pt;">权限与安全模型的核心设计思想</p>
+
+  <div class="takeaway-list">
+    <div class="takeaway-item">
+      <p class="takeaway-num">1</p>
+      <div>
+        <p style="font-weight:700;">3-Tier Pipeline 实现纵深防御</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">Deny &rarr; Allow &rarr; Ask/Classify 三层管线，每层独立负责，deny 优先确保 fail-closed。即使某层逻辑有 bug，前层已拦截危险操作。</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">2</p>
+      <div>
+        <p style="font-weight:700;">ML 分类器 2-Stage 架构平衡延迟与准确率</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">Stage 1(64 token) 快速处理 80% 明确场景，Stage 2(4096 token) CoT 推理边界 case。整体延迟低于单阶段大模型方案。</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">3</p>
+      <div>
+        <p style="font-weight:700;">信任梯度谱让安全性可调节</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">6 种模式从全手动到全自动，用户根据场景选择。不是"全开"或"全关"的二元选择。</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">4</p>
+      <div>
+        <p style="font-weight:700;">Safety-Check 豁免防止自我提权</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">.git/.claude 等路径在任何模式下需用户确认，防止 AI 修改自身的安全配置实现权限升级。</p>
+      </div>
+    </div>
+    <div class="takeaway-item">
+      <p class="takeaway-num">5</p>
+      <div>
+        <p style="font-weight:700;">熔断器保护长会话稳定性</p>
+        <p style="font-size:9pt; color:var(--text-secondary);">连续(3)/累计(20) 拒绝限制 + headless abort，防止模型陷入无限拒绝循环消耗资源。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
