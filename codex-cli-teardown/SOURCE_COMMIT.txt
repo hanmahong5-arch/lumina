@@ -1,0 +1,9 @@
+openai/codex pinned commit for this teardown:
+e4d66756328a616361a79eb792d86ad55f0bf5ae
+
+Cloned to: C:/Users/Administrator/Desktop/codex-source/
+Cloned on: 2026-05-01
+
+All file:line references in this teardown's scripts pin to this commit.
+If the upstream code shifts, references will drift — pull a fresh copy
+and re-verify before re-recording.

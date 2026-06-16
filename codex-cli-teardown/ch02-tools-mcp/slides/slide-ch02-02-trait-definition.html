@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Trait Definition</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.two-col{display:flex;gap:10pt;flex:1;margin-bottom:4pt}
+.code-panel{flex:0 0 290pt;background:var(--bg-code);border-radius:4pt;padding:8pt 10pt;border:1pt solid var(--border-subtle)}
+.code-panel p{font-family:'Courier New',monospace;font-size:7.5pt;color:#E6EDF3;margin:0 0 1pt 0;line-height:1.45}
+.code-kw{color:#FF7B72}
+.code-ty{color:#79C0FF}
+.code-cm{color:#8B949E}
+.annot-panel{flex:1;display:flex;flex-direction:column;gap:4pt}
+.annot-item{background:var(--bg-card);border-radius:3pt;padding:5pt 8pt;border-left:2pt solid var(--accent-indigo)}
+.annot-item p{font-size:8pt;color:var(--text-secondary);margin:0;line-height:1.4}
+.annot-item .label{font-size:7.5pt;font-weight:700;color:var(--accent-teal);margin:0 0 1pt 0}
+.callout{background:#16213E;border-left:3pt solid var(--accent-amber);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:2pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">02 / 09</p></div>
+<div class="slide-content">
+  <h2>ToolHandler Trait — 7 个方法签名全解</h2>
+  <div class="two-col">
+    <div class="code-panel">
+      <p><span class="code-cm">// core/src/tools/registry.rs:44</span></p>
+      <p><span class="code-kw">pub trait</span> <span class="code-ty">ToolHandler</span>: <span class="code-ty">Send</span> + <span class="code-ty">Sync</span> {</p>
+      <p>  <span class="code-kw">type</span> <span class="code-ty">Output</span>: <span class="code-ty">ToolOutput</span> + <span class="code-ty">'static</span>;</p>
+      <p>&nbsp;</p>
+      <p>  <span class="code-kw">fn</span> <span class="code-ty">kind</span>(&amp;self) -&gt; <span class="code-ty">ToolKind</span>;</p>
+      <p>  <span class="code-kw">fn</span> <span class="code-ty">matches_kind</span>(&amp;self, payload: &amp;<span class="code-ty">ToolPayload</span>) -&gt; bool</p>
+      <p>    { <span class="code-cm">/* default impl */</span> }</p>
+      <p>  <span class="code-kw">fn</span> <span class="code-ty">is_mutating</span>(&amp;self, inv: &amp;<span class="code-ty">ToolInvocation</span>)</p>
+      <p>    -&gt; impl <span class="code-ty">Future</span>&lt;Output=bool&gt; + <span class="code-ty">Send</span></p>
+      <p>    { async { <span class="code-kw">false</span> } }</p>
+      <p>  <span class="code-kw">fn</span> <span class="code-ty">pre_tool_use_payload</span>(&amp;self, inv: &amp;<span class="code-ty">ToolInvocation</span>)</p>
+      <p>    -&gt; <span class="code-ty">Option</span>&lt;<span class="code-ty">PreToolUsePayload</span>&gt; { None }</p>
+      <p>  <span class="code-kw">fn</span> <span class="code-ty">post_tool_use_payload</span>(&amp;self, inv: &amp;<span class="code-ty">ToolInvocation</span>,</p>
+      <p>    result: &amp;Self::<span class="code-ty">Output</span>) -&gt; <span class="code-ty">Option</span>&lt;<span class="code-ty">PostToolUsePayload</span>&gt; { None }</p>
+      <p>  <span class="code-kw">fn</span> <span class="code-ty">create_diff_consumer</span>(&amp;self)</p>
+      <p>    -&gt; <span class="code-ty">Option</span>&lt;Box&lt;dyn <span class="code-ty">ToolArgumentDiffConsumer</span>&gt;&gt; { None }</p>
+      <p>  <span class="code-kw">fn</span> <span class="code-ty">handle</span>(&amp;self, inv: <span class="code-ty">ToolInvocation</span>)</p>
+      <p>    -&gt; impl <span class="code-ty">Future</span>&lt;Output=<span class="code-ty">Result</span>&lt;Self::<span class="code-ty">Output</span>,<span class="code-ty">FunctionCallError</span>&gt;&gt; + <span class="code-ty">Send</span>;</p>
+      <p>}</p>
+    </div>
+    <div class="annot-panel">
+      <div class="annot-item">
+        <p class="label">Send + Sync super-trait</p>
+        <p>任何实现类型必须能跨线程发送/共享。编译期强制——持有 <span class="fn">Rc&lt;T&gt;</span> 则不通过编译。</p>
+      </div>
+      <div class="annot-item">
+        <p class="label">关联类型 Output</p>
+        <p>每个 handler 声明自己的强类型输出，不用裸 <span class="fn">serde_json::Value</span>。</p>
+      </div>
+      <div class="annot-item">
+        <p class="label">is_mutating — defensive default</p>
+        <p>默认返回 <span class="fn">false</span>，但注释强制：拿不准就报 <span class="fn">true</span>。驱动用户 approval 策略。</p>
+      </div>
+      <div class="annot-item">
+        <p class="label">create_diff_consumer</p>
+        <p>LLM 流式生成 tool arguments 时，把每个 delta 推给 UI。TUI 能在 LLM 写完前显示进度。</p>
+      </div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-amber);">关键：</strong><span class="fn">registry.rs:44–92</span> 这 49 行定义了 Codex 所有 18+ 工具的统一接口。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>02 / 09</p></div>
+</body>
+</html>

@@ -43,9 +43,10 @@ function registerCleanup(browser) {
 }
 
 async function buildChapter(chapterName, options = {}) {
-  const { strict = false, browser: sharedBrowser = null } = options;
+  const { strict = false, browser: sharedBrowser = null, root = '.' } = options;
 
-  const chapterDir = path.resolve(__dirname, chapterName);
+  // `root` is the active project's content root (relative to repo root); '.' = Claude Code.
+  const chapterDir = path.resolve(__dirname, root, chapterName);
   const slidesDir = path.join(chapterDir, 'slides');
   const outputFile = path.join(chapterDir, `${chapterName}.pptx`);
 
@@ -54,8 +55,9 @@ async function buildChapter(chapterName, options = {}) {
 
   // Verify the slides directory exists
   if (!fs.existsSync(slidesDir)) {
-    console.error(`ERROR: Slides directory not found: ${slidesDir}`);
-    process.exit(1);
+    // Throw (not process.exit) so an in-process caller like build-all.js can
+    // catch it and keep going rather than having the whole run killed.
+    throw new Error(`Slides directory not found: ${slidesDir}`);
   }
 
   // List all *.html files, sorted alphabetically (supports NN-name.html naming convention)
@@ -64,8 +66,7 @@ async function buildChapter(chapterName, options = {}) {
     .sort();
 
   if (slideFiles.length === 0) {
-    console.error(`ERROR: No *.html files found in ${slidesDir}`);
-    process.exit(1);
+    throw new Error(`No *.html files found in ${slidesDir}`);
   }
 
   console.log(`\n=== Building ${chapterName} ===`);
@@ -206,12 +207,29 @@ module.exports = { buildChapter };
 // Main entry point
 if (require.main === module) {
   const args = process.argv.slice(2);
-  const chapterName = args.find(a => !a.startsWith('--'));
+
+  // Resolve the project content root: --root=<dir> or --root <dir> (default '.').
+  let root = '.';
+  let rootValueToken = null;
+  const rootEq = args.find(a => a.startsWith('--root='));
+  if (rootEq) {
+    root = rootEq.split('=')[1];
+  } else {
+    const rootIdx = args.indexOf('--root');
+    if (rootIdx !== -1 && args[rootIdx + 1] && !args[rootIdx + 1].startsWith('--')) {
+      root = args[rootIdx + 1];
+      rootValueToken = args[rootIdx + 1];
+    }
+  }
+
+  // First positional that isn't a flag (and isn't the --root value) is the chapter.
+  const chapterName = args.find(a => !a.startsWith('--') && a !== rootValueToken);
 
   if (!chapterName) {
-    console.error('Usage: node build-chapter.js <chapter-dir-name> [--strict]');
+    console.error('Usage: node build-chapter.js <chapter-dir-name> [--strict] [--root <dir>]');
     console.error('  e.g. node build-chapter.js ch01-core-engine');
     console.error('       node build-chapter.js ch01-core-engine --strict');
+    console.error('       node build-chapter.js ch01-core-engine --root=codex-cli-teardown');
     process.exit(1);
   }
 
@@ -220,7 +238,7 @@ if (require.main === module) {
     console.log('  Mode: strict (fail-fast)');
   }
 
-  buildChapter(chapterName, { strict })
+  buildChapter(chapterName, { strict, root })
     .then(result => {
       if (result.errors.length > 0) {
         console.log(`\nBuild completed with ${result.errors.length} error(s). Check output above.`);

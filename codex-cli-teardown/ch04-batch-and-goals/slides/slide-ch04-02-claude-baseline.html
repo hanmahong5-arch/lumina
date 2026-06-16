@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - Claude Code Baseline</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+.flow-box{background:var(--bg-code);border-radius:4pt;padding:8pt 12pt;margin:6pt 0;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal)}
+.flow-box p{font-size:8pt;color:var(--accent-teal);margin:0;font-family:'Courier New',monospace;line-height:1.6}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:4pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">02 / 13</p></div>
+<div class="slide-content">
+  <h2>基线：Claude Code 的子 Agent 模型</h2>
+  <div class="compare-grid">
+    <div class="compare-col" style="flex:1.2">
+      <h4 style="color:var(--accent-coral);">Claude Code — 串行、阻塞、一次一个</h4>
+      <div class="flow-box">
+        <p>LLM 决策 → Task(prompt) → 启动子 agent → 等完成 → 拿结果</p>
+        <p>                                             (同步阻塞)</p>
+      </div>
+      <ul>
+        <li>主 agent 在子 agent 运行时完全阻塞</li>
+        <li>LLM 单次 turn 只能 emit 一个 tool call</li>
+        <li>100 个文件 = 主 agent 循环 100 次，或用户手动并行（不可能）</li>
+        <li>适合"需要隔离上下文的搜索"，不适合"批量处理 N 个相似项"</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight" style="flex:0.8">
+      <h4 style="color:var(--accent-teal);">Codex 的回答</h4>
+      <ul>
+        <li><span class="fn">spawn_agents_on_csv</span> — CSV 驱动的 map-reduce</li>
+        <li>默认 16 个并发 worker，上限 64</li>
+        <li>主 agent 不阻塞，fire-and-forget</li>
+        <li>结果异步收集写入 output CSV</li>
+      </ul>
+      <div class="callout"><p><strong style="color:var(--accent-indigo);">范式差异：</strong>Claude Code 是"一对一委派"，Codex 是"一对 N 批处理"——两个截然不同的 agent 协作心智模型。</p></div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>02 / 13</p></div>
+</body>
+</html>

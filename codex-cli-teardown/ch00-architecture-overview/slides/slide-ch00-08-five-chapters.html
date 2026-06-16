@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Five Chapters</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 6pt 0}
+.grid2{display:flex;flex-direction:column;gap:8pt;flex:1}
+.grow{display:flex;gap:10pt;flex:1}
+.ccard{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 12pt;border-left:3pt solid var(--accent-indigo)}
+.ccard-uniq{flex:1;background:#1B2336;border-radius:4pt;padding:8pt 12pt;border-left:3pt solid var(--accent-amber)}
+.cnum{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1pt;margin:0}
+.cnum-uniq{font-size:8pt;font-weight:700;color:var(--accent-amber);text-transform:uppercase;letter-spacing:1pt;margin:0}
+.ccard h4,.ccard-uniq h4{font-size:10.5pt;margin:1pt 0 3pt 0}
+.ccard p,.ccard-uniq p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.callout{background:#16213E;border-left:3pt solid var(--accent-amber);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:6pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">08 / 10</p></div>
+<div class="slide-content">
+  <h2>五章路线图：ch00 立框架，ch01–04 进源码</h2>
+  <div class="grid2">
+    <div class="grow">
+      <div class="ccard">
+        <p class="cnum">ch01 · Core Engine</p>
+        <h4><span class="fn" style="font-family:'Courier New',monospace;color:#79C0FF;">submission_loop</span> + Channel pair vs AsyncGenerator</h4>
+        <p>核心控制流——与 Claude Code 最直接的对比点。</p>
+      </div>
+      <div class="ccard">
+        <p class="cnum">ch02 · Tools &amp; MCP</p>
+        <h4>ToolHandler trait</h4>
+        <p>工具系统抽象——Rust trait vs TS class 的工程含义。</p>
+      </div>
+    </div>
+    <div class="grow">
+      <div class="ccard-uniq">
+        <p class="cnum-uniq">ch03 · Native Sandboxing　★ Codex 独有</p>
+        <h4>Landlock + Bubblewrap + Seatbelt + Restricted Token + MITM Proxy</h4>
+        <p>Claude Code 完全没有 OS 级沙箱——全套拆解最有差异化价值的一章。</p>
+      </div>
+      <div class="ccard-uniq">
+        <p class="cnum-uniq">ch04 · Batch Jobs &amp; Goals　★ Codex 独有</p>
+        <h4>map-reduce sub-agents + autonomous continuation</h4>
+        <p>Claude Code 没有这两个原语——agent 闲置时自动 continue 一个目标。</p>
+      </div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-amber);">怎么读：</strong>如果只听一章，听 ch03；只读一个源码目录，读 <span class="fn" style="font-family:'Courier New',monospace;color:#79C0FF;">codex-rs/sandboxing/</span>。<strong style="color:var(--text-primary);">ch00 → ch01 → ch03</strong> 是最高浓度的 90 分钟。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>08 / 10</p></div>
+</body>
+</html>

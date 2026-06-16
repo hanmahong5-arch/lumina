@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - submission_loop</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.two-col{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.code-block{flex:0 0 268pt;background:var(--bg-code);border-radius:4pt;padding:9pt 11pt;border:1pt solid var(--border-subtle)}
+.code-block p{font-family:'Courier New',monospace;font-size:7.5pt;color:#E6EDF3;margin:0;line-height:1.55}
+.code-block .kw{color:#FF7B72}
+.code-block .ty{color:#79C0FF}
+.code-block .cm{color:#8B949E;font-style:italic}
+.right-col{flex:1;display:flex;flex-direction:column;gap:6pt}
+.step-card{background:var(--bg-card);border-radius:4pt;padding:6pt 9pt;border-left:2pt solid var(--accent-teal)}
+.step-card p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.compare-table{background:var(--bg-card);border-radius:4pt;padding:7pt 11pt}
+.compare-table h4{font-size:9pt;font-weight:700;color:var(--accent-amber);margin:0 0 4pt 0}
+.trow{display:flex;gap:6pt;padding:2pt 0;border-bottom:0.5pt solid var(--border-subtle)}
+.trow:last-child{border-bottom:none}
+.td-dim{flex:0 0 90pt}
+.td-cc{flex:1}
+.td-cx{flex:1}
+.td-dim p{font-size:7.5pt;font-weight:700;color:var(--text-primary);margin:0}
+.td-cc p{font-size:7.5pt;color:var(--accent-coral);margin:0}
+.td-cx p{font-size:7.5pt;color:var(--accent-teal);margin:0}
+.trow-hdr .td-dim p,.trow-hdr .td-cc p,.trow-hdr .td-cx p{color:var(--text-muted);font-weight:700}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">06 / 09</p></div>
+<div class="slide-content">
+  <h2><span class="fn" style="font-size:15pt;">submission_loop</span> — 中央调度器（handlers.rs:962）</h2>
+  <div class="two-col">
+    <div class="code-block">
+      <p><span class="cm">// core/src/session/handlers.rs:962</span></p>
+      <p><span class="kw">pub</span>(super) <span class="kw">async fn</span> <span class="ty">submission_loop</span>(</p>
+      <p>  sess: <span class="ty">Arc</span>&lt;<span class="ty">Session</span>&gt;,</p>
+      <p>  config: <span class="ty">Arc</span>&lt;<span class="ty">Config</span>&gt;,</p>
+      <p>  rx_sub: <span class="ty">Receiver</span>&lt;<span class="ty">Submission</span>&gt;,</p>
+      <p>) {</p>
+      <p>  <span class="kw">while let</span> <span class="ty">Ok</span>(sub) = rx_sub.recv().<span class="kw">await</span> {</p>
+      <p>    <span class="kw">let</span> span = submission_dispatch_span(&amp;sub);</p>
+      <p>    <span class="kw">let</span> should_exit = <span class="kw">async</span> {</p>
+      <p>      <span class="kw">match</span> sub.op.clone() {</p>
+      <p>        <span class="ty">Op</span>::<span class="ty">Interrupt</span> =&gt; { interrupt(&amp;sess).<span class="kw">await</span>; <span class="kw">false</span> }</p>
+      <p>        <span class="ty">Op</span>::<span class="ty">UserInput</span> { items } =&gt; { ... <span class="kw">false</span> }</p>
+      <p>        <span class="ty">Op</span>::<span class="ty">Shutdown</span> =&gt; { ...; <span class="kw">true</span> }</p>
+      <p>        <span class="cm">// ~20 种 Op variant</span></p>
+      <p>      }</p>
+      <p>    }.instrument(span).<span class="kw">await</span>;</p>
+      <p>    <span class="kw">if</span> should_exit { <span class="kw">break</span>; }</p>
+      <p>  }</p>
+      <p>}</p>
+    </div>
+    <div class="right-col">
+      <div class="step-card"><p><strong style="color:var(--accent-teal);">骨架 1：</strong>纯顺序 while 循环，无 tokio::select。每次从 rx_sub 拉一个 Submission，处理完再拉下一个。</p></div>
+      <div class="step-card"><p><strong style="color:var(--accent-teal);">骨架 2：</strong>根据 sub.op enum variant 分派到对应处理函数——约 20 种 Op，每种独立处理路径。</p></div>
+      <div class="step-card"><p><strong style="color:var(--accent-teal);">骨架 3：</strong>每个 dispatch 单独 instrument 一个 tracing span——可观测性内置，不是事后添加。</p></div>
+      <div class="step-card"><p><strong style="color:var(--accent-teal);">骨架 4：</strong>收到 Op::Shutdown 返回 true，退出循环。优雅关闭走同一消息通道。</p></div>
+      <div class="compare-table">
+        <h4>vs Claude Code queryLoop</h4>
+        <div class="trow trow-hdr">
+          <div class="td-dim"><p>维度</p></div>
+          <div class="td-cc"><p>queryLoop (CC)</p></div>
+          <div class="td-cx"><p>submission_loop</p></div>
+        </div>
+        <div class="trow">
+          <div class="td-dim"><p>输入触发</p></div>
+          <div class="td-cc"><p>submitMessage() 直接调用</p></div>
+          <div class="td-cx"><p>rx_sub channel 收 Submission</p></div>
+        </div>
+        <div class="trow">
+          <div class="td-dim"><p>输出</p></div>
+          <div class="td-cc"><p>yield SDKMessage</p></div>
+          <div class="td-cx"><p>tx_event.send(Event)</p></div>
+        </div>
+        <div class="trow">
+          <div class="td-dim"><p>操作类型数</p></div>
+          <div class="td-cc"><p>1 种：用户消息 → 推理</p></div>
+          <div class="td-cx"><p>~20 种 Op</p></div>
+        </div>
+        <div class="trow">
+          <div class="td-dim"><p>驱动模型</p></div>
+          <div class="td-cc"><p>调用驱动</p></div>
+          <div class="td-cx"><p>消息驱动</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>06 / 09</p></div>
+</body>
+</html>

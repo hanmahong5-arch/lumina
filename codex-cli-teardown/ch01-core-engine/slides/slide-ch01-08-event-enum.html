@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Event Enum</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:16pt;font-weight:700;margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.event-groups{display:flex;gap:8pt;flex:1;margin-bottom:5pt}
+.egroup{flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt 8pt;border-top:2pt solid var(--accent-teal)}
+.egroup h4{font-size:8.5pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:7.5pt;line-height:1.4;margin:0;padding-left:11pt}
+li{margin-bottom:2pt;color:var(--text-secondary)}
+.compare-section{background:var(--bg-card);border-radius:4pt;padding:7pt 11pt}
+.compare-section h4{font-size:9pt;font-weight:700;color:var(--accent-amber);margin:0 0 4pt 0}
+.trow{display:flex;gap:6pt;padding:2pt 0;border-bottom:0.5pt solid var(--border-subtle)}
+.trow:last-child{border-bottom:none}
+.td-src{flex:0 0 120pt}
+.td-evts{flex:1}
+.td-src p{font-size:7.5pt;font-weight:700;color:var(--text-primary);margin:0}
+.td-evts p{font-size:7.5pt;color:var(--text-secondary);margin:0}
+.trow-hdr .td-src p,.trow-hdr .td-evts p{color:var(--text-muted);font-weight:700}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">08 / 09</p></div>
+<div class="slide-content">
+  <h2><span class="fn" style="font-size:14pt;">EventMsg</span> — 引擎输出的 78 个 variant（protocol/src/protocol.rs:1309）</h2>
+  <div class="event-groups">
+    <div class="egroup" style="border-top-color:var(--accent-indigo);">
+      <h4 style="color:var(--accent-indigo);">生命周期事件</h4>
+      <ul>
+        <li><span class="fn">TurnStarted / TurnComplete</span></li>
+        <li><span class="fn">SessionConfigured</span></li>
+        <li><span class="fn">Error / Warning</span></li>
+        <li><span class="fn">GuardianWarning</span></li>
+      </ul>
+    </div>
+    <div class="egroup" style="border-top-color:var(--accent-teal);">
+      <h4 style="color:var(--accent-teal);">模型输出事件</h4>
+      <ul>
+        <li><span class="fn">AgentMessage</span></li>
+        <li><span class="fn">AgentReasoning</span></li>
+        <li><span class="fn">AgentMessageContentDelta</span></li>
+        <li><span class="fn">ReasoningContentDelta</span></li>
+      </ul>
+    </div>
+    <div class="egroup" style="border-top-color:var(--accent-amber);">
+      <h4 style="color:var(--accent-amber);">工具进度事件</h4>
+      <ul>
+        <li><span class="fn">ExecCommandBegin / End</span></li>
+        <li><span class="fn">PatchApplyBegin / End</span></li>
+        <li><span class="fn">McpToolCallBegin / End</span></li>
+        <li><span class="fn">WebSearchBegin / End</span></li>
+      </ul>
+    </div>
+    <div class="egroup" style="border-top-color:var(--accent-coral);">
+      <h4 style="color:var(--accent-coral);">审批 / 状态 / Realtime</h4>
+      <ul>
+        <li><span class="fn">ExecApprovalRequest / ApplyPatchApprovalRequest</span></li>
+        <li><span class="fn">TokenCount / ContextCompacted</span></li>
+        <li><span class="fn">ModelReroute / ModelVerification</span></li>
+        <li><span class="fn">RealtimeConversation* (4 种)</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="compare-section">
+    <h4>EventMsg vs Claude Code SDKMessage — 多出来的 variant 从哪来？</h4>
+    <div class="trow trow-hdr">
+      <div class="td-src"><p>增量来源</p></div>
+      <div class="td-evts"><p>多出的事件（Codex 独有）</p></div>
+    </div>
+    <div class="trow">
+      <div class="td-src"><p>显式工具进度</p></div>
+      <div class="td-evts"><p>ExecCommandBegin/End, PatchApplyBegin/End, McpToolCallBegin/End, WebSearchBegin/End — CC 内联在工具结果里</p></div>
+    </div>
+    <div class="trow">
+      <div class="td-src"><p>审批分离</p></div>
+      <div class="td-evts"><p>ExecApprovalRequest / ApplyPatchApprovalRequest — CC 用 SDKMessage 顺序推进</p></div>
+    </div>
+    <div class="trow">
+      <div class="td-src"><p>Realtime 通道</p></div>
+      <div class="td-evts"><p>4 种 RealtimeConversation* — CC 无对应</p></div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">设计含义：</strong>Event 带 <span class="fn">id: String</span> 关联触发它的 Submission.id。Claude Code 的 SDKMessage 不需要 id——因为 submitMessage() 调用与 generator 是 1:N 同步对应，不需要异步关联。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>08 / 09</p></div>
+</body>
+</html>

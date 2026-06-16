@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Op Enum</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.two-col{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.col-main{flex:1;display:flex;flex-direction:column;gap:6pt}
+.col-side{flex:0 0 220pt;display:flex;flex-direction:column;gap:6pt}
+.op-group{background:var(--bg-card);border-radius:4pt;padding:7pt 10pt;border-left:2.5pt solid var(--accent-teal)}
+.op-group h4{font-size:9pt;font-weight:700;color:var(--accent-teal);margin:0 0 3pt 0}
+ul{font-size:8.5pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2pt;color:var(--text-secondary)}
+.side-card{background:var(--bg-card);border-radius:4pt;padding:7pt 10pt}
+.side-card h4{font-size:9pt;font-weight:700;margin:0 0 3pt 0}
+.side-card p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">07 / 09</p></div>
+<div class="slide-content">
+  <h2><span class="fn" style="font-size:15pt;">Op</span> enum — 用户能让引擎做的全部事（protocol/src/protocol.rs）</h2>
+  <div class="two-col">
+    <div class="col-main">
+      <div class="op-group">
+        <h4>核心对话 Op（最常用）</h4>
+        <ul>
+          <li><span class="fn">Op::UserInput { items }</span> — 普通对话。追加 items 到当前 thread，触发推理</li>
+          <li><span class="fn">Op::UserTurn { items, model, effort, cwd, approval_policy, sandbox_policy, … }</span> — 完整 turn 配置版，SDK 集成常用</li>
+          <li><span class="fn">Op::Interrupt</span> — 中断当前 turn。走同一 dispatch 通道，有"位置感"（顺序保证）</li>
+          <li><span class="fn">Op::Shutdown</span> — 退出引擎，submission_loop 退出 while</li>
+        </ul>
+      </div>
+      <div class="op-group" style="border-left-color:var(--accent-amber);">
+        <h4 style="color:var(--accent-amber);">配置与状态变更 Op</h4>
+        <ul>
+          <li><span class="fn">Op::OverridePermissionProfile</span> — 热切换权限策略（无需重启引擎）</li>
+          <li><span class="fn">Op::OverrideTurnContext</span> — 替换当前 turn 上下文</li>
+          <li><span class="fn">Op::CompactNow</span> — 立即触发 context compaction</li>
+          <li><span class="fn">Op::EditPreviousMessage</span> — 编辑历史消息并重新触发推理</li>
+        </ul>
+      </div>
+      <div class="op-group" style="border-left-color:var(--accent-coral);">
+        <h4 style="color:var(--accent-coral);">Realtime / 工具 / 其他 Op</h4>
+        <ul>
+          <li><span class="fn">Op::RealtimeConversationStart / Stop / Sdp</span> — WebRTC 语音会话控制</li>
+          <li><span class="fn">Op::ToolApprovalDecision</span> — 用户审批工具调用（allow / deny）</li>
+          <li><span class="fn">Op::Subscribe / ListMcpTools / CleanBackgroundTerminals</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-side">
+      <div class="side-card" style="border-top:2.5pt solid var(--accent-indigo);">
+        <h4 style="color:var(--accent-indigo);">为什么 Op::Interrupt 走通道？</h4>
+        <p>设计成 Op 而不是 tx_sub.cancel() 是关键——中断信号有"位置感"：它排在它之后发送的 Op 之前被处理，不会乱序。</p>
+      </div>
+      <div class="side-card" style="border-top:2.5pt solid var(--accent-amber);">
+        <h4 style="color:var(--accent-amber);">Erlang 邮箱模型</h4>
+        <p>所有用户操作建模为 Op enum = Erlang 邮箱模型现代化版本。优点：协议可序列化，app-server 直接走 JSON over WebSocket 暴露给 IDE 客户端。</p>
+      </div>
+      <div class="callout">
+        <p><strong style="color:var(--accent-indigo);">vs Claude Code：</strong>CC 的"操作"是方法调用：submitMessage、abortController.abort。Codex 的操作是数据——所有 Op 可序列化，跨进程/语言边界传输。</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>07 / 09</p></div>
+</body>
+</html>

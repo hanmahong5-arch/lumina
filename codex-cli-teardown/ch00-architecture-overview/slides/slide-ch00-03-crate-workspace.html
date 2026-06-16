@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - 85-Crate Workspace</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0}
+h4{font-size:11pt;font-weight:700;margin:0 0 3pt 0}
+p{font-size:10pt;line-height:1.4;margin:0 0 3pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:9pt}
+.metric-row{display:flex;gap:12pt;margin:8pt 0}
+.metric-card{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;border-top:2.5pt solid var(--accent-indigo)}
+.metric-value{font-size:22pt;font-weight:700;color:var(--accent-teal);margin:0;line-height:1}
+.metric-label{font-size:8.5pt;color:var(--text-secondary);margin:3pt 0 0 0}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-top:4pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt;border:1.5pt solid var(--accent-indigo)}
+.compare-col p,.compare-col-highlight p{font-size:9.5pt;color:var(--text-secondary);margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">03 / 10</p></div>
+<div class="slide-content">
+  <h2>85+ Crate 的 Cargo Workspace</h2>
+  <p style="color:var(--text-secondary);">打开 <span class="fn">codex-rs/Cargo.toml</span>：一个号称"CLI 工具"的项目，内部是 <strong>85+ crate</strong> 的 workspace。三个高投入领域暴露了它的野心——这些是 Claude Code 完全没有、或极简的方向：</p>
+  <div class="metric-row">
+    <div class="metric-card">
+      <p class="metric-value">6</p>
+      <p class="metric-label">沙箱 Sandbox<br>sandboxing · linux/windows-sandbox · network-proxy</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value">6</p>
+      <p class="metric-label">持久化 Persistence<br>state · thread-store · rollout · memories/{r,w}</p>
+    </div>
+    <div class="metric-card">
+      <p class="metric-value">2</p>
+      <p class="metric-label">Realtime<br>realtime-webrtc · device-key</p>
+    </div>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex</h4>
+      <p>85 crate = 构建系统<strong style="color:var(--text-primary);">强制</strong>的边界，编译期检查依赖关系</p>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code</h4>
+      <p>单一 npm 包、~200 文件；模块边界是<strong style="color:var(--text-primary);">社会约定</strong>，非构建强制</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 10</p></div>
+</body>
+</html>

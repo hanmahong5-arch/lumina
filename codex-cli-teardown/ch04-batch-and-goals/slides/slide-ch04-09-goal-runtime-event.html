@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - GoalRuntimeEvent</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 5pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 7pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 12pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 12pt;border:1.5pt solid var(--accent-indigo)}
+.code-block{background:var(--bg-code);border-radius:3pt;padding:6pt 9pt;margin:5pt 0}
+.code-block p{font-size:7.8pt;color:#79C0FF;margin:0;font-family:'Courier New',monospace;line-height:1.6}
+.code-block .comment{color:#6A9955}
+.code-block .variant{color:#F8943A}
+.autonomy-loop{display:flex;gap:0;margin:8pt 0 5pt 0;align-items:center}
+.loop-step{background:rgba(108,99,255,0.15);border:1pt solid var(--accent-indigo);border-radius:3pt;padding:4pt 8pt;flex:1}
+.loop-step p{font-size:8pt;color:var(--text-secondary);margin:0;text-align:center;line-height:1.3}
+.loop-arrow{font-size:12pt;color:var(--accent-teal);padding:0 4pt;margin:0;flex-shrink:0}
+.callout{background:#16213E;border-left:3pt solid var(--accent-green);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+.src-ref{font-size:7pt;color:var(--text-muted);font-family:'Courier New',monospace;margin:3pt 0 0 0}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">09 / 13</p></div>
+<div class="slide-content">
+  <h2>GoalRuntimeEvent — Goal 的生命周期事件</h2>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">GoalRuntimeEvent enum</h4>
+      <div class="code-block">
+        <p><span class="comment">// goals.rs:76（节选，共 10 个 variant）</span></p>
+        <p><span class="variant">enum</span> GoalRuntimeEvent {</p>
+        <p>  TurnStarted,        <span class="comment">// turn 开始，注入 goal 上下文</span></p>
+        <p>  TurnFinished,       <span class="comment">// turn 正常完成</span></p>
+        <p>  TaskAborted,        <span class="comment">// 被中断（用户 Ctrl+C 等）</span></p>
+        <p>  MaybeContinueIfIdle, <span class="comment">// session 空闲检查点</span></p>
+        <p>}</p>
+      </div>
+      <p class="src-ref">goals.rs:76</p>
+      <ul style="margin-top:6pt">
+        <li><span class="fn">TurnStarted</span> → 将 <span class="fn">objective</span> 注入 system prompt</li>
+        <li><span class="fn">TaskAborted</span> → 记录中断，不触发 continue</li>
+        <li><span class="fn">MaybeContinueIfIdle</span> → 核心：闲置时自动续命</li>
+      </ul>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-amber);">自主循环（Autonomy Loop）</h4>
+      <div class="autonomy-loop">
+        <div class="loop-step"><p>Turn 完成</p></div>
+        <p class="loop-arrow">→</p>
+        <div class="loop-step"><p>Session 空闲？</p></div>
+        <p class="loop-arrow">→</p>
+        <div class="loop-step"><p>MaybeContinue IfIdle</p></div>
+        <p class="loop-arrow">→</p>
+        <div class="loop-step"><p>注入 continuation prompt</p></div>
+        <p class="loop-arrow">→</p>
+        <div class="loop-step"><p>新 turn 开始</p></div>
+      </div>
+      <ul>
+        <li>用户无操作时，goal 驱动 agent 自动开始下一 turn</li>
+        <li>检查：goal 是否已完成？budget 是否耗尽？</li>
+        <li>如果都否 → 注入 <span class="fn">CONTINUATION_PROMPT_TEMPLATE</span></li>
+        <li>如果用户同时操作 → 事件冲突，defer 到下次空闲</li>
+      </ul>
+      <div class="callout"><p><strong style="color:var(--accent-green);">意义：</strong>这是 Codex 从"工具"到"自主代理"的关键机制——agent 不再等待人类 prompt，它会主动推进 goal。</p></div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>09 / 13</p></div>
+</body>
+</html>

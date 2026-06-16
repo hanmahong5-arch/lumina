@@ -16,15 +16,17 @@ const html2pptx = require(
   path.resolve(__dirname, 'pptx-skill', 'pptx', 'scripts', 'html2pptx.js')
 );
 
-async function validateChapter(chapterName, browser) {
-  const slidesDir = path.resolve(__dirname, chapterName, 'slides');
+async function validateChapter(chapterName, browser, root = '.') {
+  const slidesDir = path.resolve(__dirname, root, chapterName, 'slides');
   if (!fs.existsSync(slidesDir)) {
     console.log(`  WARN: Slides directory not found: ${slidesDir}`);
     return [];
   }
 
+  // Match every *.html slide. (Previously required a `slide-` prefix, which
+  // silently skipped chapters like ch07-memory that use bare NN-*.html names.)
   const slideFiles = fs.readdirSync(slidesDir)
-    .filter(f => f.startsWith('slide-') && f.endsWith('.html'))
+    .filter(f => f.endsWith('.html'))
     .sort();
 
   const errors = [];
@@ -42,14 +44,37 @@ async function validateChapter(chapterName, browser) {
 }
 
 (async () => {
-  let chapters = process.argv.slice(2);
+  const args = process.argv.slice(2);
+
+  // --project=<name> selects a content tree from lumina.config.js;
+  // --root=<dir> overrides the scan root directly. Positional args = chapter dirs.
+  let root = '.';
+  const pjEq = args.find(a => a.startsWith('--project='));
+  const rootEq = args.find(a => a.startsWith('--root='));
+  if (rootEq) root = rootEq.split('=')[1];
+
+  let chapters = args.filter(a => !a.startsWith('--'));
+
+  if (pjEq) {
+    const projectName = pjEq.split('=')[1];
+    const config = require(path.resolve(__dirname, 'lumina.config.js'));
+    const project = config.projects && config.projects[projectName];
+    if (!project) {
+      console.error(`Unknown project "${projectName}". Available: ${Object.keys(config.projects || {}).join(', ')}`);
+      process.exit(1);
+    }
+    root = project.root || '.';
+    if (chapters.length === 0) chapters = project.chapters.map(c => c.id);
+  }
+
   if (chapters.length === 0) {
-    // Auto-detect all chapter directories starting with 'ch'
-    chapters = fs.readdirSync(__dirname, { withFileTypes: true })
+    // Auto-detect all chapter directories starting with 'ch' under the root
+    const scanDir = path.resolve(__dirname, root);
+    chapters = fs.readdirSync(scanDir, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('ch'))
       .map(dirent => dirent.name)
       .sort();
-      
+
     if (chapters.length === 0) {
       console.error('No chapter directories found.');
       process.exit(1);
@@ -77,7 +102,7 @@ async function validateChapter(chapterName, browser) {
   try {
     for (const ch of chapters) {
       console.log(`\n=== ${ch} ===`);
-      const errors = await validateChapter(ch, browser);
+      const errors = await validateChapter(ch, browser, root);
       if (errors.length === 0) {
         console.log('  All slides valid!');
       } else {

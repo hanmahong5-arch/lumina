@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Language Split</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:11pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:10pt;line-height:1.5;margin:0;padding-left:14pt}
+li{margin-bottom:3pt}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:9pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:2pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">02 / 10</p></div>
+<div class="slide-content">
+  <h2>核心引擎的语言抉择</h2>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code — TypeScript 端到端</h4>
+      <ul>
+        <li>核心引擎 <span class="fn">QueryEngine</span> 用 TS 写，单语言贯穿</li>
+        <li>内嵌引擎：必须与调用方同处一个 Node 进程（返回 AsyncGenerator，跨不了进程）</li>
+        <li>分发即代码——<span class="fn">@anthropic-ai/claude-code</span> npm 包</li>
+        <li>代价：放弃 OS 级原生沙箱能力</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex — Rust 核心 + JS 薄壳</h4>
+      <ul>
+        <li>核心引擎用 Rust 写，编译进独立 native 二进制</li>
+        <li>引擎是可执行文件，前端是协议消费者——进程级隔离</li>
+        <li>原生 OS 集成 + 单二进制分发 + 协议化外部 API</li>
+        <li>押注"基础设施"，而非"内部工具"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">为什么不同：</strong>这不是品味之争。语言选择是一连串工程目标推出的必然结果——它决定了下游<strong style="color:var(--text-primary);">所有</strong>架构特性的可能性边界。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>02 / 10</p></div>
+</body>
+</html>

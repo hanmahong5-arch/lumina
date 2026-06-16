@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Persistence Stack</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:11pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:9.5pt;line-height:1.45;margin:0;padding-left:14pt}
+li{margin-bottom:2.5pt}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:2pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">07 / 10</p></div>
+<div class="slide-content">
+  <h2>持久化栈：6 个独立 Crate</h2>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex — 工业化长期记忆</h4>
+      <ul>
+        <li><span class="fn">state</span>　SQLite-backed 的目标/任务/记忆表</li>
+        <li><span class="fn">thread-store</span>　持久化对话历史（本地或云端）</li>
+        <li><span class="fn">agent-graph-store</span>　sub-agent 派生关系图</li>
+        <li><span class="fn">rollout</span> / <span class="fn">rollout-trace</span>　推理调试跟踪</li>
+        <li><span class="fn">memories/read</span> + <span class="fn">memories/write</span>　读写分离（读轻量、写严谨）</li>
+      </ul>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code — 人可读的简单模型</h4>
+      <ul>
+        <li><span class="fn">src/services/memory/</span> 约 5 个 TS 文件</li>
+        <li>存为 <span class="fn">~/.claude/memory/</span> 下的 markdown</li>
+        <li>无 SQLite、无 rollout 跟踪、无 agent graph</li>
+        <li>记忆 = 开发者手写的 CLAUDE.md + 简单 KV，简单到能直接 <span class="fn">cat</span> 出来读</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">不同假设：</strong>Codex 假设 agent <strong style="color:var(--text-primary);">长期、自主、跨会话</strong>工作，记忆必须工业化；Claude Code 假设 agent 以<strong style="color:var(--text-primary);">当前会话</strong>为主，跨会话状态由人维护。ch04 展开 goal_runtime 如何配合这些 crate。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>07 / 10</p></div>
+</body>
+</html>

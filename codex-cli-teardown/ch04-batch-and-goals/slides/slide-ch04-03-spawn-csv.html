@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - spawn_agents_on_csv</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 5pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h3{font-size:11pt;font-weight:700;margin:0 0 4pt 0;color:var(--accent-teal)}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.three-col{display:flex;gap:10pt;flex:1;margin-bottom:5pt}
+.rcard{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt;border-top:2.5pt solid var(--accent-teal);display:flex;flex-direction:column}
+.rcard .tag{font-size:7.5pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:0.8pt;margin:0 0 4pt 0}
+.rcard.amber{border-top-color:var(--accent-amber)}
+.rcard.amber .tag{color:var(--accent-amber)}
+.rcard.indigo{border-top-color:var(--accent-indigo)}
+.rcard.indigo .tag{color:var(--accent-indigo)}
+.code-block{background:var(--bg-code);border-radius:3pt;padding:5pt 8pt;font-family:'Courier New',monospace;font-size:7.5pt;color:#79C0FF;line-height:1.5}
+.code-block p{font-size:7.5pt;color:#79C0FF;margin:0;font-family:'Courier New',monospace;line-height:1.5}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+.src-ref{font-size:7pt;color:var(--text-muted);font-family:'Courier New',monospace;margin:0}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">03 / 13</p></div>
+<div class="slide-content">
+  <h2><span class="fn">spawn_agents_on_csv</span> — 批处理 Tool 解剖</h2>
+  <div class="three-col">
+    <div class="rcard">
+      <p class="tag">BatchJobHandler 结构体</p>
+      <div class="code-block">
+        <p>struct BatchJobHandler {</p>
+        <p>  semaphore: Arc&lt;Semaphore&gt;,</p>
+        <p>  active_jobs: Arc&lt;Mutex&lt;…&gt;&gt;,</p>
+        <p>  result_tx: Sender&lt;JobResult&gt;,</p>
+        <p>}</p>
+      </div>
+      <p class="src-ref">agent_jobs.rs:39</p>
+    </div>
+    <div class="rcard amber">
+      <p class="tag">4 个编译期常量</p>
+      <ul>
+        <li><span class="fn">DEFAULT_AGENT_JOB_CONCURRENCY</span> = 16</li>
+        <li><span class="fn">MAX_AGENT_JOB_CONCURRENCY</span> = 64</li>
+        <li><span class="fn">STATUS_POLL_INTERVAL</span> = 250 ms</li>
+        <li><span class="fn">DEFAULT_AGENT_JOB_ITEM_TIMEOUT</span> = 30 min</li>
+      </ul>
+      <p class="src-ref">agent_jobs.rs:41–44</p>
+    </div>
+    <div class="rcard indigo">
+      <p class="tag">Args / Result 类型</p>
+      <div class="code-block">
+        <p>SpawnAgentsOnCsvArgs {</p>
+        <p>  csv_path: String,</p>
+        <p>  instruction: String,</p>
+        <p>  id_column: Option&lt;String&gt;,</p>
+        <p>  output_csv_path: Option&lt;String&gt;,</p>
+        <p>  output_schema: Option&lt;Value&gt;,</p>
+        <p>  max_concurrency: Option&lt;usize&gt;,</p>
+        <p>  max_workers: Option&lt;usize&gt;,</p>
+        <p>  max_runtime_seconds: Option&lt;u64&gt;,</p>
+        <p>}</p>
+      </div>
+      <p class="src-ref">agent_jobs.rs:47–56</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">设计意图：</strong><span class="fn">csv_path</span> 指向的 CSV，每行 = 一个独立 prompt 实例化参数；<span class="fn">output_csv_path</span> 汇聚所有 worker 结果。这是数据流编程思想在 agent 协作层的直接移植：map（CSV 行 → agent）+ reduce（结果行 → output CSV）。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 13</p></div>
+</body>
+</html>

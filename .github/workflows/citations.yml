@@ -1,0 +1,48 @@
+name: Citation freshness
+
+# Verifies that every source-code `file:line` citation in the teardown scripts
+# still resolves against the pinned upstream commit. Drift (a cited file moved,
+# renamed, or a line number now out of range) fails the build. See
+# check-citations.js and the per-project `source` block in lumina.config.js.
+#
+# The upstream source is NOT vendored into this repo; the job restores the
+# pinned Codex tree as a sibling dir to match lumina.config.js
+# (projects.codex.source.tree === '../codex-source').
+
+on:
+  push:
+    paths:
+      - '**/script.md'
+      - 'check-citations.js'
+      - 'lumina.config.js'
+      - 'codex-cli-teardown/SOURCE_COMMIT.txt'
+  pull_request:
+    paths:
+      - '**/script.md'
+      - 'check-citations.js'
+      - 'lumina.config.js'
+  workflow_dispatch:
+
+jobs:
+  citations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore pinned Codex source
+        run: |
+          SHA=$(grep -oiE '[0-9a-f]{7,40}' codex-cli-teardown/SOURCE_COMMIT.txt | head -1)
+          echo "Pinned commit: $SHA"
+          git init ../codex-source
+          git -C ../codex-source remote add origin https://github.com/openai/codex.git
+          git -C ../codex-source fetch --depth 1 origin "$SHA"
+          git -C ../codex-source checkout FETCH_HEAD
+
+      # check-citations.js uses only Node built-ins + lumina.config.js, so no
+      # `npm install` is needed here — keep the gate fast.
+      - name: Check citations
+        run: node check-citations.js

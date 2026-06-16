@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - vs Claude Code</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 13pt;border:1.5pt solid var(--accent-indigo)}
+h4{font-size:10pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:8.5pt;line-height:1.5;margin:0;padding-left:12pt;color:var(--text-secondary)}
+li{margin-bottom:2.5pt}
+.row-label{font-size:7.5pt;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6pt}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:3pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">04 / 09</p></div>
+<div class="slide-content">
+  <h2>工具系统对照：class 继承 vs Rust trait</h2>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code — TypeScript abstract class</h4>
+      <ul>
+        <li><span class="row-label">抽象机制：</span> <span class="fn">abstract class Tool&lt;Input, Output&gt;</span> + extends</li>
+        <li><span class="row-label">方法多态：</span> 虚函数表，运行时分派</li>
+        <li><span class="row-label">输入类型：</span> 泛型参数 <span class="fn">&lt;Input&gt;</span> + Zod schema 验证</li>
+        <li><span class="row-label">输出类型：</span> 泛型参数 <span class="fn">&lt;Output&gt;</span></li>
+        <li><span class="row-label">并发安全：</span> 程序员自律（无强制），<span class="fn">Promise.all</span> 可能竞态</li>
+        <li><span class="row-label">Tool 描述：</span> <span class="fn">abstract description: string</span> 字段</li>
+        <li><span class="row-label">可选 hook：</span> <span class="fn">isMutating?(input): boolean</span> 可选方法</li>
+        <li><span class="row-label">工具数量：</span> ~30+ 原子工具（小而多）</li>
+        <li><span class="row-label">注册：</span> extends + register 到工具数组</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex — Rust trait ToolHandler</h4>
+      <ul>
+        <li><span class="row-label">抽象机制：</span> <span class="fn">trait ToolHandler: Send + Sync</span> + impl</li>
+        <li><span class="row-label">方法多态：</span> 编译期 monomorphization（RPITIT）</li>
+        <li><span class="row-label">输入类型：</span> <span class="fn">Args struct + #[derive(JsonSchema)]</span></li>
+        <li><span class="row-label">输出类型：</span> 关联类型 <span class="fn">type Output: ToolOutput + 'static</span></li>
+        <li><span class="row-label">并发安全：</span> <span class="fn">Send + Sync</span> 编译期强制，持有 <span class="fn">Rc&lt;T&gt;</span> 不通过编译</li>
+        <li><span class="row-label">Tool 描述：</span> 无独立字段——从 <span class="fn">JsonSchema</span> derive 生成（schema 兼做描述）</li>
+        <li><span class="row-label">可选 hook：</span> <span class="fn">Option&lt;...&gt;</span> 返回值 + 默认 impl</li>
+        <li><span class="row-label">工具数量：</span> 18 handler（大而合，功能打包）</li>
+        <li><span class="row-label">注册：</span> impl + 编译期已知集合</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">最深差别：</strong>Claude Code 的并发安全靠程序员自律。Codex 的 <span class="fn">Send + Sync</span> 由编译器强制——工具意外持有不可 share 的状态，在 build 时就报错。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>04 / 09</p></div>
+</body>
+</html>

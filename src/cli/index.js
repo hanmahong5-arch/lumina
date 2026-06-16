@@ -9,11 +9,12 @@ const chokidar = require('chokidar');
 
 const program = new Command();
 const rootDir = path.resolve(__dirname, '../../');
+const config = require(path.join(rootDir, 'lumina.config.js'));
 
 program
   .name('lumina')
-  .description('CLI tool for building the Claude Code Lumina presentation pipeline')
-  .version('2.0.0');
+  .description('CLI tool for building the Lumina presentation pipeline (multi-project)')
+  .version('3.0.0');
 
 // Build command
 program
@@ -21,6 +22,8 @@ program
   .description('Build the presentation (.pptx) files')
   .option('-a, --all', 'Build all chapters and merge them (default if no chapter specified)')
   .option('-c, --chapter <name>', 'Build a specific chapter (e.g. ch01-core-engine)')
+  .option('-P, --project <name>', 'Project to build (see lumina.config.js)', config.defaultProject)
+  .option('-l, --list', 'Show the resolved build plan without building')
   .option('-f, --force', 'Force rebuild ignoring the cache')
   .option('-w, --watch', 'Watch for changes and auto-rebuild')
   .action((options) => {
@@ -48,20 +51,44 @@ program
     } else {
       spinner.fail('Excalidraw render failed.');
     }
+    process.exit(result.status === 0 ? 0 : 1);
   });
 
 // Validate command
 program
   .command('validate')
   .description('Validate HTML slide syntax')
-  .action(() => {
+  .option('-P, --project <name>', 'Project to validate (see lumina.config.js)')
+  .action((options) => {
     console.log(chalk.cyan('Validating HTML slides...'));
-    const result = spawnSync('node', [path.join(rootDir, 'validate-all.js')], { cwd: rootDir, stdio: 'inherit' });
+    const vArgs = [path.join(rootDir, 'validate-all.js')];
+    if (options.project) vArgs.push(`--project=${options.project}`);
+    const result = spawnSync('node', vArgs, { cwd: rootDir, stdio: 'inherit' });
     if (result.status === 0) {
       console.log(chalk.green('All slides are valid!'));
     } else {
       console.log(chalk.red('Validation failed. Check output above.'));
     }
+    process.exit(result.status === 0 ? 0 : 1);
+  });
+
+// Citation freshness command
+program
+  .command('cite')
+  .description('Verify source-code citations resolve against the pinned upstream source')
+  .option('-P, --project <name>', 'Project to check (default: every project with a source)')
+  .action((options) => {
+    console.log(chalk.cyan('Checking source-code citations...'));
+    const cArgs = [path.join(rootDir, 'check-citations.js')];
+    if (options.project) cArgs.push(`--project=${options.project}`);
+    const result = spawnSync('node', cArgs, { cwd: rootDir, stdio: 'inherit' });
+    if (result.status === 0) {
+      console.log(chalk.green('All citations resolve.'));
+    } else {
+      console.log(chalk.red('Citation check found problems (see above).'));
+    }
+    // Propagate the gate's exit code so `npm run cite` and CI fail on drift.
+    process.exit(result.status === 0 ? 0 : 1);
   });
 
 // Studio command
@@ -79,29 +106,58 @@ program
     });
   });
 
-function runBuild(options) {
-  if (options.chapter) {
-    const spinner = ora(`Building chapter ${chalk.cyan(options.chapter)}...`).start();
-    const args = [path.join(rootDir, 'build-chapter.js'), options.chapter];
+// Web player command — self-contained interactive deck (build-web.js)
+program
+  .command('web')
+  .description('Build a self-contained interactive web player for a project deck')
+  .option('-P, --project <name>', 'Project to build (see lumina.config.js)', config.defaultProject)
+  .option('-s, --serve', 'Serve the bundle on a local port after building')
+  .option('-p, --port <number>', 'Port for --serve', '5173')
+  .action((options) => {
+    console.log(chalk.magenta('🎬 Building interactive web player...'));
+    const args = [path.join(rootDir, 'build-web.js'), `--project=${options.project}`];
+    if (options.serve) { args.push('--serve', `--port=${options.port}`); }
     const result = spawnSync('node', args, { cwd: rootDir, stdio: 'inherit' });
-    
+    if (result.status === 0) {
+      console.log(chalk.green('✓ Web player ready.'));
+    } else {
+      console.log(chalk.red('✗ Web build failed (see above).'));
+    }
+    process.exit(result.status === 0 ? 0 : 1);
+  });
+
+function runBuild(options) {
+  const projectName = options.project || config.defaultProject;
+  if (!config.projects[projectName]) {
+    console.error(chalk.red(`Unknown project "${projectName}". Available: ${Object.keys(config.projects).join(', ')}`));
+    process.exit(1);
+  }
+
+  if (options.chapter) {
+    // Single chapter: resolve the project's content root so the chapter dir is found.
+    const root = (config.projects[projectName] && config.projects[projectName].root) || '.';
+    const spinner = ora(`Building chapter ${chalk.cyan(options.chapter)} ${chalk.gray(`[${projectName}]`)}...`).start();
+    const args = [path.join(rootDir, 'build-chapter.js'), options.chapter, `--root=${root}`];
+    const result = spawnSync('node', args, { cwd: rootDir, stdio: 'inherit' });
+
     if (result.status === 0) {
       spinner.succeed(`Successfully built ${options.chapter}`);
     } else {
       spinner.fail(`Failed to build ${options.chapter}`);
     }
   } else {
-    // Build all
-    const spinner = ora('Building master presentation (all chapters)...').start();
-    const args = [path.join(rootDir, 'build-all.js')];
+    // Build all chapters of the selected project
+    const spinner = ora(`Building master presentation [${projectName}]...`).start();
+    const args = [path.join(rootDir, 'build-all.js'), `--project=${projectName}`];
     if (options.force) args.push('--force');
-    
+    if (options.list) args.push('--list');
+
     // We stream output directly since build-all has its own progress logs
-    spinner.stop(); 
+    spinner.stop();
     console.log(chalk.blue.bold('\nStarting Master Build Pipeline...\n'));
-    
+
     const result = spawnSync('node', args, { cwd: rootDir, stdio: 'inherit' });
-    
+
     if (result.status === 0) {
       console.log(chalk.green.bold('\n✓ Master Build Complete!'));
     } else {
@@ -119,9 +175,12 @@ function startWatchMode(options) {
   
   console.log(chalk.magenta('\nWatching for changes in .html and .excalidraw files...'));
   
+  const projectName = options.project || config.defaultProject;
+  const projectRoot = (config.projects[projectName] && config.projects[projectName].root) || '.';
+  const watchBase = path.join(rootDir, projectRoot);
   const watcher = chokidar.watch([
-    path.join(rootDir, 'ch*/**/*.html'),
-    path.join(rootDir, 'ch*/**/*.excalidraw')
+    path.join(watchBase, 'ch*/**/*.html'),
+    path.join(watchBase, 'ch*/**/*.excalidraw')
   ], {
     ignored: /(^|[\/\\])\../, // ignore dotfiles
     persistent: true

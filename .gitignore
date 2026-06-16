@@ -1,6 +1,9 @@
 # Generated PPTX files (commit manually after review)
 *.pptx
 
+# Generated interactive web-player bundles (regenerate via `lumina web`)
+*-web/
+
 # Temp files
 _render_temp.html
 

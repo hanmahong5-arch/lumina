@@ -28,40 +28,42 @@ const html2pptx = require(
 
 const { buildChapter } = require(path.resolve(__dirname, 'build-chapter.js'));
 
-// Ordered chapter dirs; ch00 prefers the v2 version if it exists
-const chapterOrder = [
-  'ch00-overview-v2',
-  'ch01-core-engine',
-  'ch02-multi-agent',
-  'ch03-permission',
-  'ch04-token-mgmt',
-  'ch05-tools-mcp',
-  'ch06-resilience',
-  'ch07-memory',
-  'ch08-protocol',
-  'ch09-ink-ui',
-  'ch10-feature-cost',
-];
+// --- Project resolution (driven by lumina.config.js) ---
 
-// Human-friendly chapter titles for divider slides
-const chapterTitles = {
-  'ch00-overview-v2': 'Chapter 0 \u2014 Overview',
-  'ch01-core-engine': 'Chapter 1 \u2014 Core Engine',
-  'ch02-multi-agent': 'Chapter 2 \u2014 Multi-Agent Orchestration',
-  'ch03-permission':    'Chapter 3 \u2014 Permission System',
-  'ch04-token-mgmt':    'Chapter 4 \u2014 Token Management',
-  'ch05-tools-mcp':     'Chapter 5 \u2014 Tools & MCP',
-  'ch06-resilience':    'Chapter 6 \u2014 Resilience & Self-Healing',
-  'ch07-memory':        'Chapter 7 \u2014 Memory & Context',
-  'ch08-protocol':      'Chapter 8 \u2014 Protocol Layer',
-  'ch09-ink-ui':        'Chapter 9 \u2014 Ink UI',
-  'ch10-feature-cost':  'Chapter 10 \u2014 Feature Cost',
-};
+const config = require(path.resolve(__dirname, 'lumina.config.js'));
+
+// Resolve --project (defaults to config.defaultProject). Parsed at module load
+// so the derived constants below stay module-level, as the rest of the file expects.
+function parseProjectArg() {
+  const args = process.argv.slice(2);
+  const eq = args.find(a => a.startsWith('--project='));
+  if (eq) return eq.split('=')[1];
+  const idx = args.indexOf('--project');
+  if (idx !== -1 && args[idx + 1] && !args[idx + 1].startsWith('--')) return args[idx + 1];
+  return config.defaultProject;
+}
+
+const projectName = parseProjectArg();
+const project = config.projects && config.projects[projectName];
+if (!project) {
+  console.error(`ERROR: Unknown project "${projectName}". Available: ${Object.keys(config.projects || {}).join(', ')}`);
+  process.exit(1);
+}
+
+const projectRoot = path.resolve(__dirname, project.root || '.');
+const chapterOrder = project.chapters.map(c => c.id);
+const chapterTitles = Object.fromEntries(project.chapters.map(c => [c.id, c.title]));
+const DIVIDER_SUBTITLE = project.dividerSubtitle || project.title;
+const DECK_TITLE = project.title;
+const OUTPUT_FILE = path.resolve(__dirname, project.output);
+
+// Resolve a chapter's directory within the active project's root.
+const resolveChapterDir = (id) => path.resolve(projectRoot, id);
 
 // --- Build cache utilities ---
 
-const CACHE_FILE = path.resolve(__dirname, '.build-cache.json');
-const MAX_PARALLEL = Math.min(3, chapterOrder.length);
+const CACHE_FILE = path.resolve(__dirname, project.cacheFile || '.build-cache.json');
+const MAX_PARALLEL = Math.max(1, Math.min(config.build?.concurrency ?? 3, chapterOrder.length || 1));
 
 function loadCache() {
   try {
@@ -81,7 +83,7 @@ function saveCache(cache) {
  * Returns null if the chapter has no slides directory.
  */
 function computeChapterFingerprint(chapterName) {
-  const chapterDir = path.resolve(__dirname, chapterName);
+  const chapterDir = resolveChapterDir(chapterName);
   const slidesDir = path.join(chapterDir, 'slides');
   const diagramsDir = path.join(chapterDir, 'diagrams');
   
@@ -131,7 +133,7 @@ function isChapterCacheHit(chapterName) {
   const fingerprint = computeChapterFingerprint(chapterName);
   if (!fingerprint) return false; // no slides dir — skip
 
-  const outputFile = path.resolve(__dirname, chapterName, `${chapterName}.pptx`);
+  const outputFile = path.join(resolveChapterDir(chapterName), `${chapterName}.pptx`);
   if (!fs.existsSync(outputFile)) return false;
 
   const cache = loadCache();
@@ -154,6 +156,42 @@ function recordChapterCache(chapterName) {
     timestamp: new Date().toISOString(),
   };
   saveCache(cache);
+}
+
+/**
+ * A chapter is buildable if it has authored HTML slides or a slides.md the
+ * MDX engine can compile. Chapters that have neither (e.g. a scaffolded but
+ * not-yet-authored project) are skipped instead of crashing build-chapter.js.
+ */
+function isChapterBuildable(chapterName) {
+  const dir = resolveChapterDir(chapterName);
+  const slidesDir = path.join(dir, 'slides');
+  const hasHtml = fs.existsSync(slidesDir) &&
+    fs.readdirSync(slidesDir).some(f => f.endsWith('.html'));
+  const hasMd = fs.existsSync(path.join(dir, 'slides.md'));
+  return hasHtml || hasMd;
+}
+
+/**
+ * Build a result record for a chapter that wasn't (re)built this run.
+ * kind: 'cached' (up-to-date) | 'noSlides' (nothing to build yet).
+ */
+function makeStaticResult(chapterName, kind) {
+  const outputFile = path.join(resolveChapterDir(chapterName), `${chapterName}.pptx`);
+  const stats = fs.existsSync(outputFile) ? fs.statSync(outputFile) : null;
+  const slidesDir = path.join(resolveChapterDir(chapterName), 'slides');
+  const slideCount = fs.existsSync(slidesDir)
+    ? fs.readdirSync(slidesDir).filter(f => f.endsWith('.html')).length
+    : 0;
+  return {
+    chapter: chapterName,
+    ok: true,
+    slideCount,
+    sizeMB: stats ? (stats.size / (1024 * 1024)).toFixed(2) : 'N/A',
+    cached: kind === 'cached',
+    noSlides: kind === 'noSlides',
+    errors: [],
+  };
 }
 
 /**
@@ -215,12 +253,15 @@ async function phase1BuildIndividual(options = {}) {
   }
   console.log('='.repeat(60));
 
-  // Scan for chapters that need rebuilding
+  // Scan: classify each chapter as buildable-and-stale, cached, or has-no-slides
   const toBuild = [];
   const skipped = [];
+  const noSlides = [];
 
   for (const ch of chapterOrder) {
-    if (!force && isChapterCacheHit(ch)) {
+    if (!isChapterBuildable(ch)) {
+      noSlides.push(ch);
+    } else if (!force && isChapterCacheHit(ch)) {
       skipped.push(ch);
     } else {
       toBuild.push(ch);
@@ -230,23 +271,14 @@ async function phase1BuildIndividual(options = {}) {
   if (skipped.length > 0) {
     console.log(`\n  Cached (skipped): ${skipped.length} chapter(s): ${skipped.join(', ')}`);
   }
+  if (noSlides.length > 0) {
+    console.log(`\n  No slides yet (skipped): ${noSlides.length} chapter(s): ${noSlides.join(', ')}`);
+  }
 
   if (toBuild.length === 0) {
-    console.log('\n  All chapters up-to-date — nothing to build. Use --force to rebuild.');
-    // Still return results with cached info
-    const results = chapterOrder.map(ch => {
-      const outputFile = path.resolve(__dirname, ch, `${ch}.pptx`);
-      const stats = fs.existsSync(outputFile) ? fs.statSync(outputFile) : null;
-      return {
-        chapter: ch,
-        ok: true,
-        slideCount: '?',
-        sizeMB: stats ? (stats.size / (1024 * 1024)).toFixed(2) : 'N/A',
-        cached: true,
-        errors: [],
-      };
-    });
-    return results;
+    console.log('\n  Nothing to build — all buildable chapters are up-to-date. Use --force to rebuild.');
+    return chapterOrder.map(ch =>
+      makeStaticResult(ch, noSlides.includes(ch) ? 'noSlides' : 'cached'));
   }
 
   console.log(`\n  Building: ${toBuild.length} chapter(s): ${toBuild.join(', ')}`);
@@ -255,7 +287,7 @@ async function phase1BuildIndividual(options = {}) {
 
   const buildTask = (ch) => async () => {
     try {
-      const result = await buildChapter(ch, { strict: false });
+      const result = await buildChapter(ch, { strict: false, root: project.root });
       recordChapterCache(ch);
       return { chapter: ch, ...result, ok: true };
     } catch (err) {
@@ -280,23 +312,8 @@ async function phase1BuildIndividual(options = {}) {
   }
 
   const results = chapterOrder.map(ch => {
-    if (skipped.includes(ch)) {
-      const outputFile = path.resolve(__dirname, ch, `${ch}.pptx`);
-      const stats = fs.existsSync(outputFile) ? fs.statSync(outputFile) : null;
-      // Count slides from HTML files since we're skipping the build
-      const slidesDir = path.resolve(__dirname, ch, 'slides');
-      const slideCount = fs.existsSync(slidesDir)
-        ? fs.readdirSync(slidesDir).filter(f => f.endsWith('.html')).length
-        : 0;
-      return {
-        chapter: ch,
-        ok: true,
-        slideCount,
-        sizeMB: stats ? (stats.size / (1024 * 1024)).toFixed(2) : 'N/A',
-        cached: true,
-        errors: [],
-      };
-    }
+    if (noSlides.includes(ch)) return makeStaticResult(ch, 'noSlides');
+    if (skipped.includes(ch)) return makeStaticResult(ch, 'cached');
     return resultsMap[ch];
   });
 
@@ -307,7 +324,7 @@ async function phase1BuildIndividual(options = {}) {
   let totalSize = 0;
   for (const r of results) {
     if (r.ok) {
-      const tag = r.cached ? ' (cached)' : '';
+      const tag = r.noSlides ? ' (no slides yet)' : (r.cached ? ' (cached)' : '');
       console.log(`  \u2705 ${r.chapter}: ${r.slideCount} slides (${r.sizeMB} MB)${tag}`);
       okCount++;
       totalSlides += r.slideCount === '?' ? 0 : r.slideCount;
@@ -345,7 +362,7 @@ function addDividerSlide(pptx, chapterKey) {
 
   subtitleLabel({
     slide,
-    text: 'Claude Code Lumina',
+    text: DIVIDER_SUBTITLE,
     x: 0.5, y: 2.2, w: 6.0, h: 0.6,
     fontSize: 16,
     color: '666666',
@@ -373,13 +390,13 @@ async function phase2MergeAll(browser) {
 
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_16x9';
-  pptx.title = 'Claude Code Lumina — Complete';
+  pptx.title = `${DECK_TITLE} — Complete`;
 
   let totalSlides = 0;
   const chapterSummary = [];
 
   for (const chapterKey of chapterOrder) {
-    const slidesDir = path.resolve(__dirname, chapterKey, 'slides');
+    const slidesDir = path.join(resolveChapterDir(chapterKey), 'slides');
 
     if (!fs.existsSync(slidesDir)) {
       console.log(`  \u26a0 Skipping ${chapterKey} — no slides directory`);
@@ -425,8 +442,16 @@ async function phase2MergeAll(browser) {
     });
   }
 
+  // Nothing to merge (e.g. a project whose chapters have no slides yet) —
+  // don't write an empty deck, just report.
+  if (totalSlides === 0) {
+    console.log('\n  No slides found across this project — skipping merged deck.');
+    console.log('='.repeat(60));
+    return { totalSlides: 0, empty: true };
+  }
+
   // Write merged file to temp path — rename to final happens in main()
-  const finalPath = path.resolve(__dirname, 'claude-code-lumina-complete.pptx');
+  const finalPath = OUTPUT_FILE;
   const tmpPath = finalPath.replace('.pptx', '-tmp.pptx');
   // Clean up stale temp file from previous failed build
   try {
@@ -469,13 +494,44 @@ async function writePptxAtomic(pptx, finalPath) {
 }
 
 /**
+ * Print the resolved build plan without building (--list / dry run).
+ */
+function printPlan() {
+  console.log('\nBuild plan (dry run — nothing is built):\n');
+  for (const ch of chapterOrder) {
+    const slidesDir = path.join(resolveChapterDir(ch), 'slides');
+    const htmlCount = fs.existsSync(slidesDir)
+      ? fs.readdirSync(slidesDir).filter(f => f.endsWith('.html')).length : 0;
+    let status;
+    if (!isChapterBuildable(ch)) status = 'no slides yet';
+    else if (isChapterCacheHit(ch)) status = 'cached (up-to-date)';
+    else status = 'will build';
+    console.log(`  ${ch.padEnd(30)} ${String(htmlCount).padStart(3)} slides   ${status}`);
+  }
+  console.log(`\n  → merged output: ${path.basename(OUTPUT_FILE)}\n`);
+}
+
+/**
  * Main entry point
  */
 async function main() {
   const args = process.argv.slice(2);
   const force = args.includes('--force');
   const noParallel = args.includes('--no-parallel');
-  const concurrency = parseInt(args.find(a => a.startsWith('--concurrency='))?.split('=')[1] || '3', 10);
+  const concurrency = parseInt(args.find(a => a.startsWith('--concurrency='))?.split('=')[1] || String(MAX_PARALLEL), 10);
+
+  console.log('\n' + '='.repeat(60));
+  console.log(`PROJECT: ${projectName}  —  ${DECK_TITLE}`);
+  console.log(`  Root:     ${path.relative(__dirname, projectRoot) || '.'}`);
+  console.log(`  Output:   ${path.basename(OUTPUT_FILE)}`);
+  console.log(`  Cache:    ${path.basename(CACHE_FILE)}`);
+  console.log(`  Chapters: ${chapterOrder.length}`);
+  console.log('='.repeat(60));
+
+  if (args.includes('--list')) {
+    printPlan();
+    return;
+  }
 
   // Phase 1
   const individualResults = await phase1BuildIndividual({
@@ -510,10 +566,15 @@ async function main() {
   try {
     mergeResult = await phase2MergeAll(browser);
 
+    if (mergeResult.empty) {
+      // No slides were merged — nothing to rename.
+      return;
+    }
+
     // Atomic write: rename from tmp to final on success
-    const finalPath = path.resolve(__dirname, 'claude-code-lumina-complete.pptx');
+    const finalPath = OUTPUT_FILE;
     const tmpPath = finalPath.replace('.pptx', '-tmp.pptx');
-    
+
     const actualTmpPath = fs.existsSync(tmpPath) ? tmpPath : (tmpPath + '.pptx');
     if (!fs.existsSync(actualTmpPath)) {
       throw new Error(`Failed to find generated PPTX at ${tmpPath}`);

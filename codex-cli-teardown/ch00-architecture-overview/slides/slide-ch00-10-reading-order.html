@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Reading Order</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+.ro-row{display:flex;gap:8pt;margin-bottom:4pt}
+.ro-q{flex:74;background:var(--bg-card);border-radius:3pt;padding:5pt 11pt}
+.ro-c{flex:26;background:#1E2D4A;border-radius:3pt;padding:5pt 11pt;text-align:center}
+.ro-row-hi .ro-c{background:#2A2440;border:1pt solid var(--accent-amber)}
+.ro-q p{font-size:9.5pt;color:var(--text-secondary);margin:0}
+.ro-c p{font-size:9.5pt;font-weight:700;color:var(--accent-teal);margin:0}
+.ro-row-hi .ro-c p{color:var(--accent-amber)}
+.closer{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:7pt 11pt;margin-top:7pt}
+.closer p{margin:0}
+.closer .lead{font-size:9pt;color:var(--text-secondary);line-height:1.4}
+.closer .thesis{font-size:11pt;color:var(--accent-amber);font-style:italic;font-weight:700;margin-top:4pt}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">10 / 10</p></div>
+<div class="slide-content">
+  <h2>推荐阅读顺序：带着你的问题进来</h2>
+  <div class="ro-row"><div class="ro-q"><p>"怎么写一个 LLM agent 的核心循环？"</p></div><div class="ro-c"><p>ch01</p></div></div>
+  <div class="ro-row"><div class="ro-q"><p>"我的 agent 工具系统该怎么设计？"</p></div><div class="ro-c"><p>ch02</p></div></div>
+  <div class="ro-row ro-row-hi"><div class="ro-q"><p>"我担心 agent 执行恶意代码怎么办？"</p></div><div class="ro-c"><p>ch03</p></div></div>
+  <div class="ro-row ro-row-hi"><div class="ro-q"><p>"我想让 agent 自主跑长时间任务"</p></div><div class="ro-c"><p>ch04</p></div></div>
+  <div class="ro-row"><div class="ro-q"><p>"我想从架构层面理解 Codex 整体"</p></div><div class="ro-c"><p>ch00 → ch01</p></div></div>
+  <div class="closer">
+    <p class="lead">对大多数读者：<strong style="color:var(--text-primary);">ch00 → ch01 → ch03</strong> 是最高浓度的 90 分钟，ch02 / ch04 是延伸阅读。</p>
+    <p class="thesis">带一个问题进 ch01：同一个问题，两个团队给出截然不同的设计，是因为什么？</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>10 / 10</p></div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - macOS Seatbelt</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:8.5pt;line-height:1.4;margin:0;padding-left:12pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.two-col{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.left-col{flex:1.1;display:flex;flex-direction:column;gap:6pt}
+.right-col{flex:0.9;display:flex;flex-direction:column;gap:6pt}
+.info-card{background:var(--bg-card);border-radius:4pt;padding:8pt 10pt}
+.info-card h4{font-size:9pt;font-weight:700;margin:0 0 3pt 0}
+.info-card p{font-size:8pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.code-block{background:var(--bg-code);border-radius:3pt;padding:6pt 8pt;font-family:'Courier New',monospace;font-size:7.5pt;color:#79C0FF;line-height:1.4;margin:0}
+.code-block p{margin:0;color:#79C0FF}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">04 / 10</p></div>
+<div class="slide-content">
+  <h2>macOS Seatbelt — 编译期嵌入策略文本</h2>
+  <div class="two-col">
+    <div class="left-col">
+      <div class="info-card">
+        <h4 style="color:var(--accent-teal);">compile-time 嵌入 — <span class="fn">seatbelt.rs:21</span></h4>
+        <p><span class="fn">include_str!("seatbelt_base_policy.sbpl")</span> 在编译期将策略文本嵌入 binary；codex 不依赖外部文件。攻击者污染磁盘上的策略文件<strong style="color:var(--text-primary);">无效</strong>——要改策略必须替换整个 binary。</p>
+      </div>
+      <div class="code-block">
+        <p style="color:#E2E8F0;">(version 1)</p>
+        <p style="color:#718096;">; inspired by Chrome sandbox policy</p>
+        <p style="color:#718096;">; (deny default)  — closed-by-default</p>
+        <p style="color:var(--accent-coral);">(deny default)</p>
+        <p style="color:var(--accent-green);">(allow process-exec)</p>
+        <p style="color:var(--accent-green);">(allow process-fork)</p>
+        <p style="color:var(--accent-green);">(allow signal (target same-sandbox))</p>
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="info-card">
+        <h4 style="color:var(--accent-teal);">Closed-by-Default 姿势</h4>
+        <p>SBPL 第一行 <span class="fn">(deny default)</span> 拒绝一切未显式允许的操作——与 Chrome 沙箱策略相同，注释直接给出 Chrome 源码链接。</p>
+      </div>
+      <div class="info-card" style="border:1.5pt solid var(--accent-amber);">
+        <h4 style="color:var(--accent-amber);">PATH-injection 防御 — <span class="fn">seatbelt.rs:30</span></h4>
+        <ul>
+          <li>硬编码 <span class="fn">/usr/bin/sandbox-exec</span>（绝对路径）</li>
+          <li>攻击者在 <span class="fn">$PATH</span> 前置恶意 <span class="fn">sandbox-exec</span> 时，"启动沙箱"调用不会被劫持</li>
+          <li>这种"想到 PATH 污染"的细节防御是真正的 security-conscious engineering</li>
+        </ul>
+      </div>
+      <div class="callout"><p><strong style="color:var(--accent-indigo);">Claude Code 对比：</strong>无 Seatbelt 调用，无策略文本，无进程隔离。子进程继承调用者的 macOS sandbox context（通常是完全不限制的开发者环境）。</p></div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>04 / 10</p></div>
+</body>
+</html>

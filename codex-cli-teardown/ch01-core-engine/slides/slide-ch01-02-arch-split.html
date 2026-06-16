@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Arch Split</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.two-col{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.col-left{flex:0 0 200pt;display:flex;flex-direction:column;gap:8pt}
+.col-right{flex:1;display:flex;flex-direction:column}
+.dir-card{background:var(--bg-card);border-radius:4pt;padding:8pt 11pt}
+.dir-card h4{font-size:10pt;font-weight:700;margin:0 0 2pt 0}
+.dir-card p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.4}
+.crate-table{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt}
+.crate-table h4{font-size:9.5pt;font-weight:700;margin:0 0 5pt 0;color:var(--accent-teal)}
+.row{display:flex;gap:6pt;padding:2.5pt 0;border-bottom:0.5pt solid var(--border-subtle)}
+.row:last-child{border-bottom:none}
+.cell-crate{flex:0 0 108pt}
+.cell-role{flex:1}
+.cell-cc{flex:0 0 120pt}
+.cell-crate p{font-family:'Courier New',monospace;font-size:7.5pt;color:#79C0FF;margin:0}
+.cell-role p{font-size:7.5pt;color:var(--text-secondary);margin:0}
+.cell-cc p{font-size:7.5pt;color:var(--text-muted);margin:0}
+.row-header .cell-crate p{color:var(--text-muted);font-family:Arial,sans-serif;font-weight:700;font-size:7.5pt}
+.row-header .cell-role p{color:var(--text-muted);font-weight:700}
+.row-header .cell-cc p{color:var(--text-muted);font-weight:700}
+.none-tag{color:var(--accent-coral)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">02 / 09</p></div>
+<div class="slide-content">
+  <h2>仓库结构：第一眼的信号</h2>
+  <div class="two-col">
+    <div class="col-left">
+      <div class="dir-card" style="border-top:2.5pt solid var(--accent-coral);">
+        <h4 style="color:var(--accent-coral);">codex-cli/</h4>
+        <p>TypeScript / JS 薄壳：CLI 入口、TUI 渲染层</p>
+      </div>
+      <div class="dir-card" style="border-top:2.5pt solid var(--accent-teal);">
+        <h4 style="color:var(--accent-teal);">codex-rs/</h4>
+        <p>Rust 核心：Agent 引擎、沙箱、协议、MCP——100+ 个 crate 的 Cargo workspace</p>
+      </div>
+      <div class="callout">
+        <p><strong style="color:var(--accent-indigo);">对比 Claude Code：</strong>全栈 TypeScript，引擎与 CLI 同进程，无 Rust，无 IPC。这一个目录分割决定了下游所有并发和分发选择。</p>
+      </div>
+    </div>
+    <div class="col-right">
+      <div class="crate-table">
+        <h4>codex-rs/ 关键 crate 速览</h4>
+        <div class="row row-header">
+          <div class="cell-crate"><p>Crate</p></div>
+          <div class="cell-role"><p>职责</p></div>
+          <div class="cell-cc"><p>Claude Code 对应</p></div>
+        </div>
+        <div class="row">
+          <div class="cell-crate"><p>codex-core</p></div>
+          <div class="cell-role"><p>Agent loop / Session / Tool dispatch</p></div>
+          <div class="cell-cc"><p>QueryEngine.ts + query.ts</p></div>
+        </div>
+        <div class="row">
+          <div class="cell-crate"><p>codex-protocol</p></div>
+          <div class="cell-role"><p>Submission / Event / Op enum 定义</p></div>
+          <div class="cell-cc"><p>src/types/sdk.ts</p></div>
+        </div>
+        <div class="row">
+          <div class="cell-crate"><p>codex-exec</p></div>
+          <div class="cell-role"><p>子进程执行 + 沙箱包装</p></div>
+          <div class="cell-cc"><p>src/tools/Bash.ts 内联</p></div>
+        </div>
+        <div class="row">
+          <div class="cell-crate"><p>codex-linux-sandbox</p></div>
+          <div class="cell-role"><p>Landlock + Bubblewrap helper</p></div>
+          <div class="cell-cc"><p class="none-tag">无对应</p></div>
+        </div>
+        <div class="row">
+          <div class="cell-crate"><p>codex-app-server</p></div>
+          <div class="cell-role"><p>HTTP / WebSocket 协议服务</p></div>
+          <div class="cell-cc"><p>src/sdk/*</p></div>
+        </div>
+        <div class="row">
+          <div class="cell-crate"><p>codex-realtime-webrtc</p></div>
+          <div class="cell-role"><p>WebRTC 语音通道</p></div>
+          <div class="cell-cc"><p class="none-tag">无对应</p></div>
+        </div>
+        <div class="row">
+          <div class="cell-crate"><p>codex-thread-store</p></div>
+          <div class="cell-role"><p>持久化对话历史</p></div>
+          <div class="cell-cc"><p class="none-tag">无对应（内存中）</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>02 / 09</p></div>
+</body>
+</html>

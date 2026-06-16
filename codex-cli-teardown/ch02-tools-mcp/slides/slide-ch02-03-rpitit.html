@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - RPITIT Pattern</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;margin-bottom:8pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 13pt;border:1.5pt solid var(--accent-indigo)}
+h4{font-size:10pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:9pt;line-height:1.45;margin:0;padding-left:13pt;color:var(--text-secondary)}
+li{margin-bottom:3pt}
+.agents-quote{background:var(--bg-code);border-left:3pt solid var(--accent-amber);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-bottom:8pt}
+.agents-quote p{font-family:'Courier New',monospace;font-size:8pt;color:#E6EDF3;margin:0;line-height:1.5}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">03 / 09</p></div>
+<div class="slide-content">
+  <h2>Native RPITIT — 为什么不用 <span class="fn">#[async_trait]</span></h2>
+  <div class="agents-quote">
+    <p>AGENTS.md:22 — "Discourage both #[async_trait] and #[allow(async_fn_in_trait)].</p>
+    <p>Prefer native RPITIT trait methods with explicit Send bounds on the returned future."</p>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">#[async_trait] 宏（旧方式）</h4>
+      <ul>
+        <li>把 async 方法 desugar 成 <span class="fn">Box&lt;dyn Future&gt;</span></li>
+        <li>每次调用产生堆分配（heap alloc）</li>
+        <li>trait object-safe：可以 <span class="fn">Vec&lt;Box&lt;dyn T&gt;&gt;</span></li>
+        <li>Rust 1.75 之前的必要妥协</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">RPITIT — Rust 1.75+ 原生方式</h4>
+      <ul>
+        <li><span class="fn">-&gt; impl Future&lt;Output=T&gt; + Send</span></li>
+        <li>零堆分配——caller 用具体类型，编译期 monomorphize</li>
+        <li>代价：trait 不 object-safe，不能 <span class="fn">Box&lt;dyn ToolHandler&gt;</span></li>
+        <li>Codex 接受此 trade-off：选性能 &gt; object-safety</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">教学价值：</strong>这是 2026 年 Rust 异步 trait 的现代写法。<span class="fn">#[async_trait]</span> everywhere 的代码是 pre-1.75 妥协，新项目避免。dispatch 不走 vtable，所以 Slide 8 要另解决分派机制。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 09</p></div>
+</body>
+</html>

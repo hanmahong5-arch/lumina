@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - 18 Handlers</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:11pt 28pt 5pt 28pt}
+h2{font-size:16pt;font-weight:700;margin:0 0 6pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:7.5pt}
+.groups{display:flex;gap:8pt;flex:1;margin-bottom:4pt}
+.group-col{flex:1;display:flex;flex-direction:column;gap:5pt}
+.gcard{background:var(--bg-card);border-radius:4pt;padding:6pt 8pt;border-top:2pt solid var(--accent-indigo)}
+.gcard.os{border-top-color:var(--accent-coral)}
+.gcard.mcp{border-top-color:var(--accent-teal)}
+.gcard.agent{border-top-color:var(--accent-amber)}
+.gcard.user{border-top-color:var(--accent-green)}
+.gcard.meta{border-top-color:var(--accent-indigo)}
+.gcard.input{border-top-color:#B39DDB}
+.gcard.ext{border-top-color:var(--text-muted)}
+h4{font-size:8.5pt;font-weight:700;margin:0 0 2pt 0}
+ul{font-size:7.5pt;line-height:1.4;margin:0;padding-left:10pt;color:var(--text-secondary)}
+li{margin-bottom:1pt}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:4pt 10pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">05 / 09</p></div>
+<div class="slide-content">
+  <h2>18 个具体 Handler — <span class="fn">core/src/tools/handlers/</span> 全览</h2>
+  <div class="groups">
+    <div class="group-col">
+      <div class="gcard os">
+        <h4 style="color:var(--accent-coral);">OS 执行（3）</h4>
+        <ul>
+          <li><span class="fn">shell.rs</span> — bash/sh/powershell</li>
+          <li><span class="fn">unified_exec.rs</span> — shell + 沙箱配置统一入口</li>
+          <li><span class="fn">apply_patch.rs</span> — 文件 patch 应用</li>
+        </ul>
+      </div>
+      <div class="gcard mcp">
+        <h4 style="color:var(--accent-teal);">MCP（2）</h4>
+        <ul>
+          <li><span class="fn">mcp.rs</span> — 调用外部 MCP server 工具</li>
+          <li><span class="fn">mcp_resource.rs</span> — 读取 MCP server 资源</li>
+        </ul>
+      </div>
+      <div class="gcard input">
+        <h4 style="color:#B39DDB;">输入处理（2）</h4>
+        <ul>
+          <li><span class="fn">view_image.rs</span> — 图像编码为 vision input</li>
+          <li><span class="fn">list_dir.rs</span> — 列目录内容</li>
+        </ul>
+      </div>
+    </div>
+    <div class="group-col">
+      <div class="gcard agent">
+        <h4 style="color:var(--accent-amber);">Agent 编排（4）</h4>
+        <ul>
+          <li><span class="fn">agent_jobs.rs</span> — 批量子 agent（CSV map-reduce，ch04）</li>
+          <li><span class="fn">multi_agents.rs</span> — v1 多 agent 系统</li>
+          <li><span class="fn">multi_agents_v2/</span> — v2 长期 inter-agent messaging</li>
+          <li><span class="fn">goal.rs</span> — Goal 创建/更新/查询（ch04）</li>
+        </ul>
+      </div>
+      <div class="gcard user">
+        <h4 style="color:var(--accent-green);">用户交互（2）</h4>
+        <ul>
+          <li><span class="fn">request_user_input.rs</span> — 暂停等用户输入</li>
+          <li><span class="fn">request_permissions.rs</span> — 申请额外 sandbox 权限</li>
+        </ul>
+      </div>
+    </div>
+    <div class="group-col">
+      <div class="gcard meta">
+        <h4 style="color:var(--accent-indigo);">Meta-tooling（3）</h4>
+        <ul>
+          <li><span class="fn">plan.rs</span> — 结构化任务列表（对比：Claude Code 的 TodoWrite/TodoRead 两个工具）</li>
+          <li><span class="fn">tool_search.rs</span> — 搜索可用工具</li>
+          <li><span class="fn">tool_suggest.rs</span> — 推荐工具（LLM 发现工具）</li>
+        </ul>
+      </div>
+      <div class="gcard ext">
+        <h4 style="color:var(--text-muted);">扩展 &amp; 降级（2）</h4>
+        <ul>
+          <li><span class="fn">dynamic.rs</span> — 用户运行时定义工具</li>
+          <li><span class="fn">unavailable_tool.rs</span> — 不可用工具的 stub</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">设计哲学对比：</strong>Claude Code ~30+ 原子工具（小而多，组合靠 LLM）。Codex 18 个大而合的工具（功能打包，减少 LLM 调度次数）。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>05 / 09</p></div>
+</body>
+</html>

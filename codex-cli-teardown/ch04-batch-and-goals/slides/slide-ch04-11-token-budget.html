@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - Token Budget</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 5pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.three-col{display:flex;gap:10pt;flex:1;margin-bottom:5pt}
+.rcard{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt;border-top:2.5pt solid var(--accent-teal);display:flex;flex-direction:column}
+.rcard .tag{font-size:7.5pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:0.8pt;margin:0 0 4pt 0}
+.rcard.amber{border-top-color:var(--accent-amber)}
+.rcard.amber .tag{color:var(--accent-amber)}
+.rcard.coral{border-top-color:var(--accent-coral)}
+.rcard.coral .tag{color:var(--accent-coral)}
+.code-block{background:var(--bg-code);border-radius:3pt;padding:5pt 8pt;margin:4pt 0}
+.code-block p{font-size:7.5pt;color:#79C0FF;margin:0;font-family:'Courier New',monospace;line-height:1.55}
+.code-block .comment{color:#6A9955}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+.src-ref{font-size:7pt;color:var(--text-muted);font-family:'Courier New',monospace;margin:3pt 0 0 0}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">11 / 13</p></div>
+<div class="slide-content">
+  <h2>Token Budget — 自主性的安全阀</h2>
+  <div class="three-col">
+    <div class="rcard">
+      <p class="tag">Double Option 语义</p>
+      <div class="code-block">
+        <p><span class="comment">// goals.rs:38, goals.rs:65</span></p>
+        <p>token_budget:</p>
+        <p>  Option&lt;Option&lt;i64&gt;&gt;</p>
+        <p></p>
+        <p>None         <span class="comment">// 未设置</span></p>
+        <p>Some(None)   <span class="comment">// 显式无限制</span></p>
+        <p>Some(Some(n)) <span class="comment">// n 个 token</span></p>
+      </div>
+      <p>双层 Option 区分"未指定"与"明确无限"——两个不同的用户意图，不能混用单层 Option。</p>
+    </div>
+    <div class="rcard amber">
+      <p class="tag">Budget 消耗阶段</p>
+      <ul>
+        <li><strong>正常阶段</strong> (0–80%)</li>
+        <li>agent 正常运行，goal 注入 system prompt</li>
+        <li><strong>警告阶段</strong> (80–100%)</li>
+        <li>continuation prompt 追加警告文本</li>
+        <li>agent 被引导向完成而非探索</li>
+        <li><strong>触限阶段</strong> (100%)</li>
+        <li>注入 <span class="fn">BUDGET_LIMIT_PROMPT_TEMPLATE</span></li>
+        <li>agent 被指示生成完成摘要并停止</li>
+      </ul>
+    </div>
+    <div class="rcard coral">
+      <p class="tag">BudgetLimitSteering</p>
+      <div class="code-block">
+        <p>enum BudgetLimitSteering {</p>
+        <p>  Allowed,    <span class="comment">// 正常续</span></p>
+        <p>  Suppressed, <span class="comment">// 强制停</span></p>
+        <p>}</p>
+      </div>
+      <ul style="margin-top:5pt">
+        <li><span class="fn">Allowed</span> → 生成 continuation prompt，触发新 turn</li>
+        <li><span class="fn">Suppressed</span> → 跳过 <span class="fn">MaybeContinueIfIdle</span>，goal 结束</li>
+        <li>确定性有限状态机，无歧义</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">关键洞察：</strong>Token budget 是 Codex 自主性与用户控制之间的唯一可调旋钮。没有 budget，agent 可以无限运行直到 API 账单耗尽。这是把"无限循环"变成"有界自主"的核心机制。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>11 / 13</p></div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Dispatch Mechanism</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.layout{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.flow-panel{flex:0 0 280pt;background:var(--bg-code);border-radius:4pt;padding:9pt 11pt;border:1pt solid var(--border-subtle)}
+.flow-panel p{font-family:'Courier New',monospace;font-size:7.5pt;color:#E6EDF3;margin:0 0 1pt 0;line-height:1.5}
+.flow-cm{color:#8B949E}
+.flow-hl{color:var(--accent-teal)}
+.annot{flex:1;display:flex;flex-direction:column;gap:5pt}
+.annot-item{background:var(--bg-card);border-radius:3pt;padding:6pt 9pt;border-left:2pt solid var(--accent-indigo)}
+.annot-item p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.4}
+.annot-item .label{font-size:8pt;font-weight:700;color:var(--text-primary);margin:0 0 2pt 0}
+.callout{background:#16213E;border-left:3pt solid var(--accent-amber);border-radius:0 4pt 4pt 0;padding:5pt 10pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">08 / 09</p></div>
+<div class="slide-content">
+  <h2>Dispatch：<span class="fn">submission_loop</span> 怎么找到正确 Handler</h2>
+  <div class="layout">
+    <div class="flow-panel">
+      <p><span class="flow-cm">// LLM 流式输出 tool call</span></p>
+      <p><span class="flow-hl">LLM stream</span></p>
+      <p>  ↓</p>
+      <p>parse tool_name + arguments</p>
+      <p>  ↓</p>
+      <p><span class="flow-hl">ToolKind::Function</span> | <span class="flow-hl">ToolKind::Mcp</span></p>
+      <p>  ↓</p>
+      <p>handler.matches_kind(payload)?</p>
+      <p>  ↓</p>
+      <p><span class="flow-hl">handler.handle(invocation).await</span></p>
+      <p>  ↓</p>
+      <p><span class="flow-hl">AnyToolResult</span>  <span class="flow-cm">// registry.rs:107+</span></p>
+      <p>  ↓</p>
+      <p>EventMsg → WebSocket → Frontend</p>
+      <p>&nbsp;</p>
+      <p><span class="flow-cm">// Dynamic handler 例外：</span></p>
+      <p><span class="flow-cm">// 运行时定义，但走同一 trait 接口</span></p>
+    </div>
+    <div class="annot">
+      <div class="annot-item">
+        <p class="label">为什么不能 Vec&lt;Box&lt;dyn ToolHandler&gt;&gt;</p>
+        <p>RPITIT 使 trait 不 object-safe。无法做动态 vtable dispatch——必须编译期已知 handler 集合，通过 enum / match / monomorphize 分派。</p>
+      </div>
+      <div class="annot-item">
+        <p class="label">AnyToolResult — 统一结果类型</p>
+        <p><span class="fn">registry.rs:107</span> 定义统一结果包装，把各 handler 的强类型 <span class="fn">Output</span> 转成可统一处理的形态，再构造 <span class="fn">EventMsg</span> 推给前端。</p>
+      </div>
+      <div class="annot-item">
+        <p class="label">Dynamic handler — 双轨制</p>
+        <p><span class="fn">dynamic.rs</span> 支持用户运行时定义工具，但仍实现同一 <span class="fn">ToolHandler</span> trait。运行时灵活性 + 编译期类型安全并存。</p>
+      </div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-amber);">架构反思：</strong>编译期已知 handler 集合 + 运行时 Dynamic 双轨制是 Rust trait 系统的合理妥协。牺牲了"配置文件加新工具"的灵活性，换来零开销 dispatch + 编译期类型安全。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>08 / 09</p></div>
+</body>
+</html>

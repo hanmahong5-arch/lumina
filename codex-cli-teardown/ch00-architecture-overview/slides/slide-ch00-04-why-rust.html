@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Why Rust</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 6pt 0}
+.three-col{display:flex;gap:10pt;flex:1;margin-bottom:5pt}
+.rcard{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt;border-top:2.5pt solid var(--accent-teal);display:flex;flex-direction:column}
+.rcard .tag{font-size:7.5pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:0.8pt;margin:0 0 3pt 0}
+.rcard h4{font-size:11pt;font-weight:700;margin:0 0 4pt 0}
+.rcard p{font-size:8.5pt;line-height:1.4;color:var(--text-secondary);margin:0 0 3pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">04 / 10</p></div>
+<div class="slide-content">
+  <h2>为什么核心用 Rust？三个具体答案</h2>
+  <div class="three-col">
+    <div class="rcard">
+      <p class="tag">答案 1</p>
+      <h4>原生跨平台沙箱</h4>
+      <p>Landlock / Seatbelt / Restricted Token 都是 OS 级原语，要直接驱动 C syscall 与系统 API。</p>
+      <p>Rust 零开销 FFI 进 libc/syscall；<span class="fn">seatbelt.rs:30</span> 直接硬编码 sandbox-exec 路径。Node 只能写脆弱的 native addon，或放弃。</p>
+    </div>
+    <div class="rcard">
+      <p class="tag">答案 2</p>
+      <h4>单一二进制分发</h4>
+      <p>agent + sandbox + network proxy + WebRTC 客户端全部编译进 ~30MB native binary。</p>
+      <p>无 Node 运行时依赖，无 npm install。目标受众含 CI 容器、企业受限环境——那里 native binary 近乎必需。</p>
+    </div>
+    <div class="rcard">
+      <p class="tag">答案 3</p>
+      <h4>可被多前端消费的引擎</h4>
+      <p><span class="fn">app-server</span> 把引擎暴露成 HTTP/WebSocket——VSCode、Web、移动端、三方 IDE 共享同一引擎。</p>
+      <p>serde + tokio 让"引擎是可执行文件、前端是协议消费者"的拓扑天然舒服。</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">关键洞察：</strong>三者合起来 = Codex 从一开始押的是<strong style="color:var(--text-primary);">"基础设施"</strong>，不是"内部工具"。Rust 是原生 OS 集成 + 可分发性 + 协议化 API 的同时最优解。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>04 / 10</p></div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - MCP Cost Comparison</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+h4{font-size:10pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:9pt;line-height:1.5;margin:0;padding-left:13pt;color:var(--text-secondary)}
+li{margin-bottom:3pt}
+.tag-good{display:inline;color:var(--accent-green);font-size:8pt;font-weight:700}
+.tag-warn{display:inline;color:var(--accent-amber);font-size:8pt;font-weight:700}
+.callout{background:#16213E;border-left:3pt solid var(--accent-teal);border-radius:0 4pt 4pt 0;padding:6pt 10pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">07 / 09</p></div>
+<div class="slide-content">
+  <h2>MCP 集成对比："同一问题，不同实现成本"</h2>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code — 依赖 npm MCP SDK</h4>
+      <ul>
+        <li><span class="tag-good">省：</span> MCP 客户端代码量少，直接 import <span class="fn">@modelcontextprotocol/sdk</span></li>
+        <li><span class="tag-good">省：</span> 与核心引擎集成简单（同语言同进程，直接 import &amp; use）</li>
+        <li><span class="tag-warn">缺：</span> MCP server 子进程不自动套用 sandbox policy</li>
+        <li><span class="tag-warn">缺：</span> MCP server 默认信任，permission prompt 兜底</li>
+        <li><span class="tag-warn">缺：</span> 无法深度集成 network proxy（MITM 拦截 ch03 话题）</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex — 自研 codex-mcp crate</h4>
+      <ul>
+        <li><span class="tag-warn">贵：</span> 独立 crate + 跨 crate 边界 trait 实现，代码量更多</li>
+        <li><span class="tag-good">得：</span> spawn MCP 子进程时自动套 codex-linux-sandbox policy</li>
+        <li><span class="tag-good">得：</span> 与 network proxy 深度集成（MITM 能拦截 MCP 流量）</li>
+        <li><span class="tag-good">得：</span> MCP server 默认 untrusted，sandbox + MITM 双重兜底</li>
+        <li><span class="tag-good">得：</span> hot config reload，连接生命周期完全受控</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-teal);">结论：</strong>Codex 自研 MCP 客户端是为了 sandbox 深度集成，不是为了减少依赖。一个 npm 现成 SDK 不会"知道"在 spawn MCP server 子进程时要套上 codex-linux-sandbox——这种深度只能手写。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>07 / 09</p></div>
+</body>
+</html>

@@ -22,6 +22,13 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
+// Render settings come from the central config (lumina.config.js); defaults
+// below match the historical hardcoded values so behavior is unchanged.
+const config = require(path.resolve(__dirname, 'lumina.config.js'));
+const RENDER_CFG = (config.render && config.render.excalidraw) || {};
+const BATCH_CONCURRENCY = (config.render && config.render.batchConcurrency) || 5;
+const SCALE = RENDER_CFG.scale ?? 2;
+
 /**
  * Render template — warm light theme with high contrast.
  * Background is pure white (#FFFFFF), text auto-adjusts to dark.
@@ -88,7 +95,7 @@ window.__moduleReady=true;
 </script></body></html>`;
 
 // Retry config for esm.sh CDN instability
-const MAX_RENDER_RETRIES = 3;
+const MAX_RENDER_RETRIES = RENDER_CFG.maxRetries ?? 3;
 const RETRY_DELAY_MS = 2000;
 
 // Pinned Excalidraw version — prevents silent breakage when esm.sh bundle changes
@@ -225,7 +232,7 @@ async function renderExcalidraw(inputPath, outputPath, opts = {}) {
     const diagramH = bounds.maxY - bounds.minY + padding * 2;
     const vpWidth = Math.max(Math.ceil(diagramW), 1920);
     const vpHeight = Math.max(Math.ceil(diagramH), 600);
-    const scale = 2; // deviceScaleFactor
+    const scale = SCALE; // deviceScaleFactor
     const outW = Math.ceil(diagramW * scale);
     const outH = Math.max(Math.ceil(diagramH * scale), 600);
     console.log(`DRY-RUN: ${path.basename(input)}`);
@@ -306,7 +313,7 @@ async function renderExcalidraw(inputPath, outputPath, opts = {}) {
       try {
         page = await browser.newPage({
           viewport: { width: vpWidth, height: vpHeight },
-          deviceScaleFactor: 2,
+          deviceScaleFactor: SCALE,
         });
 
         fs.writeFileSync(tmpHtml, template, 'utf-8');
@@ -412,7 +419,7 @@ async function batchRender(dir, opts = {}) {
     
     // Use dynamic import since p-limit is an ES module
     const { default: pLimit } = await import('p-limit');
-    const limit = pLimit(5); // Concurrency limit
+    const limit = pLimit(BATCH_CONCURRENCY); // Concurrency limit (config.render.batchConcurrency)
     
     const tasks = files.map(file => limit(async () => {
       const inputPath = path.join(dir, file);
@@ -533,7 +540,7 @@ async function renderSingle(browser, inputPath, opts = {}) {
     try {
       page = await browser.newPage({
         viewport: { width: vpWidth, height: vpHeight },
-        deviceScaleFactor: 2,
+        deviceScaleFactor: SCALE,
       });
 
       try {

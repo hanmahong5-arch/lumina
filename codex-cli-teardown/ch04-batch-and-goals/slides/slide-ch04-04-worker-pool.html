@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - Worker Pool</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+.code-block{background:var(--bg-code);border-radius:3pt;padding:7pt 10pt;font-family:'Courier New',monospace;font-size:7.8pt;line-height:1.55;margin-bottom:6pt}
+.code-block p{font-size:7.8pt;color:#79C0FF;margin:0;font-family:'Courier New',monospace;line-height:1.55}
+.code-block .comment{color:#6A9955}
+.callout{background:#16213E;border-left:3pt solid var(--accent-amber);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+.src-ref{font-size:7pt;color:var(--text-muted);font-family:'Courier New',monospace;margin:2pt 0 0 0}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">04 / 13</p></div>
+<div class="slide-content">
+  <h2>FuturesUnordered Worker Pool — 并发原语</h2>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex — Semaphore + FuturesUnordered 模式</h4>
+      <div class="code-block">
+        <p><span class="comment">// agent_jobs.rs:24-25</span></p>
+        <p>let sem = Arc::new(Semaphore::new(concurrency));</p>
+        <p>let mut futures = FuturesUnordered::new();</p>
+        <p></p>
+        <p>for row in csv_rows {</p>
+        <p>  let permit = sem.clone().acquire_owned().await?;</p>
+        <p>  futures.push(async move {</p>
+        <p>    let result = run_agent(row).await;</p>
+        <p>    drop(permit);  <span class="comment">// 归还 slot</span></p>
+        <p>    result</p>
+        <p>  });</p>
+        <p>}</p>
+        <p>while let Some(r) = futures.next().await { collect(r); }</p>
+      </div>
+      <p class="src-ref">agent_jobs.rs:24–25 (核心并发原语)</p>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">为什么不用 JS Promise.all</h4>
+      <ul>
+        <li><span class="fn">Promise.all</span> 一次 spawn 全部 — 无背压，OOM 风险</li>
+        <li>Semaphore 限流：最多 N 个 in-flight，其余排队</li>
+        <li><span class="fn">FuturesUnordered</span> 按完成顺序 poll，不等最慢者</li>
+        <li>任何一个 worker panic 不影响其他 permit 释放</li>
+        <li>tokio 异步运行时 — 真正的 M:N 线程，非 event loop</li>
+      </ul>
+      <div class="callout">
+        <p><strong style="color:var(--accent-amber);">实测含义：</strong>64 个 worker 并发 30 分钟 timeout — 单次 batch job 最多可消耗 32 小时 GPU/API 时间，对账单影响极大。</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>04 / 13</p></div>
+</body>
+</html>

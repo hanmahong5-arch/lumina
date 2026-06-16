@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - IPC Boundary</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 6pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.diagram{display:flex;align-items:center;gap:8pt;margin:2pt 0 8pt 0}
+.dbox{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;text-align:center;border:1pt solid var(--border-subtle)}
+.dbox.engine{border:1.5pt solid var(--accent-indigo)}
+.dbox p{margin:0}
+.dbox .title{font-size:10pt;font-weight:700;color:var(--text-primary)}
+.dbox .sub{font-size:8pt;color:var(--text-muted);margin-top:2pt}
+.arrow{flex:0 0 96pt;text-align:center}
+.arrow p{margin:0;font-size:8.5pt;color:var(--accent-teal);font-family:'Courier New',monospace}
+.cols{display:flex;gap:12pt;flex:1}
+.col-cross{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt;border-top:2.5pt solid var(--accent-teal)}
+.col-nocross{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt;border-top:2.5pt solid var(--accent-coral)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:4pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">06 / 10</p></div>
+<div class="slide-content">
+  <h2>IPC 边界：什么穿越，什么不穿越</h2>
+  <div class="diagram">
+    <div class="dbox"><p class="title">Frontend</p><p class="sub">CLI / TUI / IDE</p></div>
+    <div class="arrow"><p>◄── JSON ──►</p><p>WebSocket</p></div>
+    <div class="dbox engine"><p class="title">Codex Engine</p><p class="sub">Rust app-server</p></div>
+  </div>
+  <div class="cols">
+    <div class="col-cross">
+      <h4 style="color:var(--accent-teal);">穿越边界的两种消息</h4>
+      <ul>
+        <li><span class="fn">Submission { id, op }</span>　客户端 → 引擎；<span class="fn">Op</span> 约 20 个 variant（UserInput / Interrupt / Shutdown …）</li>
+        <li><span class="fn">Event { id, msg }</span>　引擎 → 客户端；<span class="fn">EventMsg</span> 约 40 个 variant（AgentMessage / TokenCount / ContextCompacted …）</li>
+        <li>都是 serde-tagged enum；<span class="fn">id</span> 把一个 Submission 与它产生的多个 Event 关联</li>
+      </ul>
+    </div>
+    <div class="col-nocross">
+      <h4 style="color:var(--accent-coral);">不穿越的东西（关键）</h4>
+      <ul>
+        <li>工具执行的实际结果（引擎内消化，只外发 begin/end）</li>
+        <li>LLM API 的原始响应（在 <span class="fn">client.rs</span> 解析成 EventMsg）</li>
+        <li>沙箱 / 文件系统 / 进程状态（引擎独占）</li>
+        <li>模型 API key（引擎在 codex-login 管理）</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">架构含义：</strong>前端是<strong style="color:var(--text-primary);">不可信</strong>的。即使是受感染的 IDE 扩展，也只能发 Submission——信不信由引擎决定。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>06 / 10</p></div>
+</body>
+</html>

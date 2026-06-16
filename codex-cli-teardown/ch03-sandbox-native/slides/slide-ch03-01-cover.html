@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Cover</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.chapter-cover{display:flex;flex-direction:column;justify-content:center;padding:46pt 60pt;flex:1}
+.chapter-number{font-size:56pt;font-weight:700;color:var(--accent-teal);opacity:0.25;margin:0;line-height:1}
+.chapter-cover h1{font-size:24pt;margin:8pt 0 6pt 0;font-weight:700;line-height:1.2}
+.subtitle{font-size:11pt;color:var(--text-secondary);margin:0}
+.split-row{display:flex;gap:14pt;margin:16pt 0 0 0}
+.split-card{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt}
+.split-card h4{font-size:10pt;font-weight:700;margin:0 0 2pt 0}
+.split-card p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.4}
+.question{font-size:10pt;color:var(--accent-amber);margin-top:14pt;font-style:italic}
+</style>
+</head>
+<body>
+<div class="chapter-cover">
+  <p class="chapter-number">03</p>
+  <h1>Native Sandboxing — Three Platforms, Four Mechanisms</h1>
+  <p class="subtitle">Codex CLI 源码级拆解 · 第 3 章 · 沙箱篇 · 6 crates, 3 platforms, 1 threat model</p>
+  <div class="split-row">
+    <div class="split-card">
+      <h4 style="color:var(--accent-coral);">Claude Code</h4>
+      <p>Permission prompt — 直接 spawn 子进程，继承用户全部权限；安全靠"问用户"</p>
+    </div>
+    <div class="split-card" style="border:1.5pt solid var(--accent-teal);">
+      <h4 style="color:var(--accent-teal);">Codex CLI</h4>
+      <p>内核级强制隔离 — Landlock + Bubblewrap (Linux)、Seatbelt (macOS)、Restricted Token (Windows) + MITM 网络代理</p>
+    </div>
+  </div>
+  <p class="question">这不是功能差距——这是两套从根上不同的威胁模型。Is this complexity worth it?</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - v2 Multi-Agent</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+.tool-list{display:flex;flex-direction:column;gap:3pt;margin-top:4pt}
+.tool-row{display:flex;gap:8pt;align-items:flex-start}
+.tool-row p{margin:0;font-size:8.5pt;line-height:1.4}
+.tool-name{min-width:90pt}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+.version-tag{font-size:7.5pt;font-weight:700;background:var(--accent-indigo);color:#fff;padding:1pt 5pt;border-radius:2pt}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">06 / 13</p></div>
+<div class="slide-content">
+  <h2>v2 Multi-Agent — 持久进程间消息传递</h2>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">v2 新增的 7 个 Agent 工具 <span class="version-tag">multi_agents_v2/</span></h4>
+      <div class="tool-list">
+        <div class="tool-row"><p class="tool-name"><span class="fn">spawn</span></p><p style="color:var(--text-secondary);">创建命名 sub-agent 实例，返回 agent_id</p></div>
+        <div class="tool-row"><p class="tool-name"><span class="fn">wait</span></p><p style="color:var(--text-secondary);">阻塞直到指定 agent 完成，拿最终结果</p></div>
+        <div class="tool-row"><p class="tool-name"><span class="fn">send_message</span></p><p style="color:var(--text-secondary);">向运行中的 agent 注入消息（异步）</p></div>
+        <div class="tool-row"><p class="tool-name"><span class="fn">close_agent</span></p><p style="color:var(--text-secondary);">优雅终止 agent，释放资源</p></div>
+        <div class="tool-row"><p class="tool-name"><span class="fn">list_agents</span></p><p style="color:var(--text-secondary);">枚举所有活跃 agent 及其状态</p></div>
+        <div class="tool-row"><p class="tool-name"><span class="fn">followup_task</span></p><p style="color:var(--text-secondary);">向已有 agent 追加新任务，不重新 spawn</p></div>
+        <div class="tool-row"><p class="tool-name"><span class="fn">message_tool</span></p><p style="color:var(--text-secondary);">agent 间结构化消息（非对话历史）</p></div>
+      </div>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">两代系统的核心差异</h4>
+      <ul>
+        <li><strong>v1 批处理</strong> ≈ <span class="fn">xargs -P 16</span></li>
+        <li>CSV 行 → 独立进程 → 无通信 → 汇聚结果</li>
+        <li>worker 之间完全隔离，不可互相影响</li>
+      </ul>
+      <ul style="margin-top:8pt">
+        <li><strong>v2 消息模型</strong> ≈ OS 进程模型</li>
+        <li>agent 有生命周期，可被 kill/wait/signal</li>
+        <li><span class="fn">send_message</span> 类似 Unix <span class="fn">kill -USR1</span></li>
+        <li>协调者 agent 可指挥多个专家 sub-agent</li>
+      </ul>
+      <div class="callout"><p>v2 是从"批量作业"到"分布式 agent 编排"的质变——每个 agent 成为有名字的、可通信的持久实体。</p></div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>06 / 13</p></div>
+</body>
+</html>

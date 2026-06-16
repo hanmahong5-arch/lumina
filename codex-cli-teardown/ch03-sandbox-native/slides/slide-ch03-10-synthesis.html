@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Synthesis</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 7pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:8.5pt;line-height:1.4;margin:0;padding-left:12pt}
+li{margin-bottom:2pt;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.two-col{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.col-cost{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt;border-top:2.5pt solid var(--accent-coral)}
+.col-return{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt;border-top:2.5pt solid var(--accent-teal)}
+.bet-card{background:#0D2020;border:1pt solid var(--accent-teal);border-radius:4pt;padding:7pt 11pt}
+.bet-card p{margin:0;font-size:8.5pt;color:var(--text-secondary);line-height:1.4}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">10 / 10</p></div>
+<div class="slide-content">
+  <h2>综合：这套复杂度值得吗？</h2>
+  <div class="two-col">
+    <div class="col-cost">
+      <h4 style="color:var(--accent-coral);">工程成本</h4>
+      <ul>
+        <li>6 个相关 crate，3 套平台实现 + 1 个 helper binary</li>
+        <li>完整 MITM 代理（cert 生成、HTTP/SOCKS5 解析、policy 决策引擎）</li>
+        <li>跨平台 policy 编译器</li>
+        <li>持续 OS API 跟踪（Landlock 5.13+；macOS sandbox-exec 随版本变化）</li>
+        <li>工具兼容性问题（沙箱失败需 fall-through 路径）</li>
+        <li>文档 + 用户教育成本（操作被拒时需解释原因）</li>
+      </ul>
+    </div>
+    <div class="col-return">
+      <h4 style="color:var(--accent-teal);">安全回报</h4>
+      <ul>
+        <li>prompt-injection 带偏 LLM 后，<span class="fn">~/.ssh/id_rsa</span> 仍不可读</li>
+        <li>网络数据外泄需绕过 MITM——攻击门槛极高</li>
+        <li>第三方 MCP server 被 compromise，影响被限定在沙箱边界</li>
+        <li>可在企业受限环境运行，无需"agent 等于开发者本人"信任</li>
+        <li>可接 untrusted code（CI 跑 untrusted PR 的代码审查）</li>
+        <li>对个人开发者：permission prompt 够用；对企业/CI/<span style="color:var(--text-primary);">不可信 MCP</span>：沙箱是必需</li>
+      </ul>
+    </div>
+  </div>
+  <div class="bet-card">
+    <p><strong style="color:var(--accent-teal);">最深的押注：</strong>Codex 投入的 sandbox 工程成本，押的是"未来的 AI agent 必须能在不可信环境跑、必须能接不可信工具、必须 audit 能合规"。如果押对，沙箱基础设施 5 年后会成为本地 agent 的入门门槛。如果押错——他们多写了 6 个 crate。</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>10 / 10</p></div>
+</body>
+</html>

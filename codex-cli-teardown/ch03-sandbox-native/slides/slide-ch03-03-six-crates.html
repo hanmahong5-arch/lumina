@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Six Crates Architecture</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.crate-row{display:flex;gap:8pt;margin-bottom:5pt}
+.crate-card{flex:1;background:var(--bg-card);border-radius:4pt;padding:7pt 9pt;border-top:2pt solid var(--accent-teal)}
+.crate-card.special{border-top-color:var(--accent-amber)}
+.crate-card h4{font-size:8.5pt;font-weight:700;margin:0 0 2pt 0}
+.crate-card p{font-size:7.5pt;color:var(--text-secondary);margin:0;line-height:1.3}
+.tag{font-size:7pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:0.8pt;margin:0 0 2pt 0}
+.tag.exe{color:var(--accent-amber)}
+.diagram-row{display:flex;align-items:center;gap:6pt;margin:4pt 0}
+.dbox{background:var(--bg-card);border-radius:3pt;padding:4pt 8pt;text-align:center;border:1pt solid var(--border-subtle);flex:0 0 auto}
+.dbox p{margin:0;font-size:7.5pt}
+.dbox.core-box{border-color:var(--accent-indigo)}
+.arrow{font-size:8pt;color:var(--accent-teal);flex:0 0 auto}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:4pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">03 / 10</p></div>
+<div class="slide-content">
+  <h2>沙箱子系统：6 个 Crate 的分工</h2>
+  <div class="crate-row">
+    <div class="crate-card">
+      <p class="tag">跨平台 Facade</p>
+      <h4><span class="fn">codex-sandboxing</span></h4>
+      <p>条件编译入口 + policy 路由；<span class="fn">lib.rs</span> 按 target_os 带入 bwrap/landlock/seatbelt 模块；链接为库</p>
+    </div>
+    <div class="crate-card special">
+      <p class="tag exe">独立可执行文件</p>
+      <h4><span class="fn">codex-linux-sandbox</span></h4>
+      <p>Linux 专属 helper binary；fork+exec 桥梁；在子进程里 commit Landlock ruleset 再 exec 用户命令</p>
+    </div>
+    <div class="crate-card">
+      <p class="tag">Windows</p>
+      <h4><span class="fn">codex-windows-sandbox</span></h4>
+      <p>Restricted Token 实现；派生剥权 token；粗粒度保护</p>
+    </div>
+  </div>
+  <div class="crate-row">
+    <div class="crate-card">
+      <p class="tag">网络层</p>
+      <h4><span class="fn">codex-network-proxy</span></h4>
+      <p>全功能 MITM HTTP/SOCKS5 代理；含 <span class="fn">mitm.rs</span>、<span class="fn">certs.rs</span>、<span class="fn">network_policy.rs</span></p>
+    </div>
+    <div class="crate-card">
+      <p class="tag">进程硬化</p>
+      <h4><span class="fn">codex-process-hardening</span></h4>
+      <p>umask、resource limits 等进程级约束；补足 Landlock/Seatbelt 不覆盖的面</p>
+    </div>
+    <div class="crate-card">
+      <p class="tag">执行策略</p>
+      <h4><span class="fn">codex-execpolicy</span></h4>
+      <p>命令级执行策略 DSL；哪些命令 auto-approve，哪些需审批，哪些 deny</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">为什么 Linux 沙箱是独立可执行文件：</strong>Landlock 的 "process commits to a ruleset" API 决定了必须先 fork → 子进程 commit ruleset → exec 命令。在主进程加 ruleset 会污染主进程。<span class="fn">codex-linux-sandbox</span> 是这个 fork-and-exec 的牺牲者。<span class="fn">core/src/landlock.rs:22</span> 是调用入口。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 10</p></div>
+</body>
+</html>

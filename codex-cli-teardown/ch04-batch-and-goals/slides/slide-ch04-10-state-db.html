@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - State DB</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 5pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:3pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+.reason-list{display:flex;flex-direction:column;gap:4pt}
+.reason-item{display:flex;gap:8pt;align-items:flex-start}
+.reason-num{background:rgba(108,99,255,0.2);border-radius:2pt;padding:1pt 5pt;min-width:16pt;text-align:center;margin:1pt 0 0 0;flex-shrink:0}
+.reason-num p{font-size:8pt;font-weight:700;color:var(--accent-indigo);margin:0;line-height:1.4}
+.reason-item .reason-text{margin:0;font-size:8.5pt;color:var(--text-secondary);line-height:1.4}
+.callout{background:#16213E;border-left:3pt solid var(--accent-coral);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.code-block{background:var(--bg-code);border-radius:3pt;padding:6pt 9pt;margin:5pt 0}
+.code-block p{font-size:7.8pt;color:#79C0FF;margin:0;font-family:'Courier New',monospace;line-height:1.6}
+.code-block .comment{color:#6A9955}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+.src-ref{font-size:7pt;color:var(--text-muted);font-family:'Courier New',monospace;margin:3pt 0 0 0}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">10 / 13</p></div>
+<div class="slide-content">
+  <h2>SQLite 持久层 — <span class="fn">StateDbHandle</span></h2>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">为什么选 SQLite？（5 个理由）</h4>
+      <div class="reason-list">
+        <div class="reason-item"><div class="reason-num"><p>1</p></div><p class="reason-text"><strong>零依赖部署：</strong>单文件 DB，无需独立 DB 服务；CLI 工具的理想选择</p></div>
+        <div class="reason-item"><div class="reason-num"><p>2</p></div><p class="reason-text"><strong>ACID 事务：</strong>goal 状态写入原子性，agent crash 不会产生半写状态</p></div>
+        <div class="reason-item"><div class="reason-num"><p>3</p></div><p class="reason-text"><strong>跨进程访问：</strong>多个 Codex 实例可读同一 DB（WAL 模式），Claude Code 的内存无此能力</p></div>
+        <div class="reason-item"><div class="reason-num"><p>4</p></div><p class="reason-text"><strong>可审计：</strong>goals、token 消耗、session 历史均可用标准 SQL 查询，无需自定义解析器</p></div>
+        <div class="reason-item"><div class="reason-num"><p>5</p></div><p class="reason-text"><strong>schema 迁移：</strong>rusqlite migration 支持版本化升级，markdown 文件无此能力</p></div>
+      </div>
+      <p class="src-ref">goals.rs:7, state/ crate</p>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code — Markdown 文件</h4>
+      <div class="code-block">
+        <p><span class="comment"># ~/.claude/memory/</span></p>
+        <p>project-guidelines.md</p>
+        <p>personal-preferences.md</p>
+        <p>conversation-notes.md</p>
+        <p><span class="comment">                    ↑</span></p>
+        <p><span class="comment">       手动写入，无结构约束</span></p>
+      </div>
+      <ul>
+        <li>人类可读，LLM 也可读</li>
+        <li>无事务保证，写入中断 = 文件损坏</li>
+        <li>无跨进程锁，并发写入危险</li>
+        <li>内容由用户/LLM 自由决定，无 schema 验证</li>
+      </ul>
+      <div class="callout">
+        <p><strong style="color:var(--accent-coral);">权衡：</strong>Markdown 对人友好，SQLite 对程序友好。Codex 的 goal 是"程序自主执行的目标"，因此选择结构化存储；Claude Code 的 memory 是"给 LLM 读的上下文"，因此选择文本。</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>10 / 13</p></div>
+</body>
+</html>

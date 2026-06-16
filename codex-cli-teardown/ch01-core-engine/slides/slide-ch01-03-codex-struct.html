@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Codex Struct</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.two-col{display:flex;gap:12pt;flex:1;margin-bottom:5pt}
+.code-block{flex:0 0 260pt;background:var(--bg-code);border-radius:4pt;padding:9pt 11pt;border:1pt solid var(--border-subtle)}
+.code-block p{font-family:'Courier New',monospace;font-size:8pt;color:#E6EDF3;margin:0;line-height:1.55}
+.code-block .kw{color:#FF7B72}
+.code-block .ty{color:#79C0FF}
+.code-block .cm{color:#8B949E;font-style:italic}
+.fields-col{flex:1;display:flex;flex-direction:column;gap:5pt}
+.field-row{background:var(--bg-card);border-radius:4pt;padding:6pt 10pt;border-left:2.5pt solid var(--accent-indigo)}
+.field-row h4{font-size:9pt;font-weight:700;margin:0 0 2pt 0;font-family:'Courier New',monospace;color:#79C0FF}
+.field-row p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.compare-row{display:flex;gap:10pt;margin-top:5pt}
+.cc-box{flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt 10pt;border-top:2pt solid var(--accent-coral)}
+.cc-box h4{font-size:9pt;font-weight:700;color:var(--accent-coral);margin:0 0 2pt 0}
+.cc-box p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">03 / 09</p></div>
+<div class="slide-content">
+  <h2><span class="fn" style="font-size:16pt;">Codex</span> struct — 引擎入口的 5 个字段</h2>
+  <div class="two-col">
+    <div class="code-block">
+      <p><span class="cm">// core/src/session/mod.rs:369</span></p>
+      <p><span class="cm">/// queue pair: send submissions,</span></p>
+      <p><span class="cm">/// receive events.</span></p>
+      <p><span class="kw">pub struct</span> <span class="ty">Codex</span> {</p>
+      <p>  <span class="kw">pub</span>(crate) tx_sub: <span class="ty">Sender</span>&lt;<span class="ty">Submission</span>&gt;,</p>
+      <p>  <span class="kw">pub</span>(crate) rx_event: <span class="ty">Receiver</span>&lt;<span class="ty">Event</span>&gt;,</p>
+      <p>  <span class="kw">pub</span>(crate) agent_status:</p>
+      <p>    watch::<span class="ty">Receiver</span>&lt;<span class="ty">AgentStatus</span>&gt;,</p>
+      <p>  <span class="kw">pub</span>(crate) session: <span class="ty">Arc</span>&lt;<span class="ty">Session</span>&gt;,</p>
+      <p>  <span class="kw">pub</span>(crate) session_loop_termination:</p>
+      <p>    <span class="ty">SessionLoopTermination</span>,</p>
+      <p>}</p>
+    </div>
+    <div class="fields-col">
+      <div class="field-row">
+        <h4>tx_sub: Sender&lt;Submission&gt;</h4>
+        <p>入站通道。调用方通过此句柄发送 Op（UserInput / Interrupt / Shutdown …）</p>
+      </div>
+      <div class="field-row">
+        <h4>rx_event: Receiver&lt;Event&gt;</h4>
+        <p>出站通道。引擎产生的所有事件——约 40 种 EventMsg 变体——从此处流出</p>
+      </div>
+      <div class="field-row">
+        <h4>agent_status: watch::Receiver</h4>
+        <p>watch channel：只关心当前状态，旧值被覆盖。TUI 渲染"running / idle / waiting"指示灯</p>
+      </div>
+      <div class="field-row">
+        <h4>session: Arc&lt;Session&gt;</h4>
+        <p>共享内部状态。Arc 让多个异步任务（subscribe / submit / goal_runner）同时持有引用</p>
+      </div>
+      <div class="field-row">
+        <h4>session_loop_termination</h4>
+        <p>Shared future：任何持有 Codex 的代码都可 .await 等待 session loop 退出（优雅关闭）</p>
+      </div>
+    </div>
+  </div>
+  <div class="compare-row">
+    <div class="cc-box">
+      <h4>Claude Code 对照</h4>
+      <p>调用方持有 <span class="fn">QueryEngine</span> 实例，调 <span class="fn">submitMessage(prompt)</span> 返回 <span class="fn">AsyncGenerator&lt;SDKMessage&gt;</span>。调用接口是方法；Codex 的接口是通道句柄。</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 09</p></div>
+</body>
+</html>

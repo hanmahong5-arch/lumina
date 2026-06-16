@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Why JS Shell</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 5pt 0}
+p{font-size:10pt;line-height:1.45;margin:0 0 4pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:9pt}
+.pipeline{display:flex;gap:8pt;align-items:stretch;margin:8pt 0}
+.pstep{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;border-top:2.5pt solid var(--accent-indigo)}
+.pstep h4{font-size:9.5pt;font-weight:700;margin:0 0 2pt 0;color:var(--accent-amber)}
+.pstep p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-top:2pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt;border:1.5pt solid var(--accent-indigo)}
+.compare-col h4,.compare-col-highlight h4{font-size:10.5pt;font-weight:700;margin:0 0 3pt 0}
+.compare-col p,.compare-col-highlight p{font-size:9pt;color:var(--text-secondary);margin:0;line-height:1.4}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">05 / 10</p></div>
+<div class="slide-content">
+  <h2>那 codex-cli（TypeScript）是干什么的？</h2>
+  <p style="color:var(--text-secondary);">打开 <span class="fn">codex-cli/package.json</span>：它是一个<strong style="color:var(--text-primary);">薄壳</strong>，作用是 npm 分发。<span class="fn">npm install -g @openai/codex</span> 能用，就因为这个包存在。它的实际工作只有三步：</p>
+  <div class="pipeline">
+    <div class="pstep"><h4>① 检测平台</h4><p>识别 os / arch（darwin-arm64、linux-x64 …）</p></div>
+    <div class="pstep"><h4>② 下载二进制</h4><p>拉取匹配的预编译 Rust binary</p></div>
+    <div class="pstep"><h4>③ 启动它</h4><p>exec 进 native 引擎，自己退场</p></div>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">这是分发包装器，不是技术债</h4>
+      <p>解决的是"让 Rust 引擎走 npm 安装工作流"这个非技术问题。Cypress、esbuild、SWC 都用同样的"npm 壳 + native binary"模式。</p>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code 无需这一层</h4>
+      <p>它本就是 Node 程序——分发即代码，没有跨语言绑定的复杂度。代价：放弃 native 沙箱能力。</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>05 / 10</p></div>
+</body>
+</html>

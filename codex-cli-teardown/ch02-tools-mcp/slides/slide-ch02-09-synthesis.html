@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Synthesis</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.three-col{display:flex;gap:9pt;margin-bottom:7pt}
+.rcard{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;border-top:2pt solid var(--accent-teal);display:flex;flex-direction:column}
+.rcard.a2{border-top-color:var(--accent-indigo)}
+.rcard.a3{border-top-color:var(--accent-coral)}
+.rcard.a4{border-top-color:var(--accent-amber)}
+.rcard.a5{border-top-color:var(--accent-green)}
+.rcard.a6{border-top-color:#B39DDB}
+.rcard .tag{font-size:7.5pt;font-weight:700;text-transform:uppercase;letter-spacing:0.6pt;margin:0 0 2pt 0;color:var(--text-muted)}
+.rcard h4{font-size:9.5pt;font-weight:700;margin:0 0 3pt 0}
+.rcard p{font-size:8pt;line-height:1.4;color:var(--text-secondary);margin:0}
+.callout{background:#16213E;border-left:3pt solid var(--accent-teal);border-radius:0 4pt 4pt 0;padding:6pt 10pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">09 / 09</p></div>
+<div class="slide-content">
+  <h2>综合：ToolHandler Trait 编码了六个工程决策</h2>
+  <div class="three-col">
+    <div class="rcard">
+      <p class="tag">决策 1</p>
+      <h4 style="color:var(--accent-teal);">Send + Sync 强制约束</h4>
+      <p>工具默认运行于多线程并发上下文——为 ch04 的 64-worker batch jobs 和 v2 multi-agent 服务。</p>
+    </div>
+    <div class="rcard a2">
+      <p class="tag">决策 2</p>
+      <h4 style="color:var(--accent-indigo);">Defensive is_mutating 默认</h4>
+      <p>默认怀疑工具变更环境，approval 是默认开启姿态——呼应 ch03 的"不信任 LLM/工具"威胁模型。</p>
+    </div>
+    <div class="rcard a3">
+      <p class="tag">决策 3</p>
+      <h4 style="color:var(--accent-coral);">pre/post hook 是一等公民</h4>
+      <p>telemetry/audit 内置进 trait——Codex 假设部署在需要审计追溯的企业/合规环境。</p>
+    </div>
+  </div>
+  <div class="three-col">
+    <div class="rcard a4">
+      <p class="tag">决策 4</p>
+      <h4 style="color:var(--accent-amber);">create_diff_consumer streaming hook</h4>
+      <p>实时 UI 反馈是 trait 设计目标——LLM 还没写完 tool call，TUI 已经显示进度。</p>
+    </div>
+    <div class="rcard a5">
+      <p class="tag">决策 5</p>
+      <h4 style="color:var(--accent-green);">关联类型 type Output</h4>
+      <p>每个工具有强类型化输出，不靠 <span class="fn">serde_json::Value</span> 裸传——Rust 类型系统充分利用。</p>
+    </div>
+    <div class="rcard a6">
+      <p class="tag">决策 6</p>
+      <h4 style="color:#B39DDB;">Native RPITIT，无 #[async_trait]</h4>
+      <p>性能洁癖——每次 tool call 不付堆分配代价。Rust 1.75+ 的现代姿势。</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-teal);">总结：</strong><span class="fn">registry.rs:44–92</span> 这 49 行是 Codex 整体哲学（显式、并发、untrusted、可审计、高性能）的浓缩表达。读懂这 49 行，就读懂了 Codex 团队的全套工程价值观。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>09 / 09</p></div>
+</body>
+</html>

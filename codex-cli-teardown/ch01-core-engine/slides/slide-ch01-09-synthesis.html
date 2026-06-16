@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - Synthesis</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.thesis{background:var(--bg-card);border-radius:4pt;padding:9pt 14pt;border-left:3pt solid var(--accent-indigo);margin-bottom:8pt}
+.thesis p{font-size:10.5pt;color:var(--text-primary);line-height:1.5;margin:0}
+.compare-grid{display:flex;gap:12pt;margin-bottom:8pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 12pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 12pt;border:1.5pt solid var(--accent-indigo)}
+h4{font-size:10pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:9pt;line-height:1.45;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+.next-up{display:flex;gap:10pt;align-items:center;background:var(--bg-card);border-radius:4pt;padding:7pt 12pt}
+.next-up p{font-size:9pt;color:var(--text-secondary);margin:0;line-height:1.4}
+.next-label{font-size:8pt;font-weight:700;color:var(--accent-amber);margin:0 0 2pt 0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">09 / 09</p></div>
+<div class="slide-content">
+  <h2>综合：两种设计都是对的</h2>
+  <div class="thesis">
+    <p><strong style="color:var(--accent-teal);">一句话：</strong>Claude Code 选了"借助语言隐含约束的极简模型"，Codex 选了"显式建模并发关注点的可扩展模型"。两边都没错——给定它们不同的目标。</p>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code — 嵌入式引擎</h4>
+      <ul>
+        <li>目标：在 Anthropic SDK 内部工作良好，作为嵌入式引擎</li>
+        <li>调用方拿 AsyncGenerator，直接消费，无多线程/协议序列化负担</li>
+        <li>JS 单线程是助力——天然背压，天然串行，天然简单</li>
+        <li>不需要后台并发 → 不需要付 channel pair 的复杂度税</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex — 可协议消费的独立引擎</h4>
+      <ul>
+        <li>目标：作为独立可执行文件，被 CLI / TUI / VSCode / Web 通过协议消费</li>
+        <li>必须把用户意图建模成可序列化 Op，输出建模成可序列化 Event</li>
+        <li>channel pair 是 Op/Event 协议的天然容器</li>
+        <li>Rust 多线程必要：goal_runtime / mailbox / realtime audio 真正并行</li>
+      </ul>
+    </div>
+  </div>
+  <div class="next-up">
+    <div style="flex:0 0 auto;">
+      <p class="next-label">下一章 ch02</p>
+      <p><strong style="color:var(--text-primary);">工具系统</strong></p>
+    </div>
+    <div>
+      <p>ToolHandler trait 如何把 shell 执行、文件 patch、MCP 调用、批量子 agent spawn、动态用户工具统一到一个 dispatch 模型——与 Claude Code src/tools/* 类继承体系的正面对比。</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>09 / 09</p></div>
+</body>
+</html>

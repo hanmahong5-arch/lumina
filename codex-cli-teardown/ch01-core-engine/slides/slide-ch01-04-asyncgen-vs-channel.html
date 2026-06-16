@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - AsyncGenerator vs Channel Pair</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;margin-bottom:7pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 12pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 12pt;border:1.5pt solid var(--accent-indigo)}
+h4{font-size:10pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:9pt;line-height:1.45;margin:0;padding-left:13pt}
+li{margin-bottom:2.5pt;color:var(--text-secondary)}
+.table-section{background:var(--bg-card);border-radius:4pt;padding:7pt 11pt}
+.table-section h4{font-size:9pt;font-weight:700;color:var(--accent-amber);margin:0 0 4pt 0}
+.trow{display:flex;gap:6pt;padding:2pt 0;border-bottom:0.5pt solid var(--border-subtle)}
+.trow:last-child{border-bottom:none}
+.tcol-prop{flex:0 0 100pt}
+.tcol-ag{flex:1}
+.tcol-ch{flex:1}
+.tcol-prop p{font-size:8pt;font-weight:700;color:var(--text-primary);margin:0}
+.tcol-ag p{font-size:8pt;color:var(--accent-coral);margin:0}
+.tcol-ch p{font-size:8pt;color:var(--accent-teal);margin:0}
+.trow-header .tcol-prop p{color:var(--text-muted)}
+.trow-header .tcol-ag p{color:var(--text-muted)}
+.trow-header .tcol-ch p{color:var(--text-muted)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">04 / 09</p></div>
+<div class="slide-content">
+  <h2>AsyncGenerator vs Channel Pair — 同一问题，两套并发哲学</h2>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">AsyncGenerator（Claude Code）</h4>
+      <ul>
+        <li>借助 JS 语言原生协程：<span class="fn">yield</span> 暂停，<span class="fn">next()</span> 推进</li>
+        <li>调用方 <span class="fn">.return()</span> 取消，触发 <span class="fn">try/finally</span></li>
+        <li>引擎是被动的——消费者不 next 就不前进 = 天然背压</li>
+        <li>单消费者、单线程；不支持后台并发任务</li>
+        <li>承认"JS 只有一根线程"，用语言给的机制</li>
+      </ul>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Channel Pair（Codex）</h4>
+      <ul>
+        <li>生产与消费完全解耦：引擎自主节奏跑 <span class="fn">submission_loop</span></li>
+        <li>引擎推 Event 到 <span class="fn">tx_event</span>，消费者何时消费是消费者的事</li>
+        <li>取消 = 显式 <span class="fn">Op::Interrupt</span> 信号走同一通道</li>
+        <li>多消费者天然（broadcast）、后台任务天然（Tokio 任务）</li>
+        <li>为 goal_runtime / mailbox / realtime audio 并发打开了门</li>
+      </ul>
+    </div>
+  </div>
+  <div class="table-section">
+    <h4>代价与收益对照</h4>
+    <div class="trow trow-header">
+      <div class="tcol-prop"><p>性质</p></div>
+      <div class="tcol-ag"><p>AsyncGenerator (CC)</p></div>
+      <div class="tcol-ch"><p>Channel Pair (Codex)</p></div>
+    </div>
+    <div class="trow">
+      <div class="tcol-prop"><p>背压</p></div>
+      <div class="tcol-ag"><p>天然——消费者不 next 就不推进</p></div>
+      <div class="tcol-ch"><p>需手动——bounded(N) channel 满了 send 阻塞</p></div>
+    </div>
+    <div class="trow">
+      <div class="tcol-prop"><p>多消费者</p></div>
+      <div class="tcol-ag"><p>不行——单消费者</p></div>
+      <div class="tcol-ch"><p>天然——broadcast receiver fan-out</p></div>
+    </div>
+    <div class="trow">
+      <div class="tcol-prop"><p>后台任务</p></div>
+      <div class="tcol-ag"><p>不能——必须有人 next 才推进</p></div>
+      <div class="tcol-ch"><p>天然——Tokio 任务独立跑</p></div>
+    </div>
+    <div class="trow">
+      <div class="tcol-prop"><p>跨线程</p></div>
+      <div class="tcol-ag"><p>不行——JS 没有线程</p></div>
+      <div class="tcol-ch"><p>天然——Send/Sync trait</p></div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">关键洞察：</strong>Codex 选 channel pair 不是因为它"更好"，是因为它<strong style="color:var(--text-primary);">为后台并发打开了门</strong>——goal_runtime、mailbox、realtime audio 同时跑——这些是 AsyncGenerator 从根上不支持的。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>04 / 09</p></div>
+</body>
+</html>

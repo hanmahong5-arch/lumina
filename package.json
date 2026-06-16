@@ -8,6 +8,8 @@
     "build": "node src/cli/index.js build --all",
     "build:watch": "node src/cli/index.js build --all --watch",
     "validate": "node src/cli/index.js validate",
+    "cite": "node src/cli/index.js cite",
+    "web": "node src/cli/index.js web",
     "render": "node src/cli/index.js render",
     "studio": "node src/cli/index.js studio",
     "build:ch00": "node src/cli/index.js build -c ch00-overview-v2",

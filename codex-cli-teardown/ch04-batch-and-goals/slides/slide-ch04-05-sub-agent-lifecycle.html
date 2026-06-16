@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - Sub-Agent Lifecycle</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:14pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 8pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:9pt;line-height:1.4;margin:0;padding-left:13pt}
+li{margin-bottom:3pt;color:var(--text-secondary)}
+p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.compare-grid{display:flex;gap:12pt;flex:1;margin-bottom:6pt}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:11pt 13pt;border:1.5pt solid var(--accent-indigo)}
+.check-item{display:flex;gap:6pt;margin-bottom:4pt;align-items:flex-start}
+.check-item p{margin:0;font-size:9pt;color:var(--text-secondary);line-height:1.4}
+.icon-green{font-size:10pt;color:var(--accent-green);margin:0;line-height:1.3}
+.icon-red{font-size:10pt;color:var(--accent-coral);margin:0;line-height:1.3}
+.callout{background:#16213E;border-left:3pt solid var(--accent-teal);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+.slide-footer p{font-size:7pt;margin:0;color:var(--text-muted)}
+.src-ref{font-size:7pt;color:var(--text-muted);font-family:'Courier New',monospace;margin:3pt 0 0 0}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">05 / 13</p></div>
+<div class="slide-content">
+  <h2>Sub-Agent 生命周期 — 继承与隔离</h2>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h4 style="color:var(--accent-green);">继承自父 Agent</h4>
+      <div class="check-item"><p class="icon-green">✓</p><p>工作目录（<span class="fn">cwd</span>）</p></div>
+      <div class="check-item"><p class="icon-green">✓</p><p>环境变量（<span class="fn">env</span> 块完整复制）</p></div>
+      <div class="check-item"><p class="icon-green">✓</p><p>model 配置（同一 provider、同一 model ID）</p></div>
+      <div class="check-item"><p class="icon-green">✓</p><p>工具权限集（<span class="fn">allowed_tools</span>）</p></div>
+      <div class="check-item"><p class="icon-green">✓</p><p>Shell 配置（<span class="fn">shell</span> 字段）</p></div>
+      <p class="src-ref">multi_agents/build_agent_spawn_config</p>
+    </div>
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-coral);">不继承 — 故意隔离</h4>
+      <div class="check-item"><p class="icon-red">✗</p><p>父 agent 的对话历史（上下文清零）</p></div>
+      <div class="check-item"><p class="icon-red">✗</p><p>父 agent 的内存/缓存状态</p></div>
+      <div class="check-item"><p class="icon-red">✗</p><p>运行中的其他 sub-agent 上下文</p></div>
+      <div class="check-item"><p class="icon-red">✗</p><p>父 goal（sub-agent 没有自动 continue）</p></div>
+      <div class="check-item"><p class="icon-red">✗</p><p>token budget（各自独立计算）</p></div>
+      <p class="src-ref">agent_jobs.rs:13</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-teal);">设计意图：</strong>隔离对话历史是 batch 正确性的关键——每个 worker 对 CSV 行的处理必须幂等、无副作用。如果 worker A 的中间状态污染 worker B，整个 map-reduce 结果不可信。这是刻意的"无共享"架构。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>05 / 13</p></div>
+</body>
+</html>

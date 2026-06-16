@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Linux Landlock + Bubblewrap</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:8.5pt;line-height:1.4;margin:0;padding-left:12pt}
+li{margin-bottom:2pt;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.three-col{display:flex;gap:9pt;margin-bottom:7pt}
+.mcard{flex:1;background:var(--bg-card);border-radius:4pt;padding:7pt 9pt;border-top:2pt solid var(--accent-teal)}
+.mcard h4{font-size:8.5pt;font-weight:700;margin:0 0 3pt 0}
+.mcard p{font-size:7.5pt;color:var(--text-secondary);margin:0 0 2pt 0;line-height:1.3}
+.flow-row{display:flex;align-items:center;gap:6pt;margin:2pt 0 6pt 0}
+.fbox{background:var(--bg-card);border-radius:3pt;padding:4pt 8pt;text-align:center;flex:0 0 auto;border:1pt solid var(--border-subtle)}
+.fbox.highlight{border-color:var(--accent-amber)}
+.fbox p{margin:0;font-size:7.5pt}
+.arr{font-size:10pt;color:var(--accent-teal);flex:0 0 10pt;text-align:center}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">05 / 10</p></div>
+<div class="slide-content">
+  <h2>Linux: Landlock + Bubblewrap — 三层叠加防御</h2>
+  <div class="three-col">
+    <div class="mcard">
+      <h4 style="color:var(--accent-teal);">Landlock LSM (5.13+)</h4>
+      <p>内核 filesystem 强制访问控制。</p>
+      <p>精细限定进程"只能读 cwd 子树、只能写 /tmp 和 cwd"；进程 commit ruleset 后不可更改；<span class="fn">sandboxing/src/landlock.rs</span></p>
+    </div>
+    <div class="mcard">
+      <h4 style="color:var(--accent-teal);">Bubblewrap (bwrap)</h4>
+      <p>用户态 namespace 工具（systemd 家族）。</p>
+      <p>新 mount/PID/user namespace + chroot 到最小化根目录；无需 root（unprivileged user namespace）；<span class="fn">sandboxing/src/bwrap.rs</span></p>
+    </div>
+    <div class="mcard">
+      <h4 style="color:var(--accent-teal);">seccomp-bpf</h4>
+      <p>syscall 级别过滤器。</p>
+      <p>BPF 程序声明哪些 syscall 允许调用；拦截危险的 <span class="fn">ptrace</span>、<span class="fn">mount</span>、<span class="fn">reboot</span> 等；最细粒度的 OS 约束层</p>
+    </div>
+  </div>
+  <div class="flow-row">
+    <div class="fbox"><p>codex (主进程)</p><p style="font-size:6.5pt;color:var(--text-muted);">保持完整权限</p></div>
+    <div class="arr"><p>→</p></div>
+    <div class="fbox"><p>fork()</p></div>
+    <div class="arr"><p>→</p></div>
+    <div class="fbox highlight"><p style="color:var(--accent-amber);font-weight:700;">codex-linux-sandbox</p><p style="font-size:6.5pt;color:var(--text-muted);">helper binary</p></div>
+    <div class="arr"><p>→</p></div>
+    <div class="fbox"><p>user namespace</p><p style="font-size:6.5pt;">+ Landlock commit</p></div>
+    <div class="arr"><p>→</p></div>
+    <div class="fbox"><p>seccomp filter</p></div>
+    <div class="arr"><p>→</p></div>
+    <div class="fbox"><p>exec(cmd)</p><p style="font-size:6.5pt;color:var(--text-muted);">继承全部约束</p></div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">为什么不用 Docker：</strong>Docker 需要 daemon + root；CI 环境通常已在容器中（nesting 噩梦）；bwrap+Landlock 在 unprivileged 模式工作；启动延迟 &lt;100ms vs Docker ~1s。<span class="fn">spawn_command_under_linux_sandbox()</span> 注释说明：不同于 macOS Seatbelt 直接嵌入策略文本，Linux 路径走独立 helper binary，JSON 传递 PermissionProfile。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>05 / 10</p></div>
+</body>
+</html>

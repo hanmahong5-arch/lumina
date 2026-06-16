@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - MCP Integration</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.diagram{display:flex;align-items:stretch;gap:8pt;margin-bottom:8pt}
+.dbox{flex:1;background:var(--bg-card);border-radius:4pt;padding:7pt 10pt;text-align:center;border:1pt solid var(--border-subtle)}
+.dbox.core{border:1.5pt solid var(--accent-indigo)}
+.dbox p{margin:0}
+.dbox .title{font-size:9.5pt;font-weight:700}
+.dbox .sub{font-size:7.5pt;color:var(--text-muted);margin-top:2pt}
+.arrow{flex:0 0 60pt;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.arrow p{margin:0;font-size:8pt;color:var(--accent-teal);font-family:'Courier New',monospace;text-align:center}
+.cols{display:flex;gap:10pt;flex:1}
+.col-box{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt;border-top:2.5pt solid var(--accent-teal)}
+h4{font-size:10pt;font-weight:700;margin:0 0 4pt 0}
+ul{font-size:8.5pt;line-height:1.45;margin:0;padding-left:12pt;color:var(--text-secondary)}
+li{margin-bottom:2.5pt}
+.note{font-size:7.5pt;color:var(--text-muted);font-style:italic;margin:6pt 0 0 0}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:4pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">06 / 09</p></div>
+<div class="slide-content">
+  <h2><span class="fn">codex-mcp</span> Crate — MCP 连接生命周期管理</h2>
+  <div class="diagram">
+    <div class="dbox">
+      <p class="title">MCP Server 1</p>
+      <p class="sub">subprocess / HTTP</p>
+    </div>
+    <div class="arrow"><p>◄──►</p><p>JSON-RPC</p></div>
+    <div class="dbox core">
+      <p class="title">McpConnectionManager</p>
+      <p class="sub"><span class="fn">codex-mcp/src/connection_manager.rs</span></p>
+    </div>
+    <div class="arrow"><p>◄──►</p><p>JSON-RPC</p></div>
+    <div class="dbox">
+      <p class="title">MCP Server N</p>
+      <p class="sub">subprocess / HTTP</p>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="col-box">
+      <h4 style="color:var(--accent-teal);">McpConnectionManager 职责（5 项）</h4>
+      <ul>
+        <li>spawn / 重连每个 MCP server 子进程</li>
+        <li>维护各 server 暴露的 tool schema 列表</li>
+        <li>路由 tool call 到正确的 server</li>
+        <li>处理 server 端 elicitation（inbound "需要用户输入 OAuth code"）</li>
+        <li>配置 hot reload（改 config 无需重启 codex）</li>
+      </ul>
+      <p class="note">模型 tool call → MCP RequestCallTool RPC 的转换：<span class="fn">core/src/mcp_tool_call.rs</span>（属于 core crate，非 codex-mcp）</p>
+    </div>
+    <div class="col-box" style="border-top-color:var(--accent-amber);">
+      <h4 style="color:var(--accent-amber);"><span class="fn">codex-mcp/src/</span> 模块</h4>
+      <ul>
+        <li><span class="fn">lib.rs</span> — 模块组装、公开 API</li>
+        <li><span class="fn">connection_manager.rs</span> — 连接生命周期（McpConnectionManager）</li>
+        <li><span class="fn">tools.rs</span> — MCP tool schema 转换</li>
+        <li><span class="fn">elicitation.rs</span> — server 端 elicitation 流程</li>
+      </ul>
+      <p class="note">AGENTS.md:32 guidance: MCP 相关状态变更走集中入口（connection_manager）</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">架构含义：</strong><span class="fn">codex-mcp</span> 是独立 crate，深度集成 sandbox——spawn MCP server 子进程时自动套用 codex-linux-sandbox policy。npm 现成 MCP SDK 做不到这一点，所以 Codex 自研。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>06 / 09</p></div>
+</body>
+</html>

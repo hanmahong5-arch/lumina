@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - Cover</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.chapter-cover{display:flex;flex-direction:column;justify-content:center;padding:46pt 60pt;flex:1}
+.chapter-number{font-size:56pt;font-weight:700;color:var(--accent-indigo);opacity:0.25;margin:0;line-height:1}
+.chapter-cover h1{font-size:27pt;margin:8pt 0 6pt 0;font-weight:700;line-height:1.2}
+.subtitle{font-size:12pt;color:var(--text-secondary);margin:0}
+.cmp-table{display:flex;gap:10pt;margin:18pt 0 0 0}
+.cmp-row{display:flex;gap:8pt;flex:1}
+.cmp-cell{flex:1;background:var(--bg-card);border-radius:4pt;padding:7pt 10pt}
+.cmp-cell p{font-size:8.5pt;margin:0;color:var(--text-secondary);line-height:1.4}
+.cmp-cell h4{font-size:9pt;font-weight:700;margin:0 0 3pt 0}
+.question{font-size:10.5pt;color:var(--accent-amber);margin-top:14pt;font-style:italic}
+.question p{font-size:10.5pt;color:var(--accent-amber);margin:0;font-style:italic}
+</style>
+</head>
+<body>
+<div class="chapter-cover">
+  <p class="chapter-number">04</p>
+  <h1>Batch Jobs &amp; Goals — The Autonomy Stack</h1>
+  <p class="subtitle">Codex CLI 源码级拆解 · 第 4 章 · 自主性栈（Codex 独有）</p>
+  <div class="cmp-table">
+    <div class="cmp-row">
+      <div class="cmp-cell">
+        <h4 style="color:var(--accent-coral);">Claude Code</h4>
+        <p>Task 工具一次一个子 agent · 主 agent 阻塞等待 · 无跨 turn 持久目标</p>
+      </div>
+      <div class="cmp-cell" style="border:1.5pt solid var(--accent-indigo);">
+        <h4 style="color:var(--accent-teal);">Codex</h4>
+        <p>CSV map-reduce 最多 64 个并发 worker · SQLite 持久化 goal · agent 闲置时自动 continue</p>
+      </div>
+    </div>
+  </div>
+  <div class="question"><p>当 agent 能在你睡觉时自己继续工作，"agent" 这个概念还成立吗？还是它已经变成"自主进程"？</p></div>
+</div>
+</body>
+</html>

