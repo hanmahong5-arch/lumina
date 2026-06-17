@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Defense Matrix</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 3pt 0}
+.lead{font-size:8.5pt;color:var(--text-secondary);margin:0 0 8pt 0}
+.matrix{display:flex;flex-direction:column;gap:3pt;flex:1}
+.mrow{display:flex;gap:3pt}
+.mrow>div{border-radius:2pt;padding:5pt 8pt;display:flex;align-items:center}
+.c-cap{flex:0 0 200pt;background:#1E2D4A}
+.c-cell{flex:1;background:#131B2E;justify-content:center}
+.mrow.head .c-cap,.mrow.head .c-cell{background:#243456}
+.mrow p{margin:0;font-size:8.7pt;color:var(--text-secondary)}
+.mrow.head p{font-weight:700;color:var(--accent-teal);font-size:8.5pt}
+.yes{color:var(--accent-green);font-weight:700}
+.partial{color:var(--accent-amber);font-weight:700}
+.no{color:var(--text-muted)}
+.cell-txt{font-size:7.6pt;color:var(--text-secondary)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:8.7pt;color:var(--text-secondary);line-height:1.45;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">08 / 14</p></div>
+<div class="slide-content">
+  <h2>纵深防御:每种越界,至少被一层挡住</h2>
+  <p class="lead">为什么要三层?因为单层都有盲区。把「攻击者想做的事」对「三道机制」连成一张矩阵就清楚了。</p>
+  <div class="matrix">
+    <div class="mrow head"><div class="c-cap"><p>攻击者想做的事</p></div><div class="c-cell"><p>Landlock(文件访问)</p></div><div class="c-cell"><p>Namespace + bwrap(隔离)</p></div><div class="c-cell"><p>seccomp(syscall 过滤)</p></div></div>
+    <div class="mrow"><div class="c-cap"><p>写系统目录 <span style="font-family:'Courier New',monospace;font-size:7.6pt;color:#79C0FF;">/etc</span></p></div><div class="c-cell"><p class="yes">✓ <span class="cell-txt">拒绝写</span></p></div><div class="c-cell"><p class="partial">~ <span class="cell-txt">mount ns</span></p></div><div class="c-cell"><p class="no">—</p></div></div>
+    <div class="mrow"><div class="c-cap"><p>ptrace 偷别的进程内存</p></div><div class="c-cell"><p class="no">—</p></div><div class="c-cell"><p class="partial">~ <span class="cell-txt">pid ns 限范围</span></p></div><div class="c-cell"><p class="yes">✓ <span class="cell-txt">过滤 ptrace</span></p></div></div>
+    <div class="mrow"><div class="c-cap"><p>mount 挂载文件系统</p></div><div class="c-cell"><p class="no">—</p></div><div class="c-cell"><p class="yes">✓ <span class="cell-txt">mount ns</span></p></div><div class="c-cell"><p class="yes">✓ <span class="cell-txt">过滤 mount</span></p></div></div>
+    <div class="mrow"><div class="c-cap"><p>开 socket 对外偷传</p></div><div class="c-cell"><p class="no">—</p></div><div class="c-cell"><p class="yes">✓ <span class="cell-txt">net ns + 代理</span></p></div><div class="c-cell"><p class="partial">~</p></div></div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">读法:</strong>每一行都至少有一个 <span class="yes">✓</span> —— 没有哪种越界能同时绕过三层。这就是「纵深防御」:Landlock 管文件、namespace 管隔离、seccomp 管系统调用,互补盲区。<strong style="color:var(--text-primary);">旧内核没有 Landlock?</strong>优雅降级到 bwrap + seccomp,而不是直接裸奔。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>08 / 14</p></div>
+</body>
+</html>

@@ -1,22 +1,22 @@
 {
   "ch00-architecture-overview": {
-    "fingerprint": "82ef50f0843e90a8e26938ce910ffaa4",
-    "timestamp": "2026-06-15T15:31:02.729Z"
+    "fingerprint": "d38ce0e545626aaa2829d4d3febbf528",
+    "timestamp": "2026-06-17T02:44:04.243Z"
   },
   "ch02-tools-mcp": {
-    "fingerprint": "735121243a7a96eb9cdbb39d25ff33fb",
-    "timestamp": "2026-06-16T02:38:06.098Z"
+    "fingerprint": "ddff88c3931a7cd415968de93c4be361",
+    "timestamp": "2026-06-17T02:44:04.163Z"
   },
   "ch01-core-engine": {
-    "fingerprint": "f9eca0e9bdfbef343be244a15501e2fb",
-    "timestamp": "2026-06-16T02:38:06.064Z"
+    "fingerprint": "ece79189aa4223c6aa8bbc6c2dc3351b",
+    "timestamp": "2026-06-17T02:44:04.191Z"
   },
   "ch03-sandbox-native": {
-    "fingerprint": "d0a16e672f4c5e0cd21fbd4f03eae3a1",
-    "timestamp": "2026-06-16T02:38:06.161Z"
+    "fingerprint": "f01fdb3a7cd04422564bc431048cdb31",
+    "timestamp": "2026-06-17T02:44:06.552Z"
   },
   "ch04-batch-and-goals": {
-    "fingerprint": "719a11080e50be9990bf00314cf03f0c",
-    "timestamp": "2026-06-16T02:38:08.723Z"
+    "fingerprint": "e8f7409f90e3ac253910710de966e519",
+    "timestamp": "2026-06-17T02:44:06.914Z"
   }
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - CSV Batch Example</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 5pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.top{display:flex;gap:10pt;margin-bottom:7pt}
+.csv{flex:0 0 50%;background:var(--bg-code);border-radius:3pt;padding:6pt 9pt}
+.csv p{font-family:'Courier New',monospace;font-size:7.6pt;color:var(--text-secondary);margin:0;line-height:1.45}
+.csv .h{color:var(--accent-teal)}
+.params{flex:1;display:flex;flex-direction:column;gap:3pt;justify-content:center}
+.param{background:var(--bg-card);border-radius:3pt;padding:3pt 9pt}
+.param p{font-size:8.2pt;color:var(--text-secondary);margin:0}
+.slots{display:flex;gap:2pt;margin:0 0 3pt 0;flex-wrap:wrap}
+.slot{width:16pt;height:9pt;border-radius:2pt;background:var(--accent-teal)}
+.slot.q{background:var(--border-subtle)}
+.slabel{font-size:7.5pt;color:var(--text-muted);margin:0 0 6pt 0}
+.steps{display:flex;flex-direction:column;gap:3pt}
+.st{display:flex;gap:7pt}
+.st .n{flex:0 0 13pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-amber);margin:0}
+.st p{font-size:8.4pt;color:var(--text-secondary);margin:0;line-height:1.3}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">04 / 16</p></div>
+<div class="slide-content">
+  <h2>worked example:用一个 CSV 跑 1000 个子任务</h2>
+  <div class="top">
+    <div class="csv">
+      <p class="h">csv_path → tasks.csv</p>
+      <p>id, prompt, output</p>
+      <p>1, "翻译第1段为英文", </p>
+      <p>2, "总结第2章要点", </p>
+      <p>3, "给函数加注释", </p>
+      <p>… 共 1000 行</p>
+    </div>
+    <div class="params">
+      <div class="param"><p><span class="fn">max_concurrency</span> = 16(默认值,可调,上限 64)</p></div>
+      <div class="param"><p><span class="fn">max_runtime_seconds</span> = 30 min / 单项</p></div>
+      <div class="param"><p>每行 = 一个独立 sub-agent;结果逐行写回 <span class="fn">output_csv_path</span></p></div>
+    </div>
+  </div>
+  <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot q"></div><div class="slot q"></div><div class="slot q"></div><div class="slot q"></div></div>
+  <p class="slabel">▮ 16 个在跑(active_items) ·　▯ 984 行排队等空位</p>
+  <div class="steps">
+    <div class="st"><p class="n">1</p><p>当 <span class="fn">active_items.len() &lt; max_concurrency</span>(agent_jobs.rs:519),就取下一行起一个 sub-agent 放进 active set</p></div>
+    <div class="st"><p class="n">2</p><p><span class="fn">FuturesUnordered</span> 等「任一」item 状态变化(agent_jobs.rs:791);250ms 兜底轮询</p></div>
+    <div class="st"><p class="n">3</p><p>某 item 完成 → 把它的结果写进 output CSV 一行 → 从 active_items <strong style="color:var(--text-primary);">移除,腾出一个空位</strong></p></div>
+    <div class="st"><p class="n">4</p><p>回到第 1 步补位,直到 1000 行跑完 —— 始终最多 16 个并发,内存/配额可控</p></div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>04 / 16</p></div>
+</body>
+</html>

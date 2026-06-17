@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - Autonomy Race &amp; Runaway</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:11pt 28pt 5pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 6pt 0}
+.sec-label{font-size:8.5pt;font-weight:700;color:var(--accent-amber);margin:0 0 3pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:7.8pt}
+.flow{display:flex;align-items:center;gap:5pt;margin-bottom:8pt}
+.fbox{background:var(--bg-card);border-radius:3pt;padding:4pt 8pt;border-top:2pt solid var(--accent-indigo)}
+.fbox p{font-size:8pt;color:var(--text-secondary);margin:0}
+.farr{font-size:10pt;color:var(--accent-teal);margin:0}
+.fbox.win{border-top-color:var(--accent-green)}
+.log{display:flex;flex-direction:column;gap:2pt;flex:1}
+.lrow{display:flex;gap:5pt}
+.lrow>div{border-radius:2pt;padding:3pt 8pt}
+.c-turn{flex:0 0 64pt;background:#1E2D4A}
+.c-tok{flex:0 0 150pt;background:#131B2E}
+.c-st{flex:1;background:#131B2E}
+.lrow.head>div{background:#1E2D4A}
+.lrow p{font-size:8.5pt;margin:0;color:var(--text-secondary)}
+.lrow.head p{font-weight:700;color:var(--accent-teal);font-size:8pt}
+.lrow.limit .c-tok,.lrow.limit .c-st{background:rgba(255,107,107,0.13)}
+.lrow.limit p{color:var(--accent-coral);font-weight:700}
+.mono{font-family:'Courier New',monospace}
+.callout{background:#16213E;border-left:3pt solid var(--accent-green);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">12 / 16</p></div>
+<div class="slide-content">
+  <h2>自主的两个「沉睡成本」:竞态 与 续命失控</h2>
+  <p class="sec-label">① 竞态:用户在续命中途输入会怎样?</p>
+  <div class="flow">
+    <div class="fbox"><p>Session 空闲</p></div>
+    <p class="farr">→</p>
+    <div class="fbox"><p><span class="fn">MaybeContinueIfIdle</span> 触发</p></div>
+    <p class="farr">→</p>
+    <div class="fbox"><p>但此刻用户正输入</p></div>
+    <p class="farr">→</p>
+    <div class="fbox win"><p>推迟到下次空闲 · 用户优先</p></div>
+  </div>
+  <p class="sec-label">② 续命失控:提示注入让目标自主续命,token budget 是唯一硬刹车(<span class="fn">thread_goals</span> 表,逐步可审计)</p>
+  <div class="log">
+    <div class="lrow head"><div class="c-turn"><p>turn</p></div><div class="c-tok"><p>tokens_used / token_budget</p></div><div class="c-st"><p>status</p></div></div>
+    <div class="lrow"><div class="c-turn"><p class="mono">2</p></div><div class="c-tok"><p class="mono">5,000 / 10,000</p></div><div class="c-st"><p>Active —— 注入的「忽略原目标」仍在上下文</p></div></div>
+    <div class="lrow"><div class="c-turn"><p class="mono">3</p></div><div class="c-tok"><p class="mono">8,000 / 10,000</p></div><div class="c-st"><p>Active —— 用户尚未察觉</p></div></div>
+    <div class="lrow"><div class="c-turn"><p class="mono">4</p></div><div class="c-tok"><p class="mono">9,950 / 10,000</p></div><div class="c-st"><p>Active —— 逼近上限</p></div></div>
+    <div class="lrow limit"><div class="c-turn"><p class="mono">5</p></div><div class="c-tok"><p class="mono">10,000 / 10,000</p></div><div class="c-st"><p>BudgetLimited → 注入 budget_limit 模板 → 目标总结并退出</p></div></div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-green);">没有预算就没有刹车:</strong>注入的目标会无限续命、无人察觉。<span class="fn">BudgetLimitSteering</span>(<span class="fn">goals.rs:868</span>)在 <span class="fn">tokens_used</span> 触顶时改写 system prompt 令其收尾 —— 每一步都落在 SQLite <span class="fn">thread_goals</span> 里,可审计、到顶即止。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>12 / 16</p></div>
+</body>
+</html>

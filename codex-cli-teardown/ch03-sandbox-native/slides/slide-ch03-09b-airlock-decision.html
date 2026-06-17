@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Airlock Decision</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 4pt 0}
+.analogy{background:var(--bg-card);border-radius:4pt;padding:6pt 11pt;border-left:3pt solid var(--accent-teal);margin-bottom:8pt}
+.analogy p{font-size:8.7pt;color:var(--text-secondary);margin:0;line-height:1.4}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.qline{font-size:9.5pt;font-weight:700;color:var(--accent-amber);margin:0 0 6pt 0;text-align:center}
+.tree{display:flex;gap:9pt;flex:1}
+.branch{flex:1;background:var(--bg-card);border-radius:4pt;padding:8pt 10pt;display:flex;flex-direction:column}
+.branch .q{font-size:8.5pt;color:var(--text-secondary);margin:0 0 5pt 0;line-height:1.35;flex:1}
+.branch .pick{font-size:10pt;font-weight:700;margin:0}
+.branch .note{font-size:7.3pt;color:var(--text-muted);margin:2pt 0 0 0}
+.b-codex{border-top:2.5pt solid var(--accent-teal)}
+.b-other{border-top:2.5pt solid var(--text-muted)}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">13 / 14</p></div>
+<div class="slide-content">
+  <h2>该用哪种沙箱?——气闸舱决策树</h2>
+  <div class="analogy"><p><strong style="color:var(--accent-teal);">类比:沙箱 = 气闸舱(airlock)。</strong>宇航员进出舱不与真空直接相连,中间隔一个受控腔体——沙箱就是 agent 与你系统之间那个「进出都要过检」的中间腔。腔体越厚越安全,但每次进出越慢。选型 = 选腔体厚度。</p></div>
+  <p class="qline">你的场景是哪一个?</p>
+  <div class="tree">
+    <div class="branch b-codex">
+      <p class="q">会执行 LLM 生成的命令,或接入不可信 MCP server?</p>
+      <p class="pick" style="color:var(--accent-teal);">→ Codex</p>
+      <p class="note">OS 级沙箱,~100ms 起、unprivileged,刚好够厚</p>
+    </div>
+    <div class="branch b-codex">
+      <p class="q">要批量自动跑成百上千个任务?</p>
+      <p class="pick" style="color:var(--accent-teal);">→ Codex</p>
+      <p class="note">沙箱 + 批处理,每个子任务都在腔体内</p>
+    </div>
+    <div class="branch b-other">
+      <p class="q">高安全多租户 / CI,要完整内核级隔离?</p>
+      <p class="pick" style="color:var(--text-secondary);">→ gVisor / 容器</p>
+      <p class="note">腔体更厚,代价是更重、更慢</p>
+    </div>
+    <div class="branch b-other">
+      <p class="q">个人开发机,信任自己写的 prompt?</p>
+      <p class="pick" style="color:var(--accent-coral);">→ Claude Code</p>
+      <p class="note">权限弹窗够用,无需 OS 沙箱</p>
+    </div>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>13 / 14</p></div>
+</body>
+</html>

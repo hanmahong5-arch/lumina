@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 04 - Panic Isolation</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 3pt 0}
+.lead{font-size:8.5pt;color:var(--text-secondary);margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.lanes{display:flex;gap:12pt;flex:1}
+.lane{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt;display:flex;flex-direction:column}
+.lane-hl{border:1.5pt solid var(--accent-teal)}
+.lane h4{font-size:10.5pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:8.7pt;line-height:1.4;margin:0;padding-left:14pt}
+li{margin-bottom:3.5pt;color:var(--text-secondary)}
+.outcome{margin-top:auto;border-radius:3pt;padding:4pt 8pt}
+.outcome p{font-size:8.8pt;font-weight:700;margin:0}
+.ok{background:rgba(72,187,120,0.14)}
+.bad{background:rgba(255,107,107,0.14)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-amber);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:8.8pt;color:var(--text-secondary);line-height:1.45;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">06 / 16</p></div>
+<div class="slide-content">
+  <h2>第 7 个子任务崩了,其余 15 个会怎样?</h2>
+  <p class="lead">这是「批处理是否可靠」的关键问题 —— 一个失败,是局部记一笔,还是整批连坐?</p>
+  <div class="lanes">
+    <div class="lane lane-hl">
+      <h4 style="color:var(--accent-teal);">Codex —— 独立 item,失败即隔离</h4>
+      <ul>
+        <li>每行 = 一个独立 sub-agent item,彼此无共享可变状态</li>
+        <li>第 7 个出错 → 记入 <span class="fn">failed_item_errors</span>,该 item 从 <span class="fn">active_items</span> 移除</li>
+        <li>腾出的空位立刻被下一行补上,其余 15 个<strong style="color:var(--text-primary);">毫不受影响</strong></li>
+        <li>最终:1000 行里 999 成功 + 1 条带错误原因的记录</li>
+      </ul>
+      <div class="outcome ok"><p style="color:var(--accent-green);">✓ 失败是局部的,产线不停</p></div>
+    </div>
+    <div class="lane">
+      <h4 style="color:var(--accent-coral);">JS <span class="fn" style="font-size:9pt;">Promise.all([...])</span> —— 全有或全无</h4>
+      <ul>
+        <li>把所有任务塞进一个 <span class="fn">Promise.all</span></li>
+        <li>任一 reject → 整个 <span class="fn">Promise.all</span> 立刻 reject</li>
+        <li>已经跑完的结果一起被丢弃(除非额外写容错代码)</li>
+        <li>要隔离失败,得手动 <span class="fn">allSettled</span> + 自建并发限流</li>
+      </ul>
+      <div class="outcome bad"><p style="color:var(--accent-coral);">✗ 一个倒下,整批连坐</p></div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-amber);">类比:</strong>Codex 像个按「在岗 ≤ 16」调度的工头 —— 某工人倒下,就记一笔工伤、把他撤下、补个新人进来,<strong style="color:var(--text-primary);">产线不停</strong>。Promise.all 像一根串联的保险丝:任何一处烧断,整条线立刻全灭。批处理要的正是前者的容错。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>06 / 16</p></div>
+</body>
+</html>

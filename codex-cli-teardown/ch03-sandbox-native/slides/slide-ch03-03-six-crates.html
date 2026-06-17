@@ -32,7 +32,7 @@ h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
 </style>
 </head>
 <body>
-<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">03 / 10</p></div>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">04 / 14</p></div>
 <div class="slide-content">
   <h2>沙箱子系统：6 个 Crate 的分工</h2>
   <div class="crate-row">
@@ -71,6 +71,6 @@ h4{font-size:10pt;font-weight:700;margin:0 0 3pt 0}
   </div>
   <div class="callout"><p><strong style="color:var(--accent-indigo);">为什么 Linux 沙箱是独立可执行文件：</strong>Landlock 的 "process commits to a ruleset" API 决定了必须先 fork → 子进程 commit ruleset → exec 命令。在主进程加 ruleset 会污染主进程。<span class="fn">codex-linux-sandbox</span> 是这个 fork-and-exec 的牺牲者。<span class="fn">core/src/landlock.rs:22</span> 是调用入口。</p></div>
 </div>
-<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 10</p></div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>04 / 14</p></div>
 </body>
 </html>

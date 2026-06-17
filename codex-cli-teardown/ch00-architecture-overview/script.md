@@ -1,6 +1,6 @@
 # Chapter 0 (Codex): Architecture Overview — The Rust + JS Split
 
-## ⏱️ Target Duration: ~30 minutes | 📑 ~12 slides | 📝 ~5,500 words
+## ⏱️ Target Duration: ~30 minutes | 📑 ~13 slides | 📝 ~5,500 words
 
 ### Core Source Files Referenced
 
@@ -63,6 +63,20 @@ Note the three bolded groups — **sandbox (6 crates), persistence (6 crates), r
 **对比**：Claude Code 的 `src/` 是单一 TypeScript 包，约 200 个文件，没有"crate 边界"的概念。所有代码住在一个 npm 包里。这不是说 Claude Code 没有模块化——它有 `src/tools/`、`src/services/`、`src/utils/`——但模块边界是社会约定，不是构建系统强制。Codex 的 85 个 crate 是构建系统强制的边界，编译期就检查依赖关系。
 
 **Comparison**: Claude Code's `src/` is a single TypeScript package, about 200 files, no concept of "crate boundaries." All code lives in one npm package. That's not to say Claude Code lacks modularity — it has `src/tools/`, `src/services/`, `src/utils/` — but boundaries are social convention, not build-system enforced. Codex's 85 crates are compile-time enforced boundaries with explicit dependency declarations.
+
+---
+
+### Slide 2b: 引擎舱 vs 仪表盘
+
+为什么一个产品要用两种语言？把 Codex 想成一辆车：重活在**引擎舱**，操作在**仪表盘**，两者用「线控」连接。
+
+`codex-rs`（Rust 核）是引擎舱——原生沙箱、网络代理、协议、持久化、模型客户端、并发调度，85+ crate 编译进独立 native 二进制。对应汽车的发动机 + 变速箱 + 制动系统：换掉它需要大手术。
+
+`codex-cli`（JS 壳）是仪表盘——`npm install -g` 分发、检测平台、下载并启动对应的 native binary，然后退出画面。薄壳，无 agent 逻辑，对应中控屏 + 钥匙。「线控」就是 `Submission/Event` 协议：仪表盘只能发指令，从不直接碰引擎内部。
+
+**对比 Claude Code**：它把引擎和仪表盘**焊死在一辆车里**——全栈 TypeScript、同进程，没有「线控」边界。好处是简单；代价是引擎换不动（拿不到原生沙箱），也没法让别的仪表盘（IDE、Web、移动端）复用同一台引擎。
+
+Why does one product use two languages? Think of Codex as a car: heavy work happens in the **engine bay** (`codex-rs` / Rust core), operation happens from the **dashboard** (`codex-cli` / JS shell), connected by "drive-by-wire." The dashboard sends commands over the `Submission/Event` protocol and never directly touches the engine internals. Claude Code welds the two together in one TypeScript process — simpler, but the engine can't be swapped out, and no other dashboard can reuse it.
 
 ---
 
@@ -158,6 +172,24 @@ Open `codex-cli/package.json`: it's a **thin shell** whose job is npm distributi
 
 ---
 
+### Slide 6b: 追一条消息穿过边界
+
+抽象说"两种消息类型"不够直观，我们跟着 `id="sub_42"` 这一个消息走一次完整来回。
+
+**步骤 ①**：前端调用 `tx_sub.send(Submission{ id:"sub_42", op })`，序列化为带 `type` 标签的 JSON，经 WebSocket 发往引擎。
+
+**步骤 ②**：引擎的 `submission_loop` 在 `rx_sub.recv()` 收到消息，按 `op` 的类型派发给对应处理器（`handlers.rs:962`），启动一个 turn。
+
+**步骤 ③**：引擎处理完成后，调用 `send_event(Event{ id:"sub_42", msg })` 把事件回传。关键点：**一个 Submission 可以产出多个 Event**，所有这些 Event 共享同一个 `id`——前端用这个 `id` 把事件关联回它发出的那条请求。
+
+**步骤 ④**：前端的 `rx_event` 收到事件，按 `id` 索引，更新 UI 或触发下一步。
+
+始终**不穿越边界**的：工具的原始执行结果、模型 API 原始响应、沙箱/文件系统/进程状态、API key——全部由引擎独占。前端拿到的永远是「消化后的事件」。这既是安全边界，也是「引擎可被多前端复用」的前提条件。
+
+Following `id="sub_42"` across the boundary: ① frontend sends `Submission{id, op}` as tagged JSON over WebSocket; ② `submission_loop` receives it at `rx_sub.recv()` and dispatches to a turn handler (`handlers.rs:962`); ③ engine calls `send_event(Event{id:"sub_42", msg})` — one Submission can produce **multiple** Events sharing the same `id`; ④ frontend correlates Events back to the originating Submission by `id`. Raw tool results, model API responses, sandbox state, and API keys never cross — the frontend only ever receives digested events.
+
+---
+
 ### [19:30] Slide 6: Codex's Persistence Stack — Six Crates
 
 注意之前那张幻灯片的"持久化（6 crate）"分组：
@@ -185,6 +217,20 @@ Open `codex-cli/package.json`: it's a **thin shell** whose job is npm distributi
 - Claude Code assumes the agent is primarily a **current-session** tool — cross-session state is human-maintained (you write CLAUDE.md by hand)
 
 ch04 会展开 Codex 的 goal_runtime + state-db 怎么和这些 persistence crate 配合实现"agent 闲置时自动 continue 一个目标"。
+
+---
+
+### Slide 7b: 场景：写状态写到一半，进程崩了
+
+六个持久化 crate 值不值？用一个崩溃场景直接检验——长任务里崩溃是常态，不是意外。
+
+**Codex 端**：状态写入在一个 SQLite 事务里（`thread_goals` 表）。崩溃发生在 commit 前，整笔**回滚**，旧状态完好无损；WAL 模式 + ACID 保证不会出现「写一半」的中间态。重启后直接查询：`SELECT objective, status, tokens_used FROM thread_goals WHERE status='Active'`，状态**可恢复、可审计、可继续**。
+
+**Claude Code 端**：状态写进 `~/.claude/memory/` 下的 `.md` 文件，没有事务边界。写到一半崩溃，文件半截损坏；下次启动可能解析报错，也可能静默读到脏数据，状态悄悄丢失。胜在简单可读——能直接 `cat` 出来，适合人来维护的当前会话场景。
+
+**假设之差**：Codex 假设 agent 会长期、跨会话、可能崩溃地自主运行，所以状态必须工业化、事务化；Claude Code 假设以当前会话为主、状态由人维护，markdown 足够。两个选择都对——取决于你押 agent 在哪种工作模式里。
+
+**Crash scenario**: Codex writes state inside a SQLite transaction (`thread_goals` table) — a mid-write crash rolls back cleanly, WAL + ACID prevents partial state. After restart: `SELECT objective, status, tokens_used FROM thread_goals WHERE status='Active'` returns clean data. Claude Code writes to `.md` files under `~/.claude/memory/` — no transaction boundary, so a mid-write crash can leave a half-corrupted file or silently dirty data. Simple and human-readable, but no crash guarantee. The difference reflects the underlying assumption: autonomous long-running agent (Codex) vs. human-maintained current-session tool (Claude Code).
 
 ---
 

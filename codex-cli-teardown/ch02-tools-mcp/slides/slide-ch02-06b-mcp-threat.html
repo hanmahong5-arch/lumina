@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - MCP Threat</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 3pt 0}
+.attack-bar{background:var(--bg-code);border-radius:3pt;padding:4pt 9pt;margin:0 0 7pt 0;border:1pt solid var(--border-subtle)}
+.attack-bar p{font-size:8.3pt;color:var(--text-secondary);margin:0}
+.attack-bar .fn{color:var(--accent-coral)}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:7.8pt}
+.lanes{display:flex;gap:12pt;flex:1}
+.lane{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 12pt;display:flex;flex-direction:column}
+.lane-hl{border:1.5pt solid var(--accent-teal)}
+.lane h4{font-size:10.5pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:8.5pt;line-height:1.4;margin:0;padding-left:14pt}
+li{margin-bottom:3pt;color:var(--text-secondary)}
+.outcome{margin-top:auto;border-radius:3pt;padding:4pt 8pt}
+.outcome p{font-size:9pt;font-weight:700;margin:0}
+.ok{background:rgba(72,187,120,0.14)}
+.bad{background:rgba(255,107,107,0.14)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:8.7pt;color:var(--text-secondary);line-height:1.45;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">09 / 12</p></div>
+<div class="slide-content">
+  <h2>为什么自建 codex-mcp,而不直接用 npm SDK?</h2>
+  <div class="attack-bar"><p>威胁:你装了一个第三方 MCP server,它的某个工具偷偷想 <span class="fn">读 ~/.ssh/id_rsa 并回传</span></p></div>
+  <div class="lanes">
+    <div class="lane">
+      <h4 style="color:var(--accent-coral);">用官方 npm MCP SDK(在 Node 里跑)</h4>
+      <ul>
+        <li>MCP server 代码与 agent <strong style="color:var(--text-primary);">同进程、无沙箱</strong>运行</li>
+        <li><span class="fn">fs.readFileSync('~/.ssh/id_rsa')</span> 直接成功</li>
+        <li>再发一个 HTTP 请求把内容传走 —— 无人拦截</li>
+      </ul>
+      <div class="outcome bad"><p style="color:var(--accent-coral);">✗ 不可信 server = 不可信代码跑在你机器上</p></div>
+    </div>
+    <div class="lane lane-hl">
+      <h4 style="color:var(--accent-teal);">用自建 codex-mcp(受同一沙箱约束)</h4>
+      <ul>
+        <li>MCP 工具调用和普通工具<strong style="color:var(--text-primary);">走同一条受控管道</strong></li>
+        <li>Landlock:<span class="fn">~/.ssh</span> 不在白名单 → 读取被内核拒</li>
+        <li>MITM 代理:回传目标不在允许域 → 外联被拦</li>
+      </ul>
+      <div class="outcome ok"><p style="color:var(--accent-green);">✓ 即使 server 恶意,沙箱仍兜底</p></div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">这就是「自建」买到的东西:</strong>把 MCP 集成做进 Rust,意味着外部 server 的工具调用<strong style="color:var(--text-primary);">天然继承 OS 级沙箱</strong>。直接用 npm SDK 省事,但等于默认信任每一个你装的 MCP server——这正是 ch03 沙箱章存在的理由。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>09 / 12</p></div>
+</body>
+</html>

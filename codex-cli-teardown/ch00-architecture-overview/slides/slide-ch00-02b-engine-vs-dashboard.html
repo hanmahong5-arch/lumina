@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Engine vs Dashboard</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 3pt 0}
+.lead{font-size:9pt;color:var(--text-secondary);margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8.5pt}
+.two{display:flex;gap:12pt;margin-bottom:7pt}
+.acard{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 13pt}
+.acard .em{font-size:13pt;font-weight:700;margin:0 0 1pt 0}
+.acard .sub{font-size:8pt;color:var(--text-muted);margin:0 0 5pt 0}
+.acard p{font-size:8.5pt;color:var(--text-secondary);margin:0 0 3pt 0;line-height:1.35}
+.callout{background:#16213E;border-left:3pt solid var(--accent-coral);border-radius:0 4pt 4pt 0;padding:6pt 10pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.45;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">03 / 13</p></div>
+<div class="slide-content">
+  <h2>类比:引擎舱 与 仪表盘</h2>
+  <p class="lead">为什么一个产品要用两种语言?把 Codex 想成一辆车——重活在引擎舱,操作在仪表盘,两者用「线控」连接。</p>
+  <div class="two">
+    <div class="acard" style="border-top:2.5pt solid var(--accent-teal);">
+      <p class="em" style="color:var(--accent-teal);">🔧 引擎舱 = <span class="fn" style="font-size:12pt;">codex-rs</span>(Rust 核)</p>
+      <p class="sub">干重活,要功率与精密</p>
+      <p>· 原生沙箱、网络代理、协议、持久化、模型客户端、并发调度</p>
+      <p>· 85+ crate,编译期边界,编译进独立 native 二进制</p>
+      <p>· 对应汽车:发动机 + 变速箱 + 制动系统</p>
+    </div>
+    <div class="acard" style="border-top:2.5pt solid var(--accent-amber);">
+      <p class="em" style="color:var(--accent-amber);">📋 仪表盘/外壳 = <span class="fn" style="font-size:12pt;">codex-cli</span>(JS 壳)</p>
+      <p class="sub">让你顺手用上引擎,不碰重活</p>
+      <p>· <span class="fn">npm install -g</span> 分发、检测平台、下载并启动 native binary</p>
+      <p>· 薄壳,无 agent 逻辑;对应汽车:中控屏 + 钥匙</p>
+      <p>· 「线控」= 前端只通过 <span class="fn">Submission/Event</span> 协议操作引擎</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-coral);">对比 Claude Code:</strong>它把引擎和仪表盘<strong style="color:var(--text-primary);">焊死在一辆车里</strong>——全栈 TypeScript、同进程,没有「线控」边界。好处是简单;代价是引擎换不动(拿不到原生沙箱),也没法让别的「仪表盘」(IDE / Web / 移动端)复用同一台引擎。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 13</p></div>
+</body>
+</html>

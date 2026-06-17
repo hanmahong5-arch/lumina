@@ -1,6 +1,6 @@
 # Chapter 2 (Codex): Tools & MCP — Trait-based Dispatch with Compile-Time Concurrency Guarantees
 
-## ⏱️ Target Duration: ~45 minutes | 📑 ~20 slides | 📝 ~7,500 words
+## ⏱️ Target Duration: ~45 minutes | 📑 12 slides | 📝 ~7,500 words
 
 > **The "less differentiated but most pedagogical" chapter.** Both Codex and Claude Code have tool systems and MCP integration — same problem domain. The interesting question is **how the language's type system shapes the abstraction**. Rust's trait + `Send + Sync` bound vs TypeScript's class hierarchy — same dispatch goal, different compile-time guarantees.
 >
@@ -132,6 +132,18 @@ Look how all async methods in the trait use `-> impl std::future::Future<Output 
 
 ---
 
+### [13:00] Slide 3b: 为什么不能 `Vec<Box<dyn ToolHandler>>`？——E0038 与两种抽象的根本差别
+
+最直觉的写法：把 18 个 handler 放进一个 `Vec<Box<dyn ToolHandler>>` 循环 dispatch。Rust 不让。编译器给出 `error[E0038]: the trait ToolHandler cannot be made into an object`——原因是 `fn handle(&self, inv) -> impl Future` 这个 RPITIT 返回值：每个实现各有不同的具体 Future 类型，无法塞进统一 vtable，所以没有 `dyn ToolHandler`。这是 Slide 3 所述 RPITIT 性能决策的直接后果。Codex 的解法是 enum + match 静态分派（下一页详解）。
+
+The most intuitive approach — put all 18 handlers in a `Vec<Box<dyn ToolHandler>>` and loop to dispatch — won't compile. The compiler issues `error[E0038]: the trait ToolHandler cannot be made into an object` because `fn handle` returns `impl Future` (RPITIT): each implementation has a distinct concrete Future type that can't fit a shared vtable, so `dyn ToolHandler` is impossible. This is the direct consequence of the RPITIT performance choice from Slide 3. Codex's solution: enum + match compile-time dispatch (next slide).
+
+**类比**：Rust trait = 插座国标——任何设备只要符合「制式」（方法签名 + `Send + Sync`）就能接入，合规由编译器在出厂前强制检查。TypeScript class 继承 = 家族血缘——靠「我继承自 Tool」来归类，合规靠运行时与约定。前者把错误挡在编译期，后者更灵活但把风险留到运行时。
+
+**Analogy**: Rust trait = standardized electrical socket spec — any device that meets the "spec" (method signatures + `Send + Sync`) plugs in; compliance is compile-time enforced before shipping. TypeScript class inheritance = family bloodline — devices are classified by "I extend Tool"; compliance is convention and runtime. The former stops errors at compile time; the latter is more flexible but defers risk to runtime.
+
+---
+
 ### [16:00] Slide 4: Comparing to Claude Code's Class-Based Model
 
 Claude Code 的工具系统在 `src/tools/` 下，每个工具一个类：
@@ -224,6 +236,20 @@ handlers/
 
 ---
 
+### [26:00] Slide 5b: 一次工具调用怎么落到 18 个 handler 之一——全程无 vtable
+
+模型吐出 `{ name: "shell", arguments: {…} }` JSON。这个 JSON 到具体执行的路径：
+
+`match ToolKind`（`registry.rs:39`）是第一个决策点——enum 分派，编译期已知全部分支：`ToolKind::Function` 走内置工具（`shell.rs` 等 18 个 handler 之一）；`ToolKind::Mcp` 走外部工具，进 `mcp.rs` 再转 MCP RPC 给 server。两路最终都收敛到 `AnyToolResult`（`registry.rs:107`），统一回灌模型。
+
+The model emits `{ name: "shell", arguments: {…} }` JSON. The path from that JSON to concrete execution: `match ToolKind` (`registry.rs:39`) is the first decision point — enum dispatch, all branches known at compile time. `ToolKind::Function` routes to a built-in handler (one of 18, e.g. `shell.rs`); `ToolKind::Mcp` routes to `mcp.rs`, which converts to an MCP RPC call for the server. Both paths converge on `AnyToolResult` (`registry.rs:107`) to be fed back to the model.
+
+两个设计巧思：① enum + match 单态化分派比 `dyn` vtable 更快，且类型全部编译期检查；② `dynamic.rs` 让运行期才确定的工具也实现同一个 `ToolHandler` trait——动态与静态走同一条统一管道，外部看完全一致。
+
+Two design insights: ① enum + match monomorphization is faster than `dyn` vtable and all types are compile-time checked; ② `dynamic.rs` allows runtime-defined tools to implement the same `ToolHandler` trait — dynamic and static handlers flow through the same unified pipeline, indistinguishable from the outside.
+
+---
+
 ### [29:00] Slide 6: The MCP Integration — `codex-mcp` Crate
 
 MCP（Model Context Protocol）是 Anthropic 主导的工具暴露标准协议。Codex 实现自己的 MCP 客户端在 `codex-mcp/` crate 里：
@@ -256,6 +282,26 @@ codex-mcp/src/
 ——这是给开发者的 internal guidance：MCP 相关的状态变更走集中入口。这种 explicit 的 architectural rule 写进 `AGENTS.md` 是好工程。
 
 （注：AGENTS.md 这行引用的 `mcp_connection_manager.rs` 在 pinned commit `e4d6675` 下实际已改名为 `connection_manager.rs`——连上游自己的指导文档也会出现引用漂移。）
+
+---
+
+### [32:00] Slide 6b: 为什么自建 codex-mcp，而不直接用 npm SDK？——不可信 MCP 的威胁场景
+
+威胁场景：你装了一个第三方 MCP server，它的某个工具偷偷想读 `~/.ssh/id_rsa` 并回传。
+
+如果用官方 npm MCP SDK（在 Node.js 里跑）：MCP server 代码与 agent 同进程、无沙箱运行，`fs.readFileSync('~/.ssh/id_rsa')` 直接成功，再发一个 HTTP 请求把内容传走，无人拦截。结论：不可信 server = 不可信代码跑在你机器上。
+
+如果用自建 codex-mcp（受同一沙箱约束）：MCP 工具调用和普通工具走同一条受控管道——Landlock 不允许访问 `~/.ssh`，读取被内核拒绝；MITM 代理拦截回传请求，目标域不在白名单则外联被阻断。结论：即使 server 恶意，沙箱仍兜底。
+
+Threat scenario: a third-party MCP server tries to read `~/.ssh/id_rsa` and exfiltrate it.
+
+With the official npm MCP SDK (running in Node.js): the MCP server code runs in the same process as the agent with no sandbox. `fs.readFileSync('~/.ssh/id_rsa')` succeeds; an HTTP request leaks the content out. Verdict: untrusted server = untrusted code on your machine.
+
+With self-built codex-mcp (subject to the same sandbox): MCP tool calls go through the same controlled pipeline as built-in tools. Landlock: `~/.ssh` is not whitelisted, kernel denies the read. MITM proxy: the exfiltration target is not in the allowed domain list, outbound connection blocked. Verdict: even a malicious server is contained by the sandbox.
+
+这就是「自建」买到的东西：把 MCP 集成写进 Rust 并深度绑定 OS 沙箱，外部 server 的工具调用天然继承 Landlock + 网络代理保护。直接用 npm SDK 省事，但等于默认信任每一个你装的 MCP server。这正是 ch03 沙箱章存在的理由。
+
+This is what "building it yourself" buys: integrating MCP in Rust with deep OS sandbox binding means external server tool calls inherently inherit Landlock + network proxy protection. Using the npm SDK is easier, but it implicitly trusts every MCP server you install — which is exactly why ch03's sandbox chapter exists.
 
 ---
 

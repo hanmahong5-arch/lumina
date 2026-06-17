@@ -24,7 +24,7 @@ li{margin-bottom:1.5pt;color:var(--text-secondary)}
 </style>
 </head>
 <body>
-<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">05 / 09</p></div>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch1 Core Engine</p><p class="page-num">06 / 12</p></div>
 <div class="slide-content">
   <h2><span class="fn" style="font-size:15pt;">Session</span> struct — 17 个字段，4 组职责（core/src/session/session.rs:11）</h2>
   <div class="four-groups">
@@ -68,6 +68,6 @@ li{margin-bottom:1.5pt;color:var(--text-secondary)}
   </div>
   <div class="callout"><p><strong style="color:var(--accent-indigo);">关键洞察：</strong>active_turn 注释"at most 1 running task at a time"——Codex 用 Mutex 付出显式锁代价，换来和 Claude Code JS 单线程<strong style="color:var(--text-primary);">完全相同的不变量</strong>，但同时保留了 goal_runtime / mailbox / realtime audio 真正并行跑的能力。</p></div>
 </div>
-<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>05 / 09</p></div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>06 / 12</p></div>
 </body>
 </html>

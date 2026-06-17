@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - IPC Trace</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 2pt 0}
+.lead{font-size:8.5pt;color:var(--text-secondary);margin:0 0 7pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:7.8pt}
+.diagram{display:flex;align-items:stretch;gap:5pt;margin-bottom:7pt}
+.dbox{flex:1;background:var(--bg-card);border-radius:4pt;padding:6pt 7pt;text-align:center;border:1pt solid var(--border-subtle)}
+.dbox.engine{border:1.5pt solid var(--accent-indigo)}
+.dbox .title{font-size:8.5pt;font-weight:700;color:var(--text-primary);margin:0}
+.dbox .sub{font-size:7pt;color:var(--text-muted);margin:2pt 0 0 0}
+.arrow{flex:0 0 78pt;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.arrow p{margin:0;font-size:7pt;color:var(--accent-teal);font-family:'Courier New',monospace;line-height:1.3}
+.steps{display:flex;gap:9pt;flex:1}
+.scol{flex:1}
+.sitem{display:flex;gap:6pt;margin-bottom:4pt}
+.sitem .n{flex:0 0 13pt;font-family:'Courier New',monospace;font-size:8pt;color:var(--accent-teal);margin:0}
+.sitem p{font-size:8.5pt;color:var(--text-secondary);margin:0;line-height:1.35}
+.note{background:#16213E;border-left:3pt solid var(--accent-coral);border-radius:0 4pt 4pt 0;padding:5pt 10pt;margin-top:auto}
+.note p{font-size:8.5pt;color:var(--text-secondary);line-height:1.4;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">08 / 13</p></div>
+<div class="slide-content">
+  <h2>追一条消息穿过边界(<span class="fn" style="font-size:13pt;">id="sub_42"</span>)</h2>
+  <p class="lead">边界上只有两种可序列化对象往返。跟着一个 id 看它的来回:</p>
+  <div class="diagram">
+    <div class="dbox"><p class="title">前端 Client</p><p class="sub">CLI / IDE</p></div>
+    <div class="arrow"><p>① Submission</p><p>JSON ►</p></div>
+    <div class="dbox engine"><p class="title">submission_loop</p><p class="sub">rx_sub.recv()</p></div>
+    <div class="arrow"><p>② turn</p><p>► 处理</p></div>
+    <div class="dbox engine"><p class="title">引擎 Turn</p><p class="sub">send_event()</p></div>
+    <div class="arrow"><p>③ Event</p><p>◄ JSON</p></div>
+    <div class="dbox"><p class="title">前端 rx_event</p><p class="sub">观察</p></div>
+  </div>
+  <div class="steps">
+    <div class="scol">
+      <div class="sitem"><p class="n">①</p><p><span class="fn">tx_sub.send(Submission{ id:"sub_42", op })</span> → 序列化成带 <span class="fn">type</span> 标签的 JSON,经 WebSocket</p></div>
+      <div class="sitem"><p class="n">②</p><p>引擎反序列化,按 <span class="fn">op</span> 派发一个 turn(<span class="fn">handlers.rs:962</span>)</p></div>
+    </div>
+    <div class="scol">
+      <div class="sitem"><p class="n">③</p><p><span class="fn">send_event(Event{ id:"sub_42", msg })</span> 回传;一个 Submission 可产出<strong style="color:var(--text-primary);">多个</strong> Event,共享同一 id</p></div>
+      <div class="sitem"><p class="n">④</p><p>前端用 <span class="fn">id</span> 把这些 Event 关联回它发出的那条 Submission</p></div>
+    </div>
+  </div>
+  <div class="note"><p><strong style="color:var(--accent-coral);">不穿越边界的:</strong>工具的原始执行结果、模型 API 原始响应、沙箱/文件系统/进程状态、API key —— 全部由引擎独占。前端拿到的永远是「消化后的事件」,这是安全边界,也是「引擎可被多前端复用」的前提。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>08 / 13</p></div>
+</body>
+</html>

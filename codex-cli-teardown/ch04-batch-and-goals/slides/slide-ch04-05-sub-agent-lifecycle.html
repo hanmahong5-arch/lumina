@@ -32,7 +32,7 @@ p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
 </style>
 </head>
 <body>
-<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">05 / 13</p></div>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch4 Batch &amp; Goals</p><p class="page-num">07 / 16</p></div>
 <div class="slide-content">
   <h2>Sub-Agent 生命周期 — 继承与隔离</h2>
   <div class="compare-grid">
@@ -57,6 +57,6 @@ p{font-size:9.5pt;line-height:1.4;margin:0 0 4pt 0;color:var(--text-secondary)}
   </div>
   <div class="callout"><p><strong style="color:var(--accent-teal);">设计意图：</strong>隔离对话历史是 batch 正确性的关键——每个 worker 对 CSV 行的处理必须幂等、无副作用。如果 worker A 的中间状态污染 worker B，整个 map-reduce 结果不可信。这是刻意的"无共享"架构。</p></div>
 </div>
-<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>05 / 13</p></div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>07 / 16</p></div>
 </body>
 </html>

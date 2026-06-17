@@ -1,6 +1,6 @@
 # Chapter 1 (Codex): Core Engine — Channel Pair vs AsyncGenerator
 
-## ⏱️ Target Duration: ~50 minutes | 📑 ~22 slides | 📝 ~7,500 words
+## ⏱️ Target Duration: ~50 minutes | 📑 12 slides | 📝 ~7,500 words
 
 > **Validation chapter.** This is the first substantive chapter of the Codex teardown. If reading these source files at this depth feels productive, the entire Codex deep-dive direction is worth pursuing. If it feels like a forced repetition of the Claude Code teardown, stop and reconsider scope.
 >
@@ -167,6 +167,24 @@ Both designs solve the same set of requirements:
 
 ---
 
+### [14:30] Slide 4b: 类比——传送带与邮局信箱 / Analogy: Conveyor belt & mailroom
+
+上一张幻灯片的对照表是分析性的；这一张用两个画面把它固化成直觉。
+
+想象 Claude Code 是**工厂传送带**：生产者把零件放上去，`yield` 让带子停一格，取货人取走一个，带子才再动一格。这就是 AsyncGenerator 的节奏——"谁先谁后"完全焊死在调用栈里，背压天然，但只能单线、单消费者、同进程。
+
+Imagine Claude Code as a **factory conveyor belt**: the producer places an item, `yield` halts the belt one notch, the consumer takes one item, and the belt advances again. That's AsyncGenerator's rhythm — ordering is baked into the call stack, backpressure is free, but you get only one lane and one consumer in the same process.
+
+Codex 是**邮局信箱对**：有两排信箱，`tx_sub`/`rx_sub` 是收件侧，`rx_event`/`send_event` 是发件侧。发件人把信扔进信箱就走，收信人按自己的节奏取信，两边完全解耦。正因为解耦，引擎才能是独立二进制，被多个前端同时订阅——但背压要靠**有界 channel** 显式设计，否则队列就会积压。
+
+Codex is a **mailroom pair**: two banks of pigeonholes — `tx_sub`/`rx_sub` on the inbound side, `rx_event`/`send_event` on the outbound. The sender drops a letter and walks away; the receiver picks it up on its own schedule. Full decoupling lets the engine be a standalone binary consumed by multiple frontends simultaneously — at the cost of explicit backpressure design via bounded channels.
+
+**一句话固化**：传送带把顺序焊死在调用栈里（简单、同进程）；信箱把它摊成可序列化的消息（灵活、可跨界）。这两句话是上一页那张对照表背后的物理直觉。
+
+**One line to remember**: the conveyor belt welds ordering into the call stack (simple, same-process); the mailroom flattens it into serializable messages (flexible, cross-boundary). That is the physical intuition behind the comparison table on the previous slide.
+
+---
+
 ### [17:00] Slide 5: The Inner Session — 17 fields of "what's actually running"
 
 `Codex` 是公开门面。真正持有运行时状态的是 `Session`，定义在 `core/src/session/session.rs:11`：
@@ -312,6 +330,36 @@ This is exactly why `Event { id: String, msg: EventMsg }` must carry `id` — it
 
 ---
 
+### [35:00] Slide 7b: Worked example — Ctrl+C 之后发生了什么 / What happens after Ctrl+C
+
+理解 `Op::Interrupt` 最快的方式是跟着一次真实的 Ctrl+C 走一遍。
+
+**Step 1**：用户在 IDE 里按下 Ctrl+C。
+
+**Step 2**：前端封装出 `Submission { op: Op::Interrupt }`，经 `tx_sub` 投入提交队列。注意：它和普通用户输入走**同一条队列**，不是带外信号。
+
+**Step 3**：`submission_loop` 在 `handlers.rs:962` 顺序 `rx_sub.recv()` 取到这条提交。
+
+**Step 4（关键）**：匹配到 `Op::Interrupt => { interrupt(&sess).await; false }`（`handlers.rs:973`），触发中止当前 turn 的逻辑。
+
+**Step 5**：引擎回发 `EventMsg::TurnAborted`，前端据此收尾。
+
+**Step 1**: The user presses Ctrl+C in the IDE.
+
+**Step 2**: The frontend wraps it as `Submission { op: Op::Interrupt }` and sends it via `tx_sub` into the submission queue — the **same queue** as ordinary user input. It is not an OS-level out-of-band signal.
+
+**Step 3**: `submission_loop` picks it up with `rx_sub.recv()` at `handlers.rs:962`.
+
+**Step 4 (the key moment)**: It matches `Op::Interrupt => { interrupt(&sess).await; false }` at `handlers.rs:973`, triggering the abort of the active turn.
+
+**Step 5**: The engine emits `EventMsg::TurnAborted`; the frontend winds down.
+
+为什么不用 OS 信号直接打断引擎？因为 `Op::Interrupt` 是排进同一信箱的一等公民，有确定的"位置感"：它不会踩到正在写入的数据结构，不会在两个原子操作之间插入，行为可预测、可序列化、能跨进程。代价是它得等队列轮到它——但对编码 Agent 来说，这个延迟完全可接受，且换来了安全保证。
+
+Why not interrupt the engine with an OS signal? Because `Op::Interrupt` queued in the same mailbox as all other ops has a determinate position: it cannot tear through in-progress data structure writes or land between two atomic operations. The behavior is predictable, serializable, and transport-agnostic. The trade-off is latency — it waits its turn in the queue — but for a coding agent that's entirely acceptable, and the determinism guarantee is worth it.
+
+---
+
 ### [38:00] Slide 8: The Event enum (~40 variants) — what flows out
 
 打开 `protocol/src/protocol.rs:1296`。`Event` 结构两个字段：`id: String`（关联回 Submission）和 `msg: EventMsg`。`EventMsg` 是一个 serde-tagged enum，目前 ~40 个 variant，按职责分 6 组：
@@ -340,6 +388,48 @@ This is exactly why `Event { id: String, msg: EventMsg }` must carry `id` — it
 Codex 把 Claude Code 内联在工具结果里的进度信息**拆成了独立事件**——这对 IDE/TUI 客户端非常友好（可以精确定位"现在正在跑 bash 命令"），代价是协议表面更大。
 
 Codex breaks out as separate events what Claude Code inlines into tool results — much friendlier to IDE/TUI clients (precise "currently running bash command" tracking), at the cost of larger protocol surface.
+
+---
+
+### [41:30] Slide 8b: 一次完整 Turn 的端到端追踪 / End-to-end turn timeline
+
+现在把这章所有的零件组装成一次端到端走读。从你敲下 prompt 到答案返回，数据如何穿过各个 actor。
+
+**T0 · 前端（Client）**：`tx_sub.send(Submission { Op::UserTurn })` — 你的 prompt 入提交队列。
+
+**T1 · 调度（submission_loop）**：`rx_sub.recv()` 取出提交，派发一个新 turn（`handlers.rs:962`）。
+
+**T2 · Turn（tokio task）**：`client_session.stream(prompt, …)` 向模型发起流式请求（`turn.rs:1835`）。
+
+**T3 · Turn**：每个 token 到达，向事件通道推送 `EventMsg::AgentMessageContentDelta`（`turn.rs:1554`），前端实时收到增量。
+
+**T4 · Turn**：模型请求执行命令，引擎发出 `EventMsg::ExecCommandBegin`。
+
+**T5 · 子进程（subprocess）**：`codex-linux-sandbox` 在沙箱内执行该命令（独立 helper 二进制）。
+
+**T6 · Turn**：命令完成，发出 `EventMsg::ExecCommandEnd`，结果回灌模型，继续流式生成。
+
+**T7 · Turn**：终答 `AgentMessage` 发出，接着 `EventMsg::TurnComplete`，前端 `rx_event` 收尾。
+
+**T0 · Client**: `tx_sub.send(Submission { Op::UserTurn })` — your prompt enters the submission queue.
+
+**T1 · submission_loop**: `rx_sub.recv()` dequeues it and dispatches a new turn (`handlers.rs:962`).
+
+**T2 · Turn (tokio task)**: `client_session.stream(prompt, …)` opens a streaming request to the model (`turn.rs:1835`).
+
+**T3 · Turn**: each arriving token is forwarded as `EventMsg::AgentMessageContentDelta` (`turn.rs:1554`) — the frontend receives deltas in real time.
+
+**T4 · Turn**: the model requests command execution; the engine emits `EventMsg::ExecCommandBegin`.
+
+**T5 · Subprocess**: `codex-linux-sandbox` runs the command inside the sandbox as an independent helper binary.
+
+**T6 · Turn**: on completion, `EventMsg::ExecCommandEnd` is emitted; the result is fed back into the model to continue streaming.
+
+**T7 · Turn**: the final `AgentMessage` is sent, followed by `EventMsg::TurnComplete`; the frontend drains `rx_event` and closes out.
+
+关键设计结论：前端自始至终只通过 `rx_event` **观察**，从不直接驱动引擎或触碰工具结果。把控制流压成两条可序列化队列，才让"引擎是独立二进制、前端是协议消费者"这个架构目标真正成立。
+
+The architectural takeaway: the frontend is a pure **observer** throughout, receiving events via `rx_event` and never reaching into the engine or tool results directly. Compressing the entire control flow into two serializable queues is what makes the goal — "engine is a standalone binary, frontend is a protocol consumer" — genuinely achievable.
 
 ---
 

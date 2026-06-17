@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 02 - Dispatch Flow</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:12pt 28pt 6pt 28pt}
+h2{font-size:17pt;font-weight:700;margin:0 0 3pt 0}
+.lead{font-size:8.5pt;color:var(--text-secondary);margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.fl{display:flex;flex-direction:column;align-items:center;gap:4pt;flex:1}
+.node{background:var(--bg-card);border-radius:4pt;padding:6pt 12pt;text-align:center;max-width:70%}
+.node p{margin:0;font-size:9pt;color:var(--text-secondary)}
+.node.hl{border:1.5pt solid var(--accent-indigo)}
+.node.hl p{color:var(--text-primary);font-weight:700}
+.arr{font-size:11pt;color:var(--accent-teal);margin:0}
+.branch{display:flex;gap:14pt;width:100%;justify-content:center}
+.bcol{flex:0 0 42%;background:var(--bg-card);border-radius:4pt;padding:7pt 11pt;border-top:2.5pt solid var(--accent-teal)}
+.bcol.mcp{border-top-color:var(--accent-amber)}
+.bcol h4{font-size:9pt;font-weight:700;margin:0 0 2pt 0}
+.bcol p{font-size:8pt;color:var(--text-secondary);margin:0;line-height:1.3}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:8.7pt;color:var(--text-secondary);line-height:1.45;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch2 Tools &amp; MCP</p><p class="page-num">07 / 12</p></div>
+<div class="slide-content">
+  <h2>一次工具调用怎么落到 18 个 handler 之一</h2>
+  <p class="lead">模型只会吐一个 <span class="fn">{name, arguments}</span> JSON。中间这层把它「展开」成具体执行——全程无 vtable。</p>
+  <div class="fl">
+    <div class="node"><p>模型输出 <span class="fn">{ name:"shell", arguments:{…} }</span></p></div>
+    <p class="arr">▼</p>
+    <div class="node hl"><p>match <span class="fn">ToolKind</span> (registry.rs:39)　—— 编译期已知的 enum 分派</p></div>
+    <p class="arr">▼</p>
+    <div class="branch">
+      <div class="bcol"><h4 style="color:var(--accent-teal);">ToolKind::Function</h4><p>内置工具 → <span class="fn">shell.rs</span> 等 18 个 handler 之一</p></div>
+      <div class="bcol mcp"><h4 style="color:var(--accent-amber);">ToolKind::Mcp</h4><p>外部工具 → <span class="fn">mcp.rs</span> → 转 MCP RPC 给 server</p></div>
+    </div>
+    <p class="arr">▼</p>
+    <div class="node"><p>统一返回 <span class="fn">AnyToolResult</span> (registry.rs:107) → 回灌模型</p></div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">两个巧思:</strong>① 因为 handler 集合编译期已知,用 <span class="fn">match</span> 单态化派发,比 <span class="fn">dyn</span> vtable 更快、且类型全检;② <span class="fn">dynamic.rs</span> 让「运行期才确定的工具」也实现同一 <span class="fn">ToolHandler</span> trait —— 动态与静态走同一条统一管道。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>07 / 12</p></div>
+</body>
+</html>

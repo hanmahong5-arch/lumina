@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 00 - Persistence Crash</title>
+<style>
+:root{--bg-primary:#0F0F1A;--bg-secondary:#1A1A2E;--bg-card:#16213E;--bg-code:#0D1117;--accent-indigo:#6C63FF;--accent-teal:#00D4AA;--accent-coral:#FF6B6B;--accent-amber:#FFB84D;--accent-green:#48BB78;--text-primary:#FFFFFF;--text-secondary:#A0AEC0;--text-muted:#718096;--border-subtle:#2D3748}
+html{background:var(--bg-primary)}
+body{width:720pt;height:405pt;margin:0;padding:0;font-family:Arial,sans-serif;color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:8pt 32pt;background:var(--bg-secondary)}
+.chapter-tag{font-size:8pt;font-weight:700;color:var(--accent-teal);text-transform:uppercase;letter-spacing:1.2pt;margin:0}
+.page-num{font-size:8pt;color:var(--text-muted);margin:0}
+.slide-content{flex:1;display:flex;flex-direction:column;padding:13pt 28pt 6pt 28pt}
+h2{font-size:18pt;font-weight:700;margin:0 0 2pt 0}
+.lead{font-size:9pt;color:var(--text-secondary);margin:0 0 8pt 0}
+.fn{font-family:'Courier New',monospace;color:#79C0FF;font-size:8pt}
+.compare-grid{display:flex;gap:12pt;flex:1}
+.compare-col{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 13pt}
+.compare-col-highlight{flex:1;background:var(--bg-card);border-radius:4pt;padding:10pt 13pt;border:1.5pt solid var(--accent-teal)}
+h4{font-size:11pt;font-weight:700;margin:0 0 5pt 0}
+ul{font-size:9pt;line-height:1.45;margin:0 0 6pt 0;padding-left:14pt}
+li{margin-bottom:3pt;color:var(--text-secondary)}
+.code-block{background:var(--bg-code);border-radius:3pt;padding:5pt 8pt}
+.code-block p{font-size:7.8pt;color:#79C0FF;font-family:'Courier New',monospace;margin:0;line-height:1.4}
+.verdict{font-size:8.5pt;font-weight:700;margin:5pt 0 0 0}
+.callout{background:#16213E;border-left:3pt solid var(--accent-indigo);border-radius:0 4pt 4pt 0;padding:6pt 10pt;margin-top:6pt}
+.callout p{font-size:9pt;color:var(--text-secondary);line-height:1.45;margin:0}
+.slide-footer{display:flex;justify-content:space-between;align-items:center;padding:2pt 32pt 4pt 32pt;font-size:7pt;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="header-bar"><p class="chapter-tag">Codex Teardown · Ch0 架构总览</p><p class="page-num">10 / 13</p></div>
+<div class="slide-content">
+  <h2>场景:agent 写状态写到一半,进程崩了</h2>
+  <p class="lead">这恰恰检验「6 个持久化 crate」值不值——长任务里崩溃是常态,不是意外。</p>
+  <div class="compare-grid">
+    <div class="compare-col-highlight">
+      <h4 style="color:var(--accent-teal);">Codex —— SQLite 事务(<span class="fn" style="font-size:10pt;">thread_goals</span> 表)</h4>
+      <ul>
+        <li>写入在一个事务里;崩溃发生在 commit 前 → 整笔<strong style="color:var(--text-primary);">回滚</strong>,旧状态完好</li>
+        <li>WAL 模式 + ACID:不会出现「写一半」的中间态</li>
+        <li>重启后照常查询:</li>
+      </ul>
+      <div class="code-block"><p>SELECT objective, status, tokens_used</p><p>FROM thread_goals WHERE status='Active';</p></div>
+      <p class="verdict" style="color:var(--accent-green);">✓ 状态可恢复、可审计、可继续</p>
+    </div>
+    <div class="compare-col">
+      <h4 style="color:var(--accent-coral);">Claude Code —— markdown 文件</h4>
+      <ul>
+        <li>状态写进 <span class="fn">~/.claude/memory/</span> 下的 .md 文件</li>
+        <li>写到一半崩溃 → 文件<strong style="color:var(--text-primary);">半截损坏</strong>,无事务边界</li>
+        <li>下次启动:解析报错,或静默读到脏数据,状态悄悄丢失</li>
+        <li>胜在简单可读(能直接 <span class="fn">cat</span>),适合人维护的当前会话</li>
+      </ul>
+      <p class="verdict" style="color:var(--accent-coral);">✗ 崩溃边界无保障</p>
+    </div>
+  </div>
+  <div class="callout"><p><strong style="color:var(--accent-indigo);">这就是假设之差:</strong>Codex 假设 agent 会<strong style="color:var(--text-primary);">长期、跨会话、可能崩溃</strong>地自主运行,所以状态必须工业化、事务化;Claude Code 假设以当前会话为主、状态由人维护,markdown 足够。两者都对——取决于你押 agent 在哪种工作模式。</p></div>
+</div>
+<div class="slide-footer"><p>Lumina · Codex CLI Teardown</p><p>10 / 13</p></div>
+</body>
+</html>
